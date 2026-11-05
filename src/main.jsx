@@ -174,10 +174,9 @@ function Portfolio() {
   const { scrollY, scrollYProgress } = useScroll();
   const [navHidden, setNavHidden] = useState(false);
   const [navOnLight, setNavOnLight] = useState(false);
-  // Hide while scrolling down, reveal on any scroll up; re-check the surface so the glass can flip to dark text.
+  // Hide while scrolling down, reveal on any scroll up
   useMotionValueEvent(scrollY, "change", (y) => {
     setNavHidden(y > scrollY.getPrevious() && y > 120);
-    setNavOnLight(surfaceIsLight(window.innerWidth / 2, 40));
   });
   // Also re-check without a scroll: on first paint, after a route change and after a theme switch.
   useEffect(() => {

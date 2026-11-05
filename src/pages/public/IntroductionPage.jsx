@@ -108,8 +108,8 @@ function HeroSection({ copy }) {
   const { t, i18n } = useTranslation();
   const ref = useRef(null);
 
-  // Opening scene: hero pins, dock & type recede into 3D depth, deep darkness settles,
-  // multi-angle spotlights beam onto Hugo on the podium with full feet visibility and 3D depth.
+  // Opening scene: hero pins, dock & type recede, deep darkness settles,
+  // multi-angle spotlights beam onto Hugo on the podium with full feet visibility.
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
@@ -119,93 +119,75 @@ function HeroSection({ copy }) {
           trigger: ref.current,
           start: "top top",
           end: endDistance,
-          scrub: 0.65,
+          scrub: 0.6,
           pin: true,
           anticipatePin: 1,
         },
       });
 
-      // 1. Initial fade out of dock and background letters/sun into 3D depth
-      tl.to(".hero-dock-wrap", { autoAlpha: 0, y: 35, duration: 0.22, ease: "power1.out" }, 0)
-        .to(".hero-layer--back", { autoAlpha: 0, z: -180, scale: 0.82, filter: "blur(14px)", duration: 0.35, ease: "power2.inOut" }, 0)
-        // 2. Deep 3D atmospheric dark hall
-        .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.4, ease: "power2.inOut" }, 0.05)
-        // 3. 3D floor spotlight pool under podium
+      // 1. Initial fade out of dock and background letters/sun (compositor-only transforms)
+      tl.to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.2, ease: "power1.out" }, 0)
+        .to(".hero-layer--back", { autoAlpha: 0, yPercent: -12, scale: 0.86, duration: 0.32, ease: "power2.inOut" }, 0)
+        // 2. Dark backdrop fade
+        .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "power2.inOut" }, 0.05)
+        // 3. Floor spotlight pool under podium
         .fromTo(".hero-spotlight-floor",
-          { autoAlpha: 0, scale: 0.6, rotateX: 72 },
-          { autoAlpha: 1, scale: 1.05, rotateX: 72, duration: 0.45, ease: "power2.out" },
-          0.18
+          { autoAlpha: 0, scale: 0.7 },
+          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+          0.16
         )
         // 4. Spotlights beam in from multiple sides onto Hugo
         .fromTo(".spotlight-beam--left",
-          { autoAlpha: 0, scaleY: 0.2, transformOrigin: "top left" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.48, ease: "power2.out" },
-          0.2
+          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top left" },
+          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "power2.out" },
+          0.18
         )
         .fromTo(".spotlight-beam--right",
-          { autoAlpha: 0, scaleY: 0.2, transformOrigin: "top right" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.48, ease: "power2.out" },
-          0.22
+          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top right" },
+          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "power2.out" },
+          0.2
         )
         .fromTo(".spotlight-beam--top",
-          { autoAlpha: 0, scaleY: 0.2, transformOrigin: "top center" },
-          { autoAlpha: 0.9, scaleY: 1, duration: 0.45, ease: "power2.out" },
-          0.24
-        )
-        .fromTo(".spotlight-lamp",
-          { autoAlpha: 0, scale: 0.4 },
-          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" },
+          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top center" },
+          { autoAlpha: 0.9, scaleY: 1, duration: 0.42, ease: "power2.out" },
           0.22
         )
-        // 5. Hugo and pedestal stepped forward in 3D (keeping full feet completely visible)
+        .fromTo(".spotlight-lamp",
+          { autoAlpha: 0, scale: 0.5 },
+          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power2.out" },
+          0.2
+        )
+        // 5. Hugo and pedestal stepped forward (keeping full feet completely visible)
         .to(".hero-layer--front", {
-          z: 45,
           scale: frontScale,
           yPercent: 0,
           transformOrigin: "50% 80%",
           duration: 0.45,
           ease: "power2.out",
-        }, 0.2)
-        .to(".hero-portrait", {
-          filter: "drop-shadow(0 0 30px rgba(255, 235, 170, 0.5)) drop-shadow(5px 0 0 #fbf8f1) drop-shadow(-5px 0 0 #fbf8f1) drop-shadow(0 5px 0 #fbf8f1) drop-shadow(0 -5px 0 #fbf8f1) drop-shadow(0 35px 50px rgba(0, 0, 0, 0.85))",
-          duration: 0.45,
-          ease: "power2.out",
-        }, 0.25)
-        .to(".hero-museum-particles", { autoAlpha: 0.85, duration: 0.35 }, 0.28)
-        // 6. Hold the full 3D spotlight showcase moment
-        .to({}, { duration: 0.4 })
+        }, 0.18)
+        // 6. Hold the full spotlight showcase moment
+        .to({}, { duration: 0.35 })
         // 7. Transition seamlessly into marquee
         .to(ref.current, {
           scale: frameScale,
           borderRadius: 36,
           transformOrigin: "50% 80%",
           ease: "power1.inOut",
-          duration: 0.3,
+          duration: 0.28,
         }, 0.88);
     };
 
     mm.add(desktopMotion, () => {
-      buildTimeline("+=120%", 1.06, 0.9);
+      buildTimeline("+=110%", 1.05, 0.9);
     });
 
     mm.add(phoneMotion, () => {
-      buildTimeline("+=100%", 1.03, 0.95);
+      buildTimeline("+=90%", 1.02, 0.95);
     });
   }, { scope: ref });
 
-  // Subtle 3D mouse parallax on desktop
-  const handleMouseMove = (e) => {
-    if (window.innerWidth <= 820) return;
-    const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 16;
-    const y = (clientY / window.innerHeight - 0.5) * 12;
-    gsap.to(".hero-layer--front", { rotationY: x * 0.8, rotationX: -y * 0.8, duration: 1, ease: "power2.out" });
-    gsap.to(".hero-layer--back", { x: -x * 1.5, y: -y * 1.5, duration: 1.2, ease: "power2.out" });
-    gsap.to(".hero-spotlights", { x: x * 0.5, duration: 1.2, ease: "power2.out" });
-  };
-
   return (
-    <section ref={ref} className="hero" onMouseMove={handleMouseMove}>
+    <section ref={ref} className="hero">
       <svg className="hero-defs" aria-hidden="true" focusable="false">
         <filter id="hero-liquid" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.004 0.02" numOctaves="1" seed="4" result="noise" />
@@ -214,7 +196,7 @@ function HeroSection({ copy }) {
         </filter>
       </svg>
 
-      {/* Dark atmospheric museum backdrop */}
+      {/* Dark atmospheric backdrop */}
       <div className="hero-museum-backdrop" aria-hidden="true" />
 
       {/* Background layer: sun, handwritten script, Hugo name */}
@@ -230,49 +212,46 @@ function HeroSection({ copy }) {
         </motion.h1>
       </div>
 
-      {/* Museum spotlights & beam system */}
+      {/* Spotlights & beam system (100% GPU-accelerated gradients, zero heavy filters) */}
       <div className="hero-spotlights" aria-hidden="true">
         <svg className="hero-spotlights-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
           <defs>
             <linearGradient id="spotlight-beam-left-grad" x1="0.08" y1="0" x2="0.5" y2="0.9">
               <stop offset="0%" stopColor="#fff8e1" stopOpacity="0.85" />
-              <stop offset="22%" stopColor="#ffd54f" stopOpacity="0.45" />
-              <stop offset="55%" stopColor="#ffb300" stopOpacity="0.18" />
+              <stop offset="22%" stopColor="#ffd54f" stopOpacity="0.4" />
+              <stop offset="55%" stopColor="#ffb300" stopOpacity="0.14" />
               <stop offset="100%" stopColor="#ffb300" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="spotlight-beam-right-grad" x1="0.92" y1="0" x2="0.5" y2="0.9">
               <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.85" />
-              <stop offset="25%" stopColor="#7dd3fc" stopOpacity="0.4" />
-              <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.15" />
+              <stop offset="25%" stopColor="#7dd3fc" stopOpacity="0.38" />
+              <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.12" />
               <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="spotlight-beam-top-grad" x1="0.5" y1="0" x2="0.5" y2="0.95">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-              <stop offset="30%" stopColor="#fffbeb" stopOpacity="0.38" />
-              <stop offset="65%" stopColor="#fef3c7" stopOpacity="0.14" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.88" />
+              <stop offset="30%" stopColor="#fffbeb" stopOpacity="0.32" />
+              <stop offset="65%" stopColor="#fef3c7" stopOpacity="0.1" />
               <stop offset="100%" stopColor="#fef3c7" stopOpacity="0" />
             </linearGradient>
             <radialGradient id="lamp-flare-gold" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
               <stop offset="25%" stopColor="#fff3bf" stopOpacity="0.9" />
-              <stop offset="55%" stopColor="#ffc107" stopOpacity="0.4" />
+              <stop offset="55%" stopColor="#ffc107" stopOpacity="0.35" />
               <stop offset="100%" stopColor="#ffc107" stopOpacity="0" />
             </radialGradient>
             <radialGradient id="lamp-flare-cyan" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
               <stop offset="25%" stopColor="#bae6fd" stopOpacity="0.9" />
-              <stop offset="55%" stopColor="#38bdf8" stopOpacity="0.4" />
+              <stop offset="55%" stopColor="#38bdf8" stopOpacity="0.35" />
               <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
             </radialGradient>
             <radialGradient id="lamp-flare-white" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
               <stop offset="35%" stopColor="#f8fafc" stopOpacity="0.8" />
-              <stop offset="65%" stopColor="#cbd5e1" stopOpacity="0.35" />
+              <stop offset="65%" stopColor="#cbd5e1" stopOpacity="0.3" />
               <stop offset="100%" stopColor="#cbd5e1" stopOpacity="0" />
             </radialGradient>
-            <filter id="beam-soft" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="8" />
-            </filter>
           </defs>
 
           {/* Left Spotlight Cone */}
@@ -280,7 +259,6 @@ function HeroSection({ copy }) {
             className="spotlight-beam spotlight-beam--left"
             points="60,-10 140,-10 680,920 320,920"
             fill="url(#spotlight-beam-left-grad)"
-            filter="url(#beam-soft)"
           />
 
           {/* Right Spotlight Cone */}
@@ -288,7 +266,6 @@ function HeroSection({ copy }) {
             className="spotlight-beam spotlight-beam--right"
             points="860,-10 940,-10 680,920 320,920"
             fill="url(#spotlight-beam-right-grad)"
-            filter="url(#beam-soft)"
           />
 
           {/* Top Center Key Light Cone */}
@@ -296,7 +273,6 @@ function HeroSection({ copy }) {
             className="spotlight-beam spotlight-beam--top"
             points="450,-10 550,-10 760,950 240,950"
             fill="url(#spotlight-beam-top-grad)"
-            filter="url(#beam-soft)"
           />
 
           {/* Emitter Fixtures / Lamp Flares */}
@@ -306,15 +282,8 @@ function HeroSection({ copy }) {
         </svg>
       </div>
 
-      {/* Glowing spotlight pool on the floor beneath the podium */}
+      {/* Floor spotlight pool beneath podium */}
       <div className="hero-spotlight-floor" aria-hidden="true" />
-
-      {/* Atmospheric dust motes drifting in the light */}
-      <div className="hero-museum-particles" aria-hidden="true">
-        {Array.from({ length: 14 }).map((_, i) => (
-          <span key={i} className={`mote mote--${i + 1}`} />
-        ))}
-      </div>
 
       {/* Centerpiece: Golden Podium and Portrait with Full Feet Visible */}
       <div className="hero-layer hero-layer--front">
