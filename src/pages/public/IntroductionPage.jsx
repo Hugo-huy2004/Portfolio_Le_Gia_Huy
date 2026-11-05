@@ -75,7 +75,7 @@ function HeroScript() {
 // Two-tier gold podium the portrait sits on: brushed-metal sides, lit top faces, a bright rim on each edge.
 function Podium() {
   return (
-    <svg viewBox="0 0 600 236" preserveAspectRatio="xMidYMax meet">
+    <svg viewBox="0 0 600 244" preserveAspectRatio="xMidYMax meet">
       <defs>
         <linearGradient id="podium-side" x1="0" x2="1">
           <stop offset="0" stopColor="#7a5418" /><stop offset=".12" stopColor="#c9952f" /><stop offset=".3" stopColor="#f6d78a" />
@@ -88,13 +88,12 @@ function Podium() {
           <stop offset="0" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity=".28" />
         </linearGradient>
       </defs>
-      <ellipse cx="300" cy="222" rx="296" ry="14" fill="#06103a" opacity=".35" />
       {/* base tier */}
       <path d="M8 140 A292 42 0 0 0 592 140 V196 A292 42 0 0 1 8 196 Z" fill="url(#podium-side)" />
       <path d="M8 140 A292 42 0 0 0 592 140 V196 A292 42 0 0 1 8 196 Z" fill="url(#podium-shade)" />
       <ellipse cx="300" cy="140" rx="292" ry="42" fill="url(#podium-top)" />
       <ellipse cx="300" cy="140" rx="292" ry="42" fill="none" stroke="#fff3cf" strokeOpacity=".7" strokeWidth="2.5" />
-      <ellipse cx="300" cy="146" rx="214" ry="28" fill="#5a3c0c" opacity=".35" />
+      <ellipse cx="300" cy="146" rx="212" ry="26" fill="#4d3208" opacity=".22" />
       {/* top tier */}
       <path d="M90 52 A210 30 0 0 0 510 52 V120 A210 30 0 0 1 90 120 Z" fill="url(#podium-side)" />
       <path d="M90 52 A210 30 0 0 0 510 52 V120 A210 30 0 0 1 90 120 Z" fill="url(#podium-shade)" />
@@ -113,49 +112,49 @@ function HeroSection({ copy }) {
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
-    const buildTimeline = (endDistance, frontScale, frameScale) => {
+    const buildTimeline = (endDistance, frontScale) => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: ref.current,
           start: "top top",
           end: endDistance,
-          scrub: 0.6,
+          scrub: true,
           pin: true,
           anticipatePin: 1,
         },
       });
 
-      // 1. Initial fade out of dock and background letters/sun (compositor-only transforms)
-      tl.to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.2, ease: "power1.out" }, 0)
-        .to(".hero-layer--back", { autoAlpha: 0, yPercent: -12, scale: 0.86, duration: 0.32, ease: "power2.inOut" }, 0)
+      // 1. Initial fade out of dock and background letters/sun (GPU transforms only)
+      tl.to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.22, ease: "none" }, 0)
+        .to(".hero-layer--back", { autoAlpha: 0, yPercent: -10, scale: 0.88, duration: 0.3, ease: "none" }, 0)
         // 2. Dark backdrop fade
-        .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "power2.inOut" }, 0.05)
+        .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "none" }, 0.05)
         // 3. Floor spotlight pool under podium
         .fromTo(".hero-spotlight-floor",
-          { autoAlpha: 0, scale: 0.7 },
-          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "power2.out" },
-          0.16
+          { autoAlpha: 0, scale: 0.8 },
+          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "none" },
+          0.15
         )
         // 4. Spotlights beam in from multiple sides onto Hugo
         .fromTo(".spotlight-beam--left",
           { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top left" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "power2.out" },
-          0.18
+          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "none" },
+          0.16
         )
         .fromTo(".spotlight-beam--right",
           { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top right" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "power2.out" },
-          0.2
+          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "none" },
+          0.18
         )
         .fromTo(".spotlight-beam--top",
           { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top center" },
-          { autoAlpha: 0.9, scaleY: 1, duration: 0.42, ease: "power2.out" },
-          0.22
+          { autoAlpha: 0.9, scaleY: 1, duration: 0.42, ease: "none" },
+          0.2
         )
         .fromTo(".spotlight-lamp",
           { autoAlpha: 0, scale: 0.5 },
-          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "power2.out" },
-          0.2
+          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "none" },
+          0.18
         )
         // 5. Hugo and pedestal stepped forward (keeping full feet completely visible)
         .to(".hero-layer--front", {
@@ -163,26 +162,18 @@ function HeroSection({ copy }) {
           yPercent: 0,
           transformOrigin: "50% 80%",
           duration: 0.45,
-          ease: "power2.out",
+          ease: "none",
         }, 0.18)
         // 6. Hold the full spotlight showcase moment
-        .to({}, { duration: 0.35 })
-        // 7. Transition seamlessly into marquee
-        .to(ref.current, {
-          scale: frameScale,
-          borderRadius: 36,
-          transformOrigin: "50% 80%",
-          ease: "power1.inOut",
-          duration: 0.28,
-        }, 0.88);
+        .to({}, { duration: 0.3 });
     };
 
     mm.add(desktopMotion, () => {
-      buildTimeline("+=110%", 1.05, 0.9);
+      buildTimeline("+=100%", 1.05);
     });
 
     mm.add(phoneMotion, () => {
-      buildTimeline("+=90%", 1.02, 0.95);
+      buildTimeline("+=80%", 1.02);
     });
   }, { scope: ref });
 
