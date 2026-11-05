@@ -168,7 +168,7 @@
 
 /* Handwritten script lines over the name (drawn by Tegaki). */
 .hero-script{position:absolute;z-index:0;inset:0;pointer-events:none}
-.hero-script>div{position:absolute;line-height:1;white-space:nowrap}
+.hero-script>div{position:absolute;line-height:1;white-space:nowrap;overflow:visible}
 .hero-script-creation{top:clamp(8.5rem,17vh,11rem);left:1vw;color:#ffbf08;font-size:clamp(7rem,19vw,19rem)}
 .hero-script-development{top:clamp(9.5rem,22vh,15rem);right:1.5vw;color:#9db1ff;font-size:clamp(5rem,14vw,16rem)}
 @media(max-width:900px){.hero-script-creation{top:5rem;font-size:24vw}.hero-script-development{top:calc(5.5rem + 34vw);right:3vw;font-size:12vw}}
@@ -251,7 +251,7 @@
 @media(max-width:600px){
   .hero-name{inset:10.5rem 0 auto;font-size:40vw}
   .hero-script-creation{top:4.6rem;left:3vw;font-size:24vw}
-  .hero-script-development{top:calc(10.5rem + 36vw);right:3vw;font-size:19vw}
+  .hero-script-development{top:calc(10.5rem + 36vw);right:auto;left:0;right:0;text-align:right;padding-right:3vw;font-size:11.5vw}
   .hero-portrait{height:min(56svh,500px)}
   .hero-sun{top:auto;bottom:16svh;width:min(78vw,360px);margin-left:calc(min(78vw,360px)/-2)}
 }
