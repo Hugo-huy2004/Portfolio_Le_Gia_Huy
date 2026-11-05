@@ -208,21 +208,21 @@ function HeroSection({ copy }) {
         <svg className="hero-spotlights-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
           <defs>
             <linearGradient id="spotlight-beam-left-grad" x1="0.08" y1="0" x2="0.5" y2="0.9">
-              <stop offset="0%" stopColor="#fff8e1" stopOpacity="0.85" />
-              <stop offset="22%" stopColor="#ffd54f" stopOpacity="0.4" />
-              <stop offset="55%" stopColor="#ffb300" stopOpacity="0.14" />
+              <stop offset="0%" stopColor="#fff8e1" stopOpacity="0.95" />
+              <stop offset="18%" stopColor="#ffe082" stopOpacity="0.55" />
+              <stop offset="50%" stopColor="#ffb300" stopOpacity="0.22" />
               <stop offset="100%" stopColor="#ffb300" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="spotlight-beam-right-grad" x1="0.92" y1="0" x2="0.5" y2="0.9">
-              <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.85" />
-              <stop offset="25%" stopColor="#7dd3fc" stopOpacity="0.38" />
-              <stop offset="60%" stopColor="#38bdf8" stopOpacity="0.12" />
+              <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.95" />
+              <stop offset="20%" stopColor="#7dd3fc" stopOpacity="0.5" />
+              <stop offset="55%" stopColor="#38bdf8" stopOpacity="0.18" />
               <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
             </linearGradient>
             <linearGradient id="spotlight-beam-top-grad" x1="0.5" y1="0" x2="0.5" y2="0.95">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.88" />
-              <stop offset="30%" stopColor="#fffbeb" stopOpacity="0.32" />
-              <stop offset="65%" stopColor="#fef3c7" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+              <stop offset="25%" stopColor="#fffbeb" stopOpacity="0.5" />
+              <stop offset="60%" stopColor="#fef3c7" stopOpacity="0.16" />
               <stop offset="100%" stopColor="#fef3c7" stopOpacity="0" />
             </linearGradient>
             <radialGradient id="lamp-flare-gold" cx="50%" cy="50%" r="50%">
