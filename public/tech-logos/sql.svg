@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 176 100">
+  <!-- Database stack + wordmark, redrawn from the reference the user supplied. -->
+  <g fill="#F2B33D">
+    <path d="M4 10 A30 7 0 0 1 64 10 V28 A30 7 0 0 1 4 28 Z"/>
+    <path d="M4 40 A30 7 0 0 1 64 40 V58 A30 7 0 0 1 4 58 Z"/>
+    <path d="M4 70 A30 7 0 0 1 64 70 V88 A30 7 0 0 1 4 88 Z"/>
+  </g>
+  <g fill="#E0A033">
+    <path d="M50 4.6 A30 7 0 0 1 64 10 V28 A30 7 0 0 1 44 34.6 Z"/>
+    <path d="M50 34.6 A30 7 0 0 1 64 40 V58 A30 7 0 0 1 44 64.6 Z"/>
+    <path d="M50 64.6 A30 7 0 0 1 64 70 V88 A30 7 0 0 1 44 94.6 Z"/>
+  </g>
+  <ellipse cx="34" cy="10" rx="25" ry="4.2" fill="#fff"/>
+  <g fill="#fff"><circle cx="9" cy="21" r="1.7"/><circle cx="9" cy="51" r="1.7"/><circle cx="9" cy="81" r="1.7"/></g>
+  <text x="72" y="90" fill="#F2B33D" font-family="Impact, 'Arial Narrow', 'Helvetica Neue', sans-serif" font-size="66" font-weight="900" letter-spacing="-1">SQL</text>
+</svg>

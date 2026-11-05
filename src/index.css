@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Site-wide base. Page and section styles live next to their pages (pages/public/*.css) and in portfolio.css. */
+:root {
+  --background: 240 24% 97%;
+  --foreground: 240 16% 12%;
+  --muted-foreground: 240 10% 42%;
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Brand mark colour (also in public/favicon/favicon.svg). */
+.hugo-mark { color: hsl(194 100% 58%); overflow: visible; }
+
+.material-symbols-outlined { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
+
+:focus-visible { outline: 2px solid #ffbf08; outline-offset: 2px; }
+
+/* iOS zooms into inputs under 16px. */
+input, textarea, select { font-size: 16px; }

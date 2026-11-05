@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="19 3 62 90" style="overflow:visible">
+  <filter id="w" x="-45%" y="-35%" width="190%" height="170%">
+    <feDropShadow dx="0" dy="0" stdDeviation="1.8" flood-color="hsl(194 100% 58%)" flood-opacity=".95"/>
+    <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="hsl(194 100% 58%)" flood-opacity=".5"/>
+  </filter>
+  <path filter="url(#w)" d="M47.43 8.25 A3 3 0 0 1 52.57 8.25 L75.68 46.48 A30 30 0 1 1 24.32 46.48 Z" fill="hsl(194 100% 58%)"/>
+</svg>
