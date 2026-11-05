@@ -205,30 +205,32 @@ function Portfolio() {
             <Link to="/#skills" {...hover("skills")}>{pill("skills")}{language.language.startsWith("vi") ? "Kỹ năng" : "Skills"}</Link>
             <a href={cvPdf()} target="_blank" rel="noreferrer" {...hover("cv")}>{pill("cv")}CV</a>
           </div>
-          <button type="button" className="portfolio-theme" onClick={toggleTheme} {...hover("theme")}
-            aria-label={language.language.startsWith("vi") ? (theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối") : (theme === "dark" ? "Switch to light theme" : "Switch to dark theme")}>
-            {pill("theme")}
-            <span className="material-symbols-outlined" aria-hidden="true">{theme === "dark" ? "light_mode" : "dark_mode"}</span>
-          </button>
-          <details className="portfolio-languages">
-            <summary aria-label="Language" {...hover("lang")}>
-              {pill("lang")}
-              <span className="material-symbols-outlined" aria-hidden="true">language</span>
-              {LANGS.find((item) => language.language.startsWith(item.code))?.short || "VI"}
-            </summary>
-            <div role="menu" translate="no">
-              {LANGS.map(({ code, name }) => (
-                <a key={code} role="menuitem" href={`${code === "vi" ? "" : `/${code}`}${pathname}`} onClick={clearGoogleTranslate}
-                  aria-current={language.language.startsWith(code) && !translatedByGoogle() ? "page" : undefined}>{name}</a>
-              ))}
-              {!otherLanguages && (
-                <button type="button" role="menuitem" className="portfolio-languages-more" onClick={() => setOtherLanguages(true)}>
-                  {language.language.startsWith("vi") ? "Ngôn ngữ khác…" : "Other languages…"}
-                </button>
-              )}
-              <div id="gt-element" className="portfolio-gt" hidden={!otherLanguages} />
-            </div>
-          </details>
+          <div className="portfolio-nav-actions">
+            <button type="button" className="portfolio-theme" onClick={toggleTheme} {...hover("theme")}
+              aria-label={language.language.startsWith("vi") ? (theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối") : (theme === "dark" ? "Switch to light theme" : "Switch to dark theme")}>
+              {pill("theme")}
+              <span className="material-symbols-outlined" aria-hidden="true">{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+            </button>
+            <details className="portfolio-languages">
+              <summary aria-label="Language" {...hover("lang")}>
+                {pill("lang")}
+                <span className="material-symbols-outlined" aria-hidden="true">language</span>
+                {LANGS.find((item) => language.language.startsWith(item.code))?.short || "VI"}
+              </summary>
+              <div role="menu" translate="no">
+                {LANGS.map(({ code, name }) => (
+                  <a key={code} role="menuitem" href={`${code === "vi" ? "" : `/${code}`}${pathname}`} onClick={clearGoogleTranslate}
+                    aria-current={language.language.startsWith(code) && !translatedByGoogle() ? "page" : undefined}>{name}</a>
+                ))}
+                {!otherLanguages && (
+                  <button type="button" role="menuitem" className="portfolio-languages-more" onClick={() => setOtherLanguages(true)}>
+                    {language.language.startsWith("vi") ? "Ngôn ngữ khác…" : "Other languages…"}
+                  </button>
+                )}
+                <div id="gt-element" className="portfolio-gt" hidden={!otherLanguages} />
+              </div>
+            </details>
+          </div>
         </nav>
       </motion.header>
       <main id="top">
@@ -245,12 +247,96 @@ function Portfolio() {
       </main>
       <OfflineNotice />
       <footer className="portfolio-footer">
-        <p>Hugo Wishpax <span>·</span> Vietnam</p>
-        <div>
-          <a href={cvPdf(language.language)} download>{language.language.startsWith("vi") ? "Tải CV PDF" : "Download CV PDF"}</a>
-          <a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="mailto:hugowishpax@gmail.com">Email</a>
-          <a href={SERVICES_ORIGIN}>{t("navbar.services", "Dịch vụ")}</a>
+        <div className="portfolio-footer-inner">
+          <div className="portfolio-footer-grid">
+            {/* Col 1: Brand & Tagline & Social Badges */}
+            <div className="portfolio-footer-brand-col">
+              <Link to="/" className="portfolio-footer-brand" aria-label="Hugo Wishpax">
+                <HugoLogo className="h-8 w-8" aria-hidden="true" />
+                <span translate="no">Hugo Wishpax</span>
+              </Link>
+              <p className="portfolio-footer-bio">
+                {language.language.startsWith("vi")
+                  ? "Kỹ sư phần mềm — Web & Mobile Full-Stack. Xây dựng sản phẩm trọn vẹn, từ cơ sở dữ liệu đến từng chi tiết trên màn hình."
+                  : "Software Engineer — Web & Mobile Full-Stack. Building products end to end, from database architecture to every detail on screen."}
+              </p>
+              <div className="portfolio-footer-socials">
+                <a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer" title="TikTok" aria-label="TikTok">
+                  <img src="/social-logos/tiktok.svg" alt="TikTok" />
+                </a>
+                <a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer" title="GitHub" aria-label="GitHub">
+                  <img src="/social-logos/github.svg" alt="GitHub" />
+                </a>
+                <a href="https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" target="_blank" rel="noreferrer" title="Facebook" aria-label="Facebook">
+                  <img src="/social-logos/facebook.svg" alt="Facebook" />
+                </a>
+                <a href="mailto:hugowishpax@gmail.com" title="Email" aria-label="Email">
+                  <img src="/social-logos/gmail.svg" alt="Email" />
+                </a>
+                <a href="https://zalo.me/0839909399" target="_blank" rel="noreferrer" title="Zalo" aria-label="Zalo">
+                  <img src="/social-logos/zalo.svg" alt="Zalo" />
+                </a>
+              </div>
+            </div>
+
+            {/* Col 2: Dự án / Projects */}
+            <div className="portfolio-footer-col">
+              <h4>{language.language.startsWith("vi") ? "Dự án" : "Projects"}</h4>
+              <ul>
+                <li><Link to="/project/chanh-toa">Chánh Tòa Mỹ Tho</Link></li>
+                <li><Link to="/project/minh-oi-media">Minh Ơi Media</Link></li>
+                <li><Link to="/project/hwj">HWJ Photography</Link></li>
+                <li><Link to="/project">{language.language.startsWith("vi") ? "Tất cả dự án →" : "All projects →"}</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Công nghệ / Tech Stack */}
+            <div className="portfolio-footer-col">
+              <h4>{language.language.startsWith("vi") ? "Công nghệ" : "Tech Stack"}</h4>
+              <ul>
+                <li><Link to="/#skills">React & Next.js</Link></li>
+                <li><Link to="/#skills">Node.js & Express</Link></li>
+                <li><Link to="/#skills">MongoDB & SQL</Link></li>
+                <li><Link to="/#skills">TypeScript & React Native</Link></li>
+              </ul>
+            </div>
+
+            {/* Col 4: Cộng đồng / Community */}
+            <div className="portfolio-footer-col">
+              <h4>{language.language.startsWith("vi") ? "Cộng đồng" : "Community"}</h4>
+              <ul>
+                <li><a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer">TikTok @pethugowishpaxle</a></li>
+                <li><a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer">GitHub @Hugo-huy2004</a></li>
+                <li><a href="https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" target="_blank" rel="noreferrer">Facebook Lê Gia Huy</a></li>
+                <li><a href="https://zalo.me/0839909399" target="_blank" rel="noreferrer">Zalo 0839 909 399</a></li>
+              </ul>
+            </div>
+
+            {/* Col 5: Giới thiệu / About */}
+            <div className="portfolio-footer-col">
+              <h4>{language.language.startsWith("vi") ? "Giới thiệu" : "About"}</h4>
+              <ul>
+                <li><Link to="/#about">{language.language.startsWith("vi") ? "Về Hugo Wishpax" : "About Hugo"}</Link></li>
+                <li><a href={cvPdf(language.language)} download>{language.language.startsWith("vi") ? "Tải CV PDF" : "Download CV"}</a></li>
+                <li><Link to="/#education">{language.language.startsWith("vi") ? "Học vấn & Bằng cấp" : "Education"}</Link></li>
+                <li><a href={SERVICES_ORIGIN} target="_blank" rel="noreferrer">{t("navbar.services", "Dịch vụ")}</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Copyright notice row */}
+          <div className="portfolio-footer-copyright">
+            <p>
+              {language.language.startsWith("vi")
+                ? `© ${new Date().getFullYear()} Hugo Wishpax · Lê Gia Huy. Mọi dự án và dòng code đều được xây dựng với sự tỉ mỉ.`
+                : `© ${new Date().getFullYear()} Hugo Wishpax · Le Gia Huy. Code and products crafted with precision and soul.`}
+            </p>
+          </div>
+
+          {/* Giant background typography watermark */}
+          <div className="portfolio-footer-watermark" aria-hidden="true" translate="no">
+            HUGO WISHPAX
+          </div>
         </div>
       </footer>
     </MotionConfig>

@@ -88,6 +88,47 @@
 /* Hero: one cobalt field, the name as the poster, one liquid-glass dock. */
 .hero{position:relative;display:grid;min-height:100svh;padding:6.5rem clamp(1rem,3vw,2.5rem) clamp(1rem,3vw,2.5rem);grid-template-rows:1fr auto;overflow:hidden;isolation:isolate;border-radius:0 0 clamp(2rem,5vw,4.5rem) clamp(2rem,5vw,4.5rem);background:radial-gradient(55% 60% at 50% 62%,#3550d4,transparent 72%),#283db7;color:#f4f6fb}
 .hero-defs{position:absolute;width:0;height:0}
+
+/* ── Museum Exhibition Spotlight & Slogan ── */
+.hero-museum-backdrop{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 95% 85% at 50% 55%,#0d1428 0%,#060914 50%,#020308 100%);opacity:0}
+
+.hero-spotlights{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;mix-blend-mode:screen}
+.hero-spotlights-svg{display:block;width:100%;height:100%}
+.spotlight-beam{opacity:0;transform-origin:top center;mix-blend-mode:screen}
+.spotlight-lamp{opacity:0;mix-blend-mode:screen}
+
+.hero-spotlight-floor{position:absolute;left:50%;bottom:calc(var(--portrait-h)*-.04);width:calc(var(--portrait-h)*1.4);height:calc(var(--portrait-h)*.36);translate:-50% 0;border-radius:50%;pointer-events:none;z-index:1;opacity:0;background:radial-gradient(ellipse 55% 45% at 50% 50%,rgba(255,246,214,.8) 0%,rgba(255,201,71,.45) 32%,rgba(245,158,11,.18) 60%,transparent 80%);filter:blur(14px);mix-blend-mode:screen}
+
+.hero-museum-particles{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0}
+.mote{position:absolute;border-radius:50%;background:rgba(255,245,210,.75);box-shadow:0 0 8px rgba(255,220,130,.9);pointer-events:none;animation:mote-float 5s ease-in-out infinite alternate}
+@keyframes mote-float{0%{transform:translateY(0) translateX(0);opacity:.3}50%{opacity:.85}100%{transform:translateY(-24px) translateX(12px);opacity:.4}}
+.mote--1{top:24%;left:22%;width:3px;height:3px;animation-duration:4.8s}
+.mote--2{top:38%;left:32%;width:4px;height:4px;animation-duration:6.2s;animation-delay:.5s}
+.mote--3{top:52%;left:28%;width:3px;height:3px;animation-duration:5.5s;animation-delay:1.2s}
+.mote--4{top:30%;left:45%;width:5px;height:5px;animation-duration:7s;animation-delay:.2s}
+.mote--5{top:48%;left:52%;width:3px;height:3px;animation-duration:4.5s;animation-delay:1.8s}
+.mote--6{top:22%;left:74%;width:4px;height:4px;animation-duration:5.8s;animation-delay:.7s}
+.mote--7{top:42%;left:68%;width:3px;height:3px;animation-duration:6.5s;animation-delay:1.4s}
+.mote--8{top:60%;left:72%;width:4px;height:4px;animation-duration:5.2s;animation-delay:2.1s}
+.mote--9{top:68%;left:38%;width:3px;height:3px;animation-duration:6s;animation-delay:.9s}
+.mote--10{top:72%;left:58%;width:4px;height:4px;animation-duration:5.7s;animation-delay:1.6s}
+.mote--11{top:18%;left:50%;width:3px;height:3px;animation-duration:6.8s;animation-delay:2.4s}
+.mote--12{top:34%;left:62%;width:4px;height:4px;animation-duration:5.1s;animation-delay:.4s}
+.mote--13{top:58%;left:44%;width:3px;height:3px;animation-duration:6.3s;animation-delay:1.9s}
+.mote--14{top:28%;left:16%;width:4px;height:4px;animation-duration:5.4s;animation-delay:2.7s}
+
+.hero-museum-slogan{position:absolute;top:clamp(4.2rem,11vh,7.5rem);inset-inline:0;display:flex;justify-content:center;align-items:center;z-index:2;pointer-events:none;padding-inline:clamp(1rem,3vw,2.5rem);opacity:0}
+.museum-plaque{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:min(880px,92vw);padding:clamp(1.2rem,2.5vw,2rem) clamp(1.5rem,3.5vw,3rem);border-radius:clamp(1.4rem,2.5vw,2.2rem);border:1px solid rgba(255,215,120,.28);background:radial-gradient(circle at 50% -10%,rgba(255,215,120,.14),rgba(7,10,22,.75) 75%);box-shadow:0 24px 60px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,191,8,.2),0 0 35px rgba(255,191,8,.12);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.museum-kicker{display:inline-flex;align-items:center;gap:.65rem;color:#ffbf08;font-size:clamp(.72rem,.95vw,.85rem);font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+.museum-kicker-dot{width:7px;height:7px;border-radius:50%;background:#ffbf08;box-shadow:0 0 12px #ffbf08,0 0 24px #ffbf08}
+.museum-title{margin-top:.75rem;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.8rem,4.2vw,3.4rem);font-variation-settings:"opsz" 96;font-weight:800;line-height:1.08;letter-spacing:-.035em;background:linear-gradient(135deg,#ffffff 0%,#fff2d0 45%,#ffd470 75%,#e6a827 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 18px rgba(0,0,0,.6))}
+.museum-sub{max-width:54ch;margin-top:.75rem;color:rgba(220,230,245,.82);font-size:clamp(.95rem,1.35vw,1.15rem);font-weight:400;line-height:1.5}
+
+@media(max-width:600px){
+  .hero-museum-slogan{top:4.8rem}
+  .museum-plaque{padding:.9rem 1.1rem;border-radius:1.2rem}
+  .museum-sub{font-size:.85rem;line-height:1.4}
+}
 /* Brick-orange sun behind the portrait: the warm counterweight to the cobalt field. */
 .hero-sun{position:absolute;z-index:0;top:clamp(7rem,16vh,10rem);left:50%;width:min(52vh,560px);aspect-ratio:1;margin-left:calc(min(52vh,560px)/-2);border-radius:50%;background:#b4452a}
 .hero-name{position:absolute;z-index:0;inset:auto 0 clamp(6rem,17vh,11rem);display:flex;justify-content:center;margin:0;color:#f4f6fb;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(9rem,37vw,38rem);font-variation-settings:"opsz" 96;font-weight:800;letter-spacing:-.06em;line-height:.8}
@@ -396,13 +437,18 @@ html{touch-action:pan-x pan-y}
   .outro-channels a{background:rgb(255 255 255/.14)}
 }
 @media(max-width:820px){.journey-visual{margin-top:1rem}}
-/* Podium under the portrait: sized from the portrait's height so the seat (top tier) sits under the hips at every breakpoint. */
-.hero{--portrait-h:min(86svh,900px)}
-.hero-portrait{height:var(--portrait-h)}
-.hero-podium{position:absolute;z-index:1;bottom:calc(var(--portrait-h)*-.02);left:50%;width:calc(var(--portrait-h)*.86);translate:-50% 0;filter:drop-shadow(0 30px 40px rgb(10 16 70/.45));pointer-events:none}
+/* 3D stage and podium under portrait: sized and lifted so full shoes/feet and pedestal base are 100% visible */
+.hero{--portrait-h:min(74svh,740px);perspective:1200px;perspective-origin:50% 45%;transform-style:preserve-3d}
+.hero-layer{transform-style:preserve-3d}
+.hero-portrait{position:absolute;z-index:1;bottom:clamp(3rem,7vh,5.5rem);left:50%;height:var(--portrait-h);translate:-50% 0;filter:drop-shadow(5px 0 0 #fbf8f1) drop-shadow(-5px 0 0 #fbf8f1) drop-shadow(0 5px 0 #fbf8f1) drop-shadow(0 -5px 0 #fbf8f1) drop-shadow(0 2px 2px rgb(0 0 0/.3)) drop-shadow(0 30px 40px rgb(10 16 70/.45));pointer-events:none;transition:filter .4s ease}
+.hero-podium{position:absolute;z-index:1;bottom:calc(clamp(3rem,7vh,5.5rem) + var(--portrait-h)*.012);left:50%;width:calc(var(--portrait-h)*.86);translate:-50% 0;filter:drop-shadow(0 30px 40px rgb(10 16 70/.45));pointer-events:none}
 .hero-podium svg{display:block;width:100%;height:auto}
-@media(max-width:900px){.hero{--portrait-h:min(70svh,760px)}}
-@media(max-width:600px){.hero{--portrait-h:min(56svh,500px)}.hero-podium{width:calc(var(--portrait-h)*.8)}}
-.hero-podium{bottom:calc(var(--portrait-h)*.015)}
-/* Phones: lift the seated portrait and its podium clear of the two buttons. */
-@media(max-width:600px){.hero-portrait{bottom:76px}.hero-podium{bottom:calc(76px + var(--portrait-h)*.03)}}
+.hero-spotlight-floor{position:absolute;left:50%;bottom:calc(clamp(3rem,7vh,5.5rem) - 1.8rem);width:calc(var(--portrait-h)*1.45);height:calc(var(--portrait-h)*.4);translate:-50% 0;border-radius:50%;pointer-events:none;z-index:1;opacity:0;transform:rotateX(72deg);transform-origin:50% 50%;background:radial-gradient(ellipse 55% 45% at 50% 50%,rgba(255,246,214,.85) 0%,rgba(255,201,71,.48) 32%,rgba(245,158,11,.2) 60%,transparent 80%);filter:blur(14px);mix-blend-mode:screen}
+
+@media(max-width:900px){.hero{--portrait-h:min(66svh,660px)}}
+@media(max-width:600px){
+  .hero{--portrait-h:min(55svh,460px)}
+  .hero-portrait{bottom:calc(82px + clamp(1.2rem,3vh,2.5rem))}
+  .hero-podium{width:calc(var(--portrait-h)*.82);bottom:calc(82px + clamp(1.2rem,3vh,2.5rem) + var(--portrait-h)*.025)}
+  .hero-spotlight-floor{bottom:calc(82px + clamp(1.2rem,3vh,2.5rem) - 1.2rem)}
+}
