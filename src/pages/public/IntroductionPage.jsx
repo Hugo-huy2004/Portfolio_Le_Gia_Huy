@@ -623,9 +623,23 @@ export default function IntroductionPage() {
       });
       gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
         scrollTrigger: { trigger: ".creator-about", start: "top bottom", end: "bottom top", scrub: 0.5 } });
+
+      // Cleanup: restore overflow so if window resizes to phone width, mobile native scroll works.
+      return () => {
+        gsap.set(".skills-reel", { clearProps: "overflow" });
+        gsap.set(".skills-progress", { clearProps: "display" });
+        gsap.utils.toArray(".edu-panel").forEach((panel) => gsap.set(panel, { clearProps: "all" }));
+        gsap.set(".journey-reel", { clearProps: "overflow" });
+      };
     });
     // Phones: native scrolling, light reveals as things come into view.
     mm.add(phoneMotion, () => {
+      // Ensure skills reel uses native horizontal scroll on phone (restore in case desktop ran first).
+      gsap.set(".skills-reel", { overflow: "auto" });
+      gsap.set(".skills-progress", { display: "none" });
+      // Ensure edu panels are all visible (not stacked/hidden by desktop animation).
+      gsap.utils.toArray(".edu-panel").forEach((panel) => gsap.set(panel, { clearProps: "yPercent,scale,filter,transform" }));
+
       const reveal = (targets, vars, trigger) => gsap.from(targets, { ...vars, scrollTrigger: { trigger: trigger || targets, start: "top 88%", toggleActions: "play none none reverse" } });
       gsap.utils.toArray(".skills-frame").forEach((frame) => reveal(frame.querySelectorAll("li"), { y: 30, scale: 0.6, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "back.out(1.7)" }, frame));
       gsap.utils.toArray(".edu-panel").forEach((panel) => {

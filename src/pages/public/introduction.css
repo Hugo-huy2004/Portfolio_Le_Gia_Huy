@@ -391,9 +391,10 @@ html{touch-action:pan-x pan-y}
 @media(max-width:820px){
   .creator-about-meta span+span{padding-left:0}
   .creator-signature{left:14%;top:46%;width:96%}
-  .skills-reel{scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .skills-reel{overflow-x:auto!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .skills-track{transform:none!important}
   .skills-frame{scroll-snap-align:start}
-  .edu-panel{border-radius:clamp(1.5rem,5vw,2.5rem) clamp(1.5rem,5vw,2.5rem) 0 0}
+  .edu-panel{border-radius:clamp(1.5rem,5vw,2.5rem) clamp(1.5rem,5vw,2.5rem) 0 0;position:relative!important;transform:none!important;filter:none!important}
   .journey-reel{overflow:visible}
   .journey-track{width:auto;flex-direction:column}
   .journey-path{display:none}
