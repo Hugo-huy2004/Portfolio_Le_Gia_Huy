@@ -264,6 +264,9 @@ function Portfolio() {
                 <a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer" title="TikTok" aria-label="TikTok">
                   <img src="/social-logos/tiktok.svg" alt="TikTok" />
                 </a>
+                <a href="https://www.youtube.com/@By_Hugo_Hi" target="_blank" rel="noreferrer" title="YouTube" aria-label="YouTube">
+                  <img src="/social-logos/youtube.svg" alt="YouTube" />
+                </a>
                 <a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer" title="GitHub" aria-label="GitHub">
                   <img src="/social-logos/github.svg" alt="GitHub" />
                 </a>
@@ -303,6 +306,7 @@ function Portfolio() {
               <h4>{language.language.startsWith("vi") ? "Cộng đồng" : "Community"}</h4>
               <ul>
                 <li><a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer">TikTok @pethugowishpaxle</a></li>
+                <li><a href="https://www.youtube.com/@By_Hugo_Hi" target="_blank" rel="noreferrer">YouTube @By_Hugo_Hi</a></li>
                 <li><a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer">GitHub @Hugo-huy2004</a></li>
                 <li><a href="https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" target="_blank" rel="noreferrer">Facebook Lê Gia Huy</a></li>
               </ul>

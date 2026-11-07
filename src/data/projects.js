@@ -6,9 +6,6 @@
  * Ảnh nằm ở `public/project-screenshots/<id>/*.webp` — chụp thật từ site đang
  * chạy, đã nén WebP 1600px. Chụp lại thì ghi đè đúng tên tệp, đừng đổi tên.
  *
- * `featured: true` chọn dự án lên khối ba thẻ ở /introduction (WorkStory).
- * Khối đó dựng cho đúng ba thẻ và trang chỉ lấy ba dự án đầu mang cờ này.
- *
  * `repo` là địa chỉ mã nguồn mở, hiện thành liên kết thứ hai ở trang chi tiết.
  *
  * `cover` chọn tấm ảnh làm bìa trên trang /project; bỏ trống thì lấy tấm đầu
@@ -74,7 +71,6 @@ export const projects = [
       { src: "kinh-nguyen", caption: "Kinh nguyện cốt lõi, có đếm lượt và chuỗi ngày." },
       { src: "gioi-thieu", caption: "Giới thiệu — lịch sử giáo xứ kể thành bốn chương." },
     ],
-    featured: true,
   },
   {
     id: "hwj",
@@ -124,7 +120,6 @@ export const projects = [
       { src: "heritage", caption: "Dòng thời gian nhà xưởng, kể theo chương." },
       { src: "appointment", caption: "Đặt lịch tư vấn sở hữu, thay cho nút mua ngay." },
     ],
-    featured: true,
   },
   {
     id: "minh-oi-media",
@@ -171,7 +166,6 @@ export const projects = [
       { src: "bang-gia", caption: "Bảng giá năm gói, liệt kê rõ thứ khách nhận được." },
       { src: "goi-dich-vu", caption: "Từng gói liệt kê đủ thứ khách nhận được." },
     ],
-    featured: false,
   },
   {
     id: "l3go-coffee",
@@ -216,13 +210,10 @@ export const projects = [
       { src: "thuc-don", caption: "Thực đơn lọc theo tâm trạng, không theo danh mục." },
       { src: "khong-gian", caption: "Trang không gian — quán ba tầng, cầu thang xoắn." },
     ],
-    featured: false,
   },
 ];
 
 /** Ảnh nào cũng ở một chỗ, nên đường dẫn dựng bằng công thức. */
 export const shotUrl = (projectId, name) => `/project-screenshots/${projectId}/${name}${name.includes('.') ? '' : '.webp'}`;
-
-export const featuredProjects = projects.filter((p) => p.featured);
 
 export const findProject = (id) => projects.find((p) => p.id === id);

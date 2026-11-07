@@ -38,27 +38,4 @@ const HugoLogo = ({ className = "h-6 w-6", ...props }) => {
   );
 };
 
-/**
- * Chữ đổ gradient Gemini. KHÔNG phải logo: nó dùng để tô tên hiển thị do người
- * dùng tự nhập trong các theme Bio, nên vẫn giữ nguyên.
- */
-const GEMINI_GRADIENT =
-  "linear-gradient(90deg, #2678ff 0%, #0797ff 28%, #7359e8 55%, #d45aa3 78%, #f0445e 100%)";
-
-export const RenderColoredText = ({ text }) => {
-  if (!text || typeof text !== "string") return null;
-  return (
-    <span
-      style={{
-        backgroundImage: GEMINI_GRADIENT,
-        WebkitBackgroundClip: "text",
-        backgroundClip: "text",
-        color: "transparent",
-      }}
-    >
-      {text}
-    </span>
-  );
-};
-
 export default HugoLogo;

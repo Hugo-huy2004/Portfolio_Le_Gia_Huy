@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
-    "clsx": "^2.1.1",
     "gsap": "^3.13.0",
     "i18next": "^26.3.4",
     "lenis": "^1.3.4",
@@ -21,7 +20,6 @@
     "react-i18next": "^17.0.8",
     "react-router-dom": "^7.18.2",
     "snd-lib": "^1.2.4",
-    "tailwind-merge": "^3.6.0",
     "tegaki": "^1.1.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDown, ArrowUpRight, FileText, MapPin } from "lucide-react";
+import { ArrowDown, ArrowUpRight, FileText, MapPin, Trophy } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
@@ -238,6 +238,7 @@ const socialLinks = [
   { name: "Facebook", icon: "facebook", href: "https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" },
   { name: "Instagram", icon: "instagram", href: "https://www.instagram.com/hugowishpax?rpxt=MW9ibDdkcTNxcm5nYg%3D%3D&utm_source=qr" },
   { name: "TikTok", icon: "tiktok", href: "https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" },
+  { name: "YouTube", icon: "youtube", href: "https://www.youtube.com/@By_Hugo_Hi" },
   { name: "Mail", icon: "gmail", href: "mailto:hugowishpax@gmail.com" },
   { name: "GitHub", icon: "github", href: "https://github.com/Hugo-huy2004" },
 ];
@@ -250,8 +251,8 @@ const profileCopy = {
     sloganKicker: "LÊ GIA HUY · HUGO WISHPAX",
     slogan: "Sinh viên năm cuối Kỹ thuật phần mềm",
     aboutTitle: "Tôi là Hugo.\nTên thật là Lê Gia Huy.",
-    about: "Tôi học cấp ba ở THPT Nguyễn Đình Chiểu, Mỹ Tho, và đang học năm cuối ngành Kỹ thuật phần mềm tại Greenwich Việt Nam, GPA quy đổi 3.80. Tôi đã làm cổng thông tin cho giáo xứ, website cho một studio cưới, một quán cà phê và một nền tảng trang sức định giá theo giá vàng. Ngoài code, tôi là Huynh trưởng Thiếu Nhi Thánh Thể ở xứ đoàn Chánh Tòa Mỹ Tho.",
-    legal: "Tên chính thức", languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
+    about: "Sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam, GPA 3.80. Tôi làm web và app cho khách hàng thật, và là Huynh trưởng Thiếu Nhi Thánh Thể ở Mỹ Tho.",
+    languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
     techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng tôi dùng hằng ngày.",
     education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối", grade: "Điểm trung bình tạm tính: 69% · US GPA tương đương: 3.80/4.00",
   },
@@ -262,8 +263,8 @@ const profileCopy = {
     sloganKicker: "LE GIA HUY · HUGO WISHPAX",
     slogan: "Final-year Software Engineering student",
     aboutTitle: "I'm Hugo.\nMy real name is Lê Gia Huy.",
-    about: "I went to Nguyễn Đình Chiểu High School in Mỹ Tho and I'm now in my final year of Software Engineering at Greenwich Vietnam, with a 3.80 US GPA equivalent. I've built a portal for a parish, websites for a wedding studio and a coffee shop, and a jewellery platform priced off the live gold rate. Outside code, I'm a Eucharistic Youth leader at the Mỹ Tho Cathedral chapter.",
-    legal: "Official name", languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
+    about: "Final-year Software Engineering student at Greenwich Vietnam, 3.80 GPA. I build web and mobile apps for real clients, and lead a Eucharistic Youth chapter in Mỹ Tho.",
+    languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
     techHeading: "Technical Skills", techNote: "The languages, frameworks and platforms I use every day.",
     education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student", grade: "Provisional average: 69% · US GPA equivalent: 3.80/4.00",
   },
@@ -307,10 +308,13 @@ const educationChapters = (language, copy) => {
   return [
     {
       id: "greenwich", tone: "sky", label: vi ? "Đại học" : "University",
-      visual: <img className="edu-logo edu-logo--wide" src="/education/greenwich.png" alt="University of Greenwich" />,
+      visual: <img className="edu-logo edu-logo--round" src="/education/greenwich-emblem.png" alt="University of Greenwich" />,
       kicker: vi ? "Đang theo học" : "Currently studying",
       title: "University of Greenwich (Vietnam)",
       sub: copy.degree,
+      body: <mark className="edu-award"><Trophy size="1.1em" aria-hidden="true" />{vi
+        ? "Nhà trường ghi danh Sinh viên Xuất sắc kỳ Summer 2026."
+        : "Named an Outstanding Student, Summer 2026."}</mark>,
       facts: [["3.80/4.00", vi ? "GPA quy đổi hệ Mỹ, tạm tính" : "US GPA equivalent, provisional"], ["69%", vi ? "Điểm trung bình tạm tính" : "Provisional average"]],
     },
     {
@@ -391,8 +395,8 @@ function Contact({ language }) {
         <a className="outro-mail" href={mail.href} onClick={playHapticTick}>hugowishpax@gmail.com <ArrowUpRight size={22} /></a>
         <ul className="outro-channels">
           {socialLinks.filter((social) => social !== mail).map((social) => <li key={social.name}>
-            <a href={social.href} target="_blank" rel="noreferrer" onClick={playHapticTick}>
-              <img src={`/social-logos/${social.icon}.svg`} alt="" /><span>{social.name}</span>
+            <a href={social.href} target="_blank" rel="noreferrer" aria-label={social.name} title={social.name} onClick={playHapticTick}>
+              <img src={`/social-logos/${social.icon}.svg`} alt="" />
             </a>
           </li>)}
         </ul>
@@ -494,10 +498,16 @@ export default function IntroductionPage() {
       const strokes = gsap.utils.toArray(".sig-stroke");
       gsap.set(words, { opacity: 0.14 });
       gsap.set(strokes, { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 0 }); // opacity hides each round-cap dot until its stroke starts
-      const profile = gsap.timeline({ scrollTrigger: { trigger: ".creator-about", start: desktop ? "top top" : "bottom bottom", end: "+=150%", scrub: 0.5, pin: true, anticipatePin: 1 } });
+      // Phones: the stacked profile is taller than the screen, so pinning it would crop the heading; it plays as it scrolls past instead.
+      const profile = gsap.timeline({ scrollTrigger: desktop
+        ? { trigger: ".creator-about", start: "top top", end: "+=150%", scrub: 0.5, pin: true, anticipatePin: 1 }
+        : { trigger: ".creator-about-copy", start: "top 85%", end: () => `+=${innerHeight * 0.9}`, scrub: 0.5 } });
       profile.to(words, { opacity: 1, stagger: 0.05, duration: 0.2, ease: "none" }).to({}, { duration: 0.15 });
+      // Phones show the photo above the copy, so the signature is signed while the photo itself scrolls by.
+      const signing = desktop ? profile
+        : gsap.timeline({ scrollTrigger: { trigger: ".creator-about-photo", start: "top 70%", end: "bottom 35%", scrub: 0.5 } });
       strokes.forEach((stroke) => {
-        profile.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
+        signing.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
       });
       if (desktop) gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
         scrollTrigger: { trigger: ".creator-about", start: "top bottom", end: "bottom top", scrub: 0.5 } });
@@ -627,7 +637,6 @@ export default function IntroductionPage() {
           <RiseHeading>{copy.aboutTitle.split("\n").map((line, index) => <span key={line}>{index ? <em>{line}</em> : line}</span>)}</RiseHeading>
           <p className="creator-about-copy">{copy.about.split(" ").map((word, index) => <span key={index} className="sub-word">{word} </span>)}</p>
           <motion.div className="creator-about-meta" {...reveal}>
-            <span>{copy.legal}<b translate="no">Lê Gia Huy (Hugo Wishpax)</b></span>
             <span>{copy.languages}<b>{copy.languagesValue}</b></span>
           </motion.div>
         </div>

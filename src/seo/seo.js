@@ -12,6 +12,7 @@ const SAME_AS = [
   "https://www.facebook.com/share/18jfh4AUPh/",
   "https://www.instagram.com/hugowishpax",
   "https://www.tiktok.com/@pethugowishpaxle",
+  "https://www.youtube.com/@By_Hugo_Hi",
 ];
 
 // Vietnamese lives at the root (also served under /vi); English under /en.
