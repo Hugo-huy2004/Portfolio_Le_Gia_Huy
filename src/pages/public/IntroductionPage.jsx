@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUpRight, FileText, MapPin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
+import { sound } from "../../sound.js";
 import { TegakiRenderer } from "tegaki";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -419,10 +420,13 @@ function FilmHud({ language }) {
   const { scrollYProgress } = useScroll();
   const [scene, setScene] = useState(0);
   const timecode = useRef(null);
+  const sceneRef = useRef(0);
   // Rect checks instead of triggers: pin spacers already shift the sections, so this never goes stale after a refresh.
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const middle = window.innerHeight / 2;
     const current = scenes.reduce((found, [selector], index) => (document.querySelector(selector)?.getBoundingClientRect().top <= middle ? index : found), 0);
+    if (current !== sceneRef.current) sound.scene(current > sceneRef.current);
+    sceneRef.current = current;
     setScene(current);
     const frames = Math.round(progress * FILM_SECONDS * 24);
     const pad = (value) => String(value).padStart(2, "0");

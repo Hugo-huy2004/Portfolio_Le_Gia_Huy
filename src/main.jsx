@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatePresence, MotionConfig, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import { installSound } from "./sound.js";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import i18n, { ensureTranslations } from "./i18n/config";
@@ -156,6 +157,7 @@ function Portfolio() {
   const [ready, setReady] = useState(false);
   useSmoothScroll();
   useNoZoom();
+  useEffect(installSound, []);
   const [theme, toggleTheme] = useTheme();
   const [otherLanguages, setOtherLanguages] = useState(translatedByGoogle);
   useEffect(() => { if (otherLanguages) loadGoogleTranslate(language.language).catch(() => setOtherLanguages(false)); }, [otherLanguages, language.language]);

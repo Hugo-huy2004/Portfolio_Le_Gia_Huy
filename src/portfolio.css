@@ -374,7 +374,8 @@ body:has(.creator-home) .portfolio-nav-wrap::after {
 /* Hover pill: one shared layoutId element that slides between nav items. */
 .portfolio-wordmark,
 .portfolio-nav-links a,
-.portfolio-languages summary { position: relative; isolation: isolate; }
+.portfolio-languages summary,
+.portfolio-theme { position: relative; isolation: isolate; }
 .portfolio-nav-pill {
   position: absolute;
   z-index: -1;
@@ -383,6 +384,9 @@ body:has(.creator-home) .portfolio-nav-wrap::after {
   background: color-mix(in srgb, currentColor 12%, transparent);
   pointer-events: none;
 }
+/* These two already are pills: the hover pill must sit exactly on them, not stick out beside. */
+.portfolio-languages summary .portfolio-nav-pill,
+.portfolio-theme .portfolio-nav-pill { inset: 0; }
 
 /* Clean, full-width top navigation bar (matching modern minimal layout, no card capsule) */
 body:has(.creator-home) .portfolio-nav {
@@ -535,3 +539,4 @@ body:has(.creator-home) .portfolio-languages summary { height: 36px; padding-inl
 .offline-pill i { width: 9px; height: 9px; border-radius: 50%; background: #b4452a; box-shadow: 0 0 0 4px rgb(180 69 42 / .3); }
 @keyframes offline-in { from { opacity: 0; transform: translate(-50%, 20px); } }
 @media (prefers-reduced-motion: reduce) { .smart-img[data-state="loading"], .skeleton-page > div, .skeleton-reel i, .scene-art { animation: none; } }
+
