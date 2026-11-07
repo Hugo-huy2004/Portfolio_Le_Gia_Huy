@@ -154,6 +154,7 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
 }
 
 .portfolio-footer-inner {
+  container-type: inline-size;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -272,7 +273,7 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
   margin-top: 2rem;
   font-family: "Bricolage Grotesque", "Nunito", sans-serif;
   font-variation-settings: "opsz" 96;
-  font-size: clamp(3.8rem, 15vw, 13.5rem);
+  font-size: 15.2cqi; /* "HUGO WISHPAX" is ~6.48em wide: 100 / 6.48 ≈ 15.4, so it always fits the column in full */
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 0.85;
@@ -281,7 +282,6 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
   text-align: center;
   user-select: none;
   pointer-events: none;
-  overflow: hidden;
   white-space: nowrap;
 }
 
@@ -300,9 +300,7 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  .portfolio-footer-watermark {
-    font-size: clamp(2.8rem, 14vw, 5rem);
-  }
+
 }
 
 /* Light mode adjustments */

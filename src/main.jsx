@@ -271,9 +271,6 @@ function Portfolio() {
                 <a href="mailto:hugowishpax@gmail.com" title="Email" aria-label="Email">
                   <img src="/social-logos/gmail.svg" alt="Email" />
                 </a>
-                <a href="https://zalo.me/0839909399" target="_blank" rel="noreferrer" title="Zalo" aria-label="Zalo">
-                  <img src="/social-logos/zalo.svg" alt="Zalo" />
-                </a>
               </div>
             </div>
 
@@ -306,7 +303,6 @@ function Portfolio() {
                 <li><a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer">TikTok @pethugowishpaxle</a></li>
                 <li><a href="https://github.com/Hugo-huy2004" target="_blank" rel="noreferrer">GitHub @Hugo-huy2004</a></li>
                 <li><a href="https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" target="_blank" rel="noreferrer">Facebook Lê Gia Huy</a></li>
-                <li><a href="https://zalo.me/0839909399" target="_blank" rel="noreferrer">Zalo 0839 909 399</a></li>
               </ul>
             </div>
 

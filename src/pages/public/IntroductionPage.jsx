@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, FileText, MapPin } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { motion } from "motion/react";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { TegakiRenderer } from "tegaki";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -45,7 +45,6 @@ const languageLogos = [
 
 // Liquid glass: backdrop-filter: url() refraction only renders in Chromium; other engines keep the frosted blur.
 gsap.registerPlugin(ScrollTrigger, useGSAP);
-const motionOk = "(prefers-reduced-motion: no-preference)";
 // Pinned, scroll-jacked scenes only where they feel good: wide screens. Phones keep native scrolling with lighter reveals.
 const desktopMotion = "(min-width: 821px) and (prefers-reduced-motion: no-preference)";
 const phoneMotion = "(max-width: 820px) and (prefers-reduced-motion: no-preference)";
@@ -107,88 +106,36 @@ function HeroSection({ copy }) {
   const { t, i18n } = useTranslation();
   const ref = useRef(null);
 
-  // Opening scene: hero pins, dock & type recede, deep darkness settles,
-  // multi-angle spotlights beam onto Hugo on the podium with full feet visibility.
+  // Opening scene: hero pins, dock & type recede, the room darkens, Hugo steps forward on the podium.
+  // Lighting is plain gradient divs animated by opacity/transform only: the old full-screen SVG beams with blend modes lagged.
   useGSAP(() => {
     const mm = gsap.matchMedia();
-
-    const buildTimeline = (endDistance, frontScale) => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top top",
-          end: endDistance,
-          scrub: true,
-          pin: true,
-          anticipatePin: 1,
-        },
-      });
-
-      // 1. Initial fade out of dock and background letters/sun (GPU transforms only)
-      tl.to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.22, ease: "none" }, 0)
-        .to(".hero-layer--back", { autoAlpha: 0, yPercent: -10, scale: 0.88, duration: 0.3, ease: "none" }, 0)
-        // 2. Dark backdrop fade
-        .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "none" }, 0.05)
-        // 3. Floor spotlight pool under podium
-        .fromTo(".hero-spotlight-floor",
-          { autoAlpha: 0, scale: 0.8 },
-          { autoAlpha: 1, scale: 1, duration: 0.4, ease: "none" },
-          0.15
-        )
-        // 4. Spotlights beam in from multiple sides onto Hugo
-        .fromTo(".spotlight-beam--left",
-          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top left" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "none" },
-          0.16
-        )
-        .fromTo(".spotlight-beam--right",
-          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top right" },
-          { autoAlpha: 0.95, scaleY: 1, duration: 0.45, ease: "none" },
-          0.18
-        )
-        .fromTo(".spotlight-beam--top",
-          { autoAlpha: 0, scaleY: 0.3, transformOrigin: "top center" },
-          { autoAlpha: 0.9, scaleY: 1, duration: 0.42, ease: "none" },
-          0.2
-        )
-        .fromTo(".spotlight-lamp",
-          { autoAlpha: 0, scale: 0.5 },
-          { autoAlpha: 1, scale: 1, duration: 0.35, ease: "none" },
-          0.18
-        )
-        // 5. Hugo and pedestal stepped forward (keeping full feet completely visible)
-        .to(".hero-layer--front", {
-          scale: frontScale,
-          yPercent: 0,
-          transformOrigin: "50% 80%",
-          duration: 0.45,
-          ease: "none",
-        }, 0.18)
-        // 6. Hold the full spotlight showcase moment
-        .to({}, { duration: 0.3 });
-    };
-
-    mm.add(desktopMotion, () => {
-      buildTimeline("+=100%", 1.05);
-    });
-
-    mm.add(phoneMotion, () => {
-      buildTimeline("+=80%", 1.02);
-    });
+    const build = (end, frontScale) => gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top top", end, scrub: true, pin: true, anticipatePin: 1 } })
+      .to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.22, ease: "none" }, 0)
+      .to(".hero-layer--back", { autoAlpha: 0, yPercent: -10, scale: 0.88, duration: 0.3, ease: "none" }, 0)
+      .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "none" }, 0.05)
+      .fromTo(".hero-beam", { autoAlpha: 0, scaleY: 0.2 }, { autoAlpha: 1, scaleY: 1, duration: 0.3, ease: "power2.out" }, 0.15)
+      .fromTo(".hero-pool", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 0.3)
+      .to(".hero-layer--front", { scale: frontScale, transformOrigin: "50% 80%", duration: 0.45, ease: "none" }, 0.18)
+      .fromTo(".hero-title", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, ease: "none" }, 0.4)
+      .from(".hero-title > *", { y: 40, opacity: 0, stagger: 0.08, duration: 0.25, ease: "power2.out" }, 0.4)
+      .to({}, { duration: 0.25 });
+    mm.add(desktopMotion, () => { build("+=80%", 1.05); });
+    mm.add(phoneMotion, () => { build("+=60%", 1.02); });
   }, { scope: ref });
 
   return (
     <section ref={ref} className="hero">
-      <svg className="hero-defs" aria-hidden="true" focusable="false">
-        <filter id="hero-liquid" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
-          <feTurbulence type="fractalNoise" baseFrequency="0.004 0.02" numOctaves="1" seed="4" result="noise" />
-          <feGaussianBlur in="noise" stdDeviation="3" result="soft" />
-          <feDisplacementMap in="SourceGraphic" in2="soft" scale="46" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </svg>
 
       {/* Dark atmospheric backdrop */}
       <div className="hero-museum-backdrop" aria-hidden="true" />
+      {/* Stage light: one beam from above, a pool on the floor, and the title card once the room is dark. */}
+      <div className="hero-beam" aria-hidden="true" />
+      <div className="hero-pool" aria-hidden="true" />
+      <div className="hero-title" aria-hidden="true">
+        <p>{copy.sloganKicker}</p>
+        <p>{copy.slogan}</p>
+      </div>
 
       {/* Background layer: sun, handwritten script, Hugo name */}
       <div className="hero-layer hero-layer--back">
@@ -203,78 +150,7 @@ function HeroSection({ copy }) {
         </motion.h1>
       </div>
 
-      {/* Spotlights & beam system (100% GPU-accelerated gradients, zero heavy filters) */}
-      <div className="hero-spotlights" aria-hidden="true">
-        <svg className="hero-spotlights-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="spotlight-beam-left-grad" x1="0.08" y1="0" x2="0.5" y2="0.9">
-              <stop offset="0%" stopColor="#fff8e1" stopOpacity="0.95" />
-              <stop offset="18%" stopColor="#ffe082" stopOpacity="0.55" />
-              <stop offset="50%" stopColor="#ffb300" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#ffb300" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="spotlight-beam-right-grad" x1="0.92" y1="0" x2="0.5" y2="0.9">
-              <stop offset="0%" stopColor="#e0f2fe" stopOpacity="0.95" />
-              <stop offset="20%" stopColor="#7dd3fc" stopOpacity="0.5" />
-              <stop offset="55%" stopColor="#38bdf8" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="spotlight-beam-top-grad" x1="0.5" y1="0" x2="0.5" y2="0.95">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="25%" stopColor="#fffbeb" stopOpacity="0.5" />
-              <stop offset="60%" stopColor="#fef3c7" stopOpacity="0.16" />
-              <stop offset="100%" stopColor="#fef3c7" stopOpacity="0" />
-            </linearGradient>
-            <radialGradient id="lamp-flare-gold" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="25%" stopColor="#fff3bf" stopOpacity="0.9" />
-              <stop offset="55%" stopColor="#ffc107" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#ffc107" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="lamp-flare-cyan" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="25%" stopColor="#bae6fd" stopOpacity="0.9" />
-              <stop offset="55%" stopColor="#38bdf8" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="lamp-flare-white" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-              <stop offset="35%" stopColor="#f8fafc" stopOpacity="0.8" />
-              <stop offset="65%" stopColor="#cbd5e1" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#cbd5e1" stopOpacity="0" />
-            </radialGradient>
-          </defs>
 
-          {/* Left Spotlight Cone */}
-          <polygon
-            className="spotlight-beam spotlight-beam--left"
-            points="60,-10 140,-10 680,920 320,920"
-            fill="url(#spotlight-beam-left-grad)"
-          />
-
-          {/* Right Spotlight Cone */}
-          <polygon
-            className="spotlight-beam spotlight-beam--right"
-            points="860,-10 940,-10 680,920 320,920"
-            fill="url(#spotlight-beam-right-grad)"
-          />
-
-          {/* Top Center Key Light Cone */}
-          <polygon
-            className="spotlight-beam spotlight-beam--top"
-            points="450,-10 550,-10 760,950 240,950"
-            fill="url(#spotlight-beam-top-grad)"
-          />
-
-          {/* Emitter Fixtures / Lamp Flares */}
-          <ellipse className="spotlight-lamp spotlight-lamp--left" cx="100" cy="8" rx="60" ry="24" fill="url(#lamp-flare-gold)" />
-          <ellipse className="spotlight-lamp spotlight-lamp--right" cx="900" cy="8" rx="60" ry="24" fill="url(#lamp-flare-cyan)" />
-          <ellipse className="spotlight-lamp spotlight-lamp--top" cx="500" cy="5" rx="75" ry="28" fill="url(#lamp-flare-white)" />
-        </svg>
-      </div>
-
-      {/* Floor spotlight pool beneath podium */}
-      <div className="hero-spotlight-floor" aria-hidden="true" />
 
       {/* Centerpiece: Golden Podium and Portrait with Full Feet Visible */}
       <div className="hero-layer hero-layer--front">
@@ -361,7 +237,6 @@ const socialLinks = [
   { name: "Facebook", icon: "facebook", href: "https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" },
   { name: "Instagram", icon: "instagram", href: "https://www.instagram.com/hugowishpax?rpxt=MW9ibDdkcTNxcm5nYg%3D%3D&utm_source=qr" },
   { name: "TikTok", icon: "tiktok", href: "https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" },
-  { name: "Zalo", icon: "zalo", href: "https://zalo.me/0839909399" },
   { name: "Mail", icon: "gmail", href: "mailto:hugowishpax@gmail.com" },
   { name: "GitHub", icon: "github", href: "https://github.com/Hugo-huy2004" },
 ];
@@ -532,6 +407,44 @@ function Contact({ language }) {
   );
 }
 
+// The page is cut like a film: seven scenes, letterbox bars close and reopen on every cut,
+// a HUD in the corner reads the scene and a timecode off the scroll position.
+const scenes = [
+  [".hero", "Mở màn", "Opening"], [".creator-marquee", "Thước phim", "Showreel"], [".creator-about", "Hồ sơ", "Profile"],
+  [".creator-skills", "Kỹ năng", "Skills"], [".edu", "Học vấn", "Education"], [".journey", "Hành trình", "Journey"], [".outro", "Lời kết", "Credits"],
+];
+const FILM_SECONDS = 180; // ponytail: whole page reads as a 3-minute reel; the timecode is scroll progress × this
+
+function FilmHud({ language }) {
+  const { scrollYProgress } = useScroll();
+  const [scene, setScene] = useState(0);
+  const timecode = useRef(null);
+  // Rect checks instead of triggers: pin spacers already shift the sections, so this never goes stale after a refresh.
+  useMotionValueEvent(scrollYProgress, "change", (progress) => {
+    const middle = window.innerHeight / 2;
+    const current = scenes.reduce((found, [selector], index) => (document.querySelector(selector)?.getBoundingClientRect().top <= middle ? index : found), 0);
+    setScene(current);
+    const frames = Math.round(progress * FILM_SECONDS * 24);
+    const pad = (value) => String(value).padStart(2, "0");
+    if (timecode.current) timecode.current.textContent = `${pad(Math.floor(frames / 1440))}:${pad(Math.floor(frames / 24) % 60)}:${pad(frames % 24)}`;
+  });
+  return (
+    <>
+      <div className="film-bars" aria-hidden="true"><i /><i /></div>
+      {/* Always mounted, only faded: GSAP wraps pinned siblings in pin-spacers, so React must never insert nodes next to them. */}
+      <motion.div className="film-hud" aria-hidden="true" initial={false} animate={{ opacity: scene > 0 ? 1 : 0, y: scene > 0 ? 0 : 16 }} transition={{ duration: 0.5, ease }}>
+        <span className="film-hud-rec" />
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.b key={scene} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "-100%", opacity: 0 }} transition={{ duration: 0.35, ease }}>
+            SC {String(scene + 1).padStart(2, "0")} · {scenes[scene][language === "vi" ? 1 : 2]}
+          </motion.b>
+        </AnimatePresence>
+        <span ref={timecode} className="film-hud-time">00:00:00</span>
+      </motion.div>
+    </>
+  );
+}
+
 export default function IntroductionPage() {
   const { t, i18n } = useTranslation();
   const location = useLocation();
@@ -541,121 +454,165 @@ export default function IntroductionPage() {
   const marquee = useMemo(() => projects.map((project) => ({ id: project.id, title: project.title, src: shotUrl(project.id, project.cover || project.shots[0].src) })), []);
   useHeadMeta("/");
   const root = useRef(null);
-  // Reel scenes: the film strips only advance while you scroll, the duotone sticker drifts against the text.
+
+  // One timeline script for the whole film, written in page order: ScrollTrigger measures each scene
+  // after the pins above it, so the order below is load-bearing. Hero (scene 1) pins in HeroSection, which mounts first.
   useGSAP(() => {
     const mm = gsap.matchMedia();
-    // Both sizes: film strips, the signature, the outro.
-    mm.add(motionOk, () => {
+    mm.add({ desktop: desktopMotion, phone: phoneMotion }, ({ conditions }) => {
+      const { desktop, phone } = conditions;
+      if (!desktop && !phone) return undefined;
+
+      // A cut: the letterbox closes as the next scene arrives and reopens once it has the frame.
+      // `wipe` also opens the incoming scene from an inset, rounded frame, like a shot cutting in.
+      const cut = (section, wipe) => {
+        gsap.timeline({ scrollTrigger: { trigger: section, start: "top 85%", end: "top 15%", scrub: 0.4 } })
+          .to(".film-bars i", { scaleY: 1, ease: "power2.in" })
+          .to(".film-bars i", { scaleY: 0, ease: "power2.out" });
+        if (wipe) gsap.fromTo(section, { clipPath: "inset(6% 5% 0% 5% round 3rem)" }, { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "none",
+          scrollTrigger: { trigger: section, start: "top bottom", end: "top 25%", scrub: 0.5 } });
+      };
+      // Phones: every scene plays with the scroll (scrubbed), so dragging back rewinds it like a film.
+      const scrubIn = (targets, vars, trigger, start = "top 90%", end = "top 45%") => gsap.from(targets, { ease: "none", ...vars, scrollTrigger: { trigger: trigger || targets, start, end, scrub: 0.5 } });
+
+      // ── Scene 2 · Showreel: strips advance with scroll and lean into the scroll speed like film through a gate.
+      cut(".creator-marquee");
       const reel = { trigger: ".creator-marquee", start: "top bottom", end: "bottom top", scrub: 0.5 };
       gsap.fromTo(".creator-marquee-track:not(.is-reverse)", { xPercent: 0 }, { xPercent: -30, ease: "none", scrollTrigger: reel });
       gsap.fromTo(".creator-marquee-track.is-reverse", { xPercent: -30 }, { xPercent: 0, ease: "none", scrollTrigger: reel });
-      // About: pin while the signature is signed stroke by stroke; scrolling on only once it's complete.
+      const lean = gsap.quickSetter(".creator-marquee-viewport", "skewX", "deg");
+      const proxy = { skew: 0 };
+      ScrollTrigger.create({ trigger: ".creator-marquee", start: "top bottom", end: "bottom top", onUpdate: (self) => {
+        const skew = gsap.utils.clamp(-10, 10, self.getVelocity() / -300);
+        if (Math.abs(skew) > Math.abs(proxy.skew)) {
+          proxy.skew = skew;
+          gsap.to(proxy, { skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => lean(proxy.skew) });
+        }
+      } });
+
+      // ── Scene 3 · Profile: pinned; the line plays out word by word like a subtitle, then the signature is signed.
+      cut(".creator-about");
+      const words = gsap.utils.toArray(".sub-word");
       const strokes = gsap.utils.toArray(".sig-stroke");
+      gsap.set(words, { opacity: 0.14 });
       gsap.set(strokes, { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 0 }); // opacity hides each round-cap dot until its stroke starts
-      const signing = gsap.timeline({ scrollTrigger: { trigger: ".creator-about", start: window.innerWidth > 820 ? "top top" : "bottom bottom", end: "+=110%", scrub: 0.5, pin: true, anticipatePin: 1 } });
+      const profile = gsap.timeline({ scrollTrigger: { trigger: ".creator-about", start: desktop ? "top top" : "bottom bottom", end: "+=150%", scrub: 0.5, pin: true, anticipatePin: 1 } });
+      profile.to(words, { opacity: 1, stagger: 0.05, duration: 0.2, ease: "none" }).to({}, { duration: 0.15 });
       strokes.forEach((stroke) => {
-        signing.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
+        profile.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
       });
-      // Outro: an iris opens on the cobalt frame, then the title lines and channels step in.
-      gsap.fromTo(".outro-iris", { clipPath: "circle(12% at 50% 55%)" }, { clipPath: "circle(150% at 50% 55%)", ease: "none",
-        scrollTrigger: { trigger: ".outro", start: "top 90%", end: "top 10%", scrub: 0.6 } });
-      gsap.from(".outro-title > span:first-child, .outro-line, .outro-mail", { yPercent: 60, autoAlpha: 0, stagger: 0.12, ease: "power3.out",
-        scrollTrigger: { trigger: ".outro", start: "top 55%", end: "top 5%", scrub: 0.6 } });
-      gsap.from(".outro-channels li", { y: 80, scale: 0.7, rotate: (index) => (index % 2 ? 10 : -10), autoAlpha: 0, stagger: 0.06, ease: "back.out(1.6)",
-        scrollTrigger: { trigger: ".outro-channels", start: "top 95%", end: "top 55%", scrub: 0.6 } });
-    });
-    // Wide screens: pinned scenes.
-    mm.add(desktopMotion, () => {
-      // Skills reel: pin the section and slide the frames sideways; each frame's logos pop in as it reaches centre.
-      const track = root.current.querySelector(".skills-track");
-      const distance = () => track.scrollWidth - track.parentElement.clientWidth;
-      gsap.set(".skills-reel", { overflow: "hidden" });
-      gsap.set(".skills-progress", { display: "block" });
-      const reelTween = gsap.to(track, { x: () => -distance(), ease: "none",
-        scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
-      gsap.to(".skills-progress i", { scaleX: 1, ease: "none",
-        scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: true } });
-      gsap.utils.toArray(".skills-frame").forEach((frame) => {
-        const inReel = (start, end) => ({ trigger: frame, containerAnimation: reelTween, start, end, scrub: 0.6 });
-        gsap.from(frame.querySelector("h3"), { xPercent: 35, autoAlpha: 0, ease: "power2.out", scrollTrigger: inReel("left 95%", "left 45%") });
-        gsap.from(frame.querySelectorAll("li"), { yPercent: 140, rotate: -28, scale: 0.4, autoAlpha: 0, stagger: 0.08, ease: "back.out(1.7)", scrollTrigger: inReel("left 85%", "left 30%") });
-      });
-      // Education: pinned stage; each chapter slides up over the last, which shrinks back like a cut.
-      const panels = gsap.utils.toArray(".edu-panel");
-      gsap.set(panels.slice(1), { yPercent: 100 });
-      gsap.from(panels[0].querySelector(".edu-visual"), { scale: 0.6, rotate: -14, autoAlpha: 0, ease: "back.out(1.6)",
-        scrollTrigger: { trigger: ".edu", start: "top 85%", end: "top 15%", scrub: 0.6 } });
-      // Each chapter holds still for a stretch of scroll before the next one cuts in (University first and longest).
-      const hold = 0.8;
-      // One timeline unit = one viewport of scroll, so the scarf sequence and holds keep their pacing.
-      const chaptersTl = gsap.timeline({ scrollTrigger: { trigger: ".edu", start: "top top", scrub: 0.7, pin: true, anticipatePin: 1,
-        end: () => `+=${window.innerHeight * chaptersTl.duration()}`, invalidateOnRefresh: true } });
-      panels.slice(1).forEach((panel, index) => {
-        const at = hold + index * (1 + hold);
-        chaptersTl
-          // explicit start value: tweening from filter "none" would start at brightness(0), i.e. black
-          .fromTo(panels[index], { scale: 1, filter: "brightness(1)" }, { scale: 0.88, filter: "brightness(0.55)", ease: "none" }, at)
-          .to(panel, { yPercent: 0, ease: "none" }, at)
-          .from(panel.querySelectorAll(".edu-copy > *"), { y: 46, autoAlpha: 0, stagger: 0.06, ease: "power2.out", duration: 0.4 }, at + 0.5);
-        chaptersTl.from(panel.querySelector(".edu-visual"), { scale: 0.5, rotate: -18, autoAlpha: 0, ease: "back.out(1.7)", duration: 0.45 }, at + 0.45);
-      });
-      // Scarf goes on: the picture swings round in 3D while the red colours in along the scarf, in tying order.
-      const tieAt = hold + (panels.length - 2) * (1 + hold) + 0.85;
-      gsap.set(".scout-reveal", { strokeDasharray: "1 1", strokeDashoffset: 1 });
-      chaptersTl
-        .fromTo(".scout-bust", { rotationY: 32, rotationX: 8, transformPerspective: 900 }, { rotationY: 0, rotationX: 0, ease: "power2.out", duration: 1 }, tieAt - 0.3)
-        .to(".scout-reveal", { strokeDashoffset: 0, ease: "power1.inOut", duration: 0.35, stagger: 0.2 }, tieAt)
-        .to({}, { duration: hold }); // last chapter holds before the section unpins
-      // Journey: pin the reel, travel sideways; the path draws with the travel, each stop's shots land as it arrives.
-      const journey = root.current.querySelector(".journey-track");
-      const journeyDistance = () => journey.scrollWidth - journey.parentElement.clientWidth;
-      gsap.set(".journey-reel", { overflow: "hidden" });
-      gsap.set(".journey-path path", { strokeDasharray: "0.012 0.012" });
-      const journeyTween = gsap.to(journey, { x: () => -journeyDistance(), ease: "none",
-        scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
-      gsap.fromTo(".journey-path path", { strokeDashoffset: 1, opacity: 0.2 }, { strokeDashoffset: 0, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: true } });
-      gsap.utils.toArray(".journey-slide").forEach((slide) => {
-        const stop = (start, end) => ({ trigger: slide, containerAnimation: journeyTween, start, end, scrub: 0.6 });
-        gsap.from(slide.querySelectorAll(".journey-copy > *"), { x: 120, autoAlpha: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: stop("left 90%", "left 35%") });
-        gsap.from(slide.querySelector(".journey-hero"), { scale: 0.78, rotate: -6, autoAlpha: 0, ease: "power2.out", scrollTrigger: stop("left 95%", "left 40%") });
-        gsap.from(slide.querySelectorAll(".journey-polaroid"), { y: 260, rotate: (index) => [-28, 22, -16][index], autoAlpha: 0, stagger: 0.08, ease: "back.out(1.4)", scrollTrigger: stop("left 75%", "left 15%") });
-      });
-      gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
+      if (desktop) gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
         scrollTrigger: { trigger: ".creator-about", start: "top bottom", end: "bottom top", scrub: 0.5 } });
 
-      // Cleanup: restore overflow so if window resizes to phone width, mobile native scroll works.
-      return () => {
-        gsap.set(".skills-reel", { clearProps: "overflow" });
-        gsap.set(".skills-progress", { clearProps: "display" });
-        gsap.utils.toArray(".edu-panel").forEach((panel) => gsap.set(panel, { clearProps: "all" }));
-        gsap.set(".journey-reel", { clearProps: "overflow" });
-      };
-    });
-    // Phones: native scrolling, light reveals as things come into view.
-    mm.add(phoneMotion, () => {
-      // Ensure skills reel uses native horizontal scroll on phone (restore in case desktop ran first).
-      gsap.set(".skills-reel", { overflow: "auto" });
-      gsap.set(".skills-progress", { display: "none" });
-      // Ensure edu panels are all visible (not stacked/hidden by desktop animation).
-      gsap.utils.toArray(".edu-panel").forEach((panel) => gsap.set(panel, { clearProps: "yPercent,scale,filter,transform" }));
+      // ── Scene 4 · Skills: pinned, the frames slide sideways (phones too: the reel is short enough to fit one screen).
+      cut(".creator-skills", true);
+      {
+        const track = root.current.querySelector(".skills-track");
+        const distance = () => track.scrollWidth - track.parentElement.clientWidth;
+        gsap.set(".skills-reel", { overflow: "hidden" });
+        gsap.set(".skills-progress", { display: "block" });
+        const reelTween = gsap.to(track, { x: () => -distance(), ease: "none",
+          scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
+        gsap.to(".skills-progress i", { scaleX: 1, ease: "none",
+          scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: true } });
+        gsap.utils.toArray(".skills-frame").forEach((frame) => {
+          const inReel = (start, end) => ({ trigger: frame, containerAnimation: reelTween, start, end, scrub: 0.6 });
+          gsap.from(frame.querySelector("h3"), { xPercent: 35, autoAlpha: 0, ease: "power2.out", scrollTrigger: inReel("left 95%", "left 45%") });
+          gsap.from(frame.querySelectorAll("li"), { yPercent: 140, rotate: -28, scale: 0.4, autoAlpha: 0, stagger: 0.08, ease: "back.out(1.7)", scrollTrigger: inReel("left 85%", "left 30%") });
+        });
+      }
 
-      const reveal = (targets, vars, trigger) => gsap.from(targets, { ...vars, scrollTrigger: { trigger: trigger || targets, start: "top 88%", toggleActions: "play none none reverse" } });
-      gsap.utils.toArray(".skills-frame").forEach((frame) => reveal(frame.querySelectorAll("li"), { y: 30, scale: 0.6, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "back.out(1.7)" }, frame));
-      gsap.utils.toArray(".edu-panel").forEach((panel) => {
-        reveal(panel.querySelector(".edu-visual"), { scale: 0.7, rotate: -10, autoAlpha: 0, duration: 0.8, ease: "back.out(1.6)" });
-        reveal(panel.querySelectorAll(".edu-copy > *"), { y: 30, autoAlpha: 0, stagger: 0.06, duration: 0.6, ease: "power2.out" }, panel.querySelector(".edu-copy"));
-      });
+      // ── Scene 5 · Education: desktop stacks the chapters on a pinned stage; phones stack them as sticky cards (chapters can be taller than a phone screen).
+      cut(".edu", true);
       gsap.set(".scout-reveal", { strokeDasharray: "1 1", strokeDashoffset: 1 });
-      gsap.to(".scout-reveal", { strokeDashoffset: 0, stagger: 0.2, ease: "power1.inOut", scrollTrigger: { trigger: ".scout-bust", start: "top 75%", end: "bottom 60%", scrub: 0.5 } });
-      gsap.utils.toArray(".journey-slide").forEach((slide) => {
-        reveal(slide.querySelector(".journey-visual"), { y: 60, autoAlpha: 0, duration: 0.8, ease: "power3.out" });
-        reveal(slide.querySelectorAll(".journey-copy > *"), { y: 30, autoAlpha: 0, stagger: 0.05, duration: 0.6, ease: "power2.out" }, slide.querySelector(".journey-copy"));
-      });
+      if (desktop) {
+        const panels = gsap.utils.toArray(".edu-panel");
+        gsap.set(panels.slice(1), { yPercent: 100 });
+        gsap.from(panels[0].querySelector(".edu-visual"), { scale: 0.6, rotate: -14, autoAlpha: 0, ease: "back.out(1.6)",
+          scrollTrigger: { trigger: ".edu", start: "top 85%", end: "top 15%", scrub: 0.6 } });
+        const hold = 0.8; // each chapter holds still this long (in viewports of scroll) before the next cuts in
+        const chaptersTl = gsap.timeline({ scrollTrigger: { trigger: ".edu", start: "top top", scrub: 0.7, pin: true, anticipatePin: 1,
+          end: () => `+=${window.innerHeight * chaptersTl.duration()}`, invalidateOnRefresh: true } });
+        panels.slice(1).forEach((panel, index) => {
+          const at = hold + index * (1 + hold);
+          chaptersTl
+            // explicit start value: tweening from filter "none" would start at brightness(0), i.e. black
+            .fromTo(panels[index], { scale: 1, filter: "brightness(1)" }, { scale: 0.88, filter: "brightness(0.55)", ease: "none" }, at)
+            .to(panel, { yPercent: 0, ease: "none" }, at)
+            .from(panel.querySelectorAll(".edu-copy > *"), { y: 46, autoAlpha: 0, stagger: 0.06, ease: "power2.out", duration: 0.4 }, at + 0.5)
+            .from(panel.querySelector(".edu-visual"), { scale: 0.5, rotate: -18, autoAlpha: 0, ease: "back.out(1.7)", duration: 0.45 }, at + 0.45);
+        });
+        // Scarf goes on: the picture swings round in 3D while the red colours in along the scarf, in tying order.
+        const tieAt = hold + (panels.length - 2) * (1 + hold) + 0.85;
+        chaptersTl
+          .fromTo(".scout-bust", { rotationY: 32, rotationX: 8, transformPerspective: 900 }, { rotationY: 0, rotationX: 0, ease: "power2.out", duration: 1 }, tieAt - 0.3)
+          .to(".scout-reveal", { strokeDashoffset: 0, ease: "power1.inOut", duration: 0.35, stagger: 0.2 }, tieAt)
+          .to({}, { duration: hold }); // last chapter holds before the section unpins
+      } else {
+        // Chapters stack like cards: each sticks once fully read (top = viewport − its height, so tall ones still scroll),
+        // the next slides over it and the one underneath sinks back. Each cuts in from a framed inset, emblem and copy scrub in.
+        const panels = gsap.utils.toArray(".edu-panel");
+        panels.forEach((panel, index) => {
+          if (index < panels.length - 1) {
+            gsap.set(panel, { position: "sticky", top: () => Math.min(0, window.innerHeight - panel.offsetHeight) });
+            gsap.fromTo(panel, { scale: 1, "--dim": 0 }, { scale: 0.9, "--dim": 0.65, ease: "none", transformOrigin: "50% 0", // dim via overlay: fading the card would show the one beneath
+              scrollTrigger: { trigger: panels[index + 1], start: "top bottom", end: "top top", scrub: true } });
+          }
+          if (index) gsap.fromTo(panel, { clipPath: "inset(8% 6% 0% 6% round 2rem)" }, { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "none",
+            scrollTrigger: { trigger: panel, start: "top bottom", end: "top 30%", scrub: 0.5 } });
+          scrubIn(panel.querySelector(".edu-visual"), { scale: 0.5, rotate: -16, autoAlpha: 0 }, panel, "top 80%", "top 25%");
+          scrubIn(panel.querySelectorAll(".edu-copy > *"), { y: 60, autoAlpha: 0, stagger: 0.1 }, panel.querySelector(".edu-copy"));
+        });
+        gsap.to(".scout-reveal", { strokeDashoffset: 0, stagger: 0.2, ease: "power1.inOut", scrollTrigger: { trigger: ".scout-bust", start: "top 75%", end: "bottom 60%", scrub: 0.5 } });
+      }
+
+      // ── Scene 6 · Journey: desktop pins and travels sideways, the path drawing as it goes; phones stack the stops and scrub each one in.
+      cut(".journey", true);
+      if (desktop) {
+        const journey = root.current.querySelector(".journey-track");
+        const journeyDistance = () => journey.scrollWidth - journey.parentElement.clientWidth;
+        gsap.set(".journey-reel", { overflow: "hidden" });
+        gsap.set(".journey-path path", { strokeDasharray: "0.012 0.012" });
+        const journeyTween = gsap.to(journey, { x: () => -journeyDistance(), ease: "none",
+          scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
+        gsap.fromTo(".journey-path path", { strokeDashoffset: 1, opacity: 0.2 }, { strokeDashoffset: 0, opacity: 1, ease: "none",
+          scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: true } });
+        gsap.utils.toArray(".journey-slide").forEach((slide) => {
+          const stop = (start, end) => ({ trigger: slide, containerAnimation: journeyTween, start, end, scrub: 0.6 });
+          gsap.from(slide.querySelectorAll(".journey-copy > *"), { x: 120, autoAlpha: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: stop("left 90%", "left 35%") });
+          gsap.from(slide.querySelector(".journey-hero"), { scale: 0.78, rotate: -6, autoAlpha: 0, ease: "power2.out", scrollTrigger: stop("left 95%", "left 40%") });
+          gsap.from(slide.querySelectorAll(".journey-polaroid"), { y: 260, rotate: (index) => [-28, 22, -16][index], autoAlpha: 0, stagger: 0.08, ease: "back.out(1.4)", scrollTrigger: stop("left 75%", "left 15%") });
+        });
+      } else {
+        // Each stop: copy slides in from the left, the main shot lands, polaroids are tossed on top.
+        gsap.utils.toArray(".journey-slide").forEach((slide) => {
+          const visual = slide.querySelector(".journey-visual");
+          scrubIn(slide.querySelectorAll(".journey-copy > *"), { x: -60, autoAlpha: 0, stagger: 0.08 }, slide, "top 85%", "top 35%");
+          scrubIn(slide.querySelector(".journey-hero"), { scale: 0.75, rotate: -8, autoAlpha: 0 }, visual, "top 95%", "top 50%");
+          scrubIn(slide.querySelectorAll(".journey-polaroid"), { y: 160, rotate: (index) => [-24, 20, -14][index], autoAlpha: 0, stagger: 0.1 }, visual, "top 85%", "top 30%");
+        });
+      }
+
+      // ── Scene 7 · Credits: an iris opens on the cobalt frame, then the lines and channels step in.
+      cut(".outro");
+      gsap.fromTo(".outro-iris", { clipPath: "circle(12% at 50% 55%)" }, { clipPath: "circle(150% at 50% 55%)", ease: "none",
+        scrollTrigger: { trigger: ".outro", start: "top 90%", end: "top 10%", scrub: 0.6 } });
+      // Content plays as one beat once the iris is mostly open (not scrubbed: half-way states stacked the mail over the tiles).
+      gsap.timeline({ scrollTrigger: { trigger: ".outro", start: "top 35%", toggleActions: "play none none reverse" } })
+        .from(".outro-title > span:first-child, .outro-line, .outro-mail", { y: 40, autoAlpha: 0, stagger: 0.1, duration: 0.7, ease: "power3.out" })
+        .from(".outro-channels li", { y: 40, scale: 0.8, autoAlpha: 0, stagger: 0.06, duration: 0.6, ease: "back.out(1.6)" }, "-=0.35")
+        .from(".outro-credits", { autoAlpha: 0, duration: 0.6 }, "-=0.2");
+
+      // Resizing across 820px swaps scripts: hand the reels back to native scrolling.
+      return () => {
+        gsap.set(".skills-reel, .skills-progress, .journey-reel", { clearProps: "overflow,display" });
+        gsap.set(".edu-panel", { clearProps: "all" });
+      };
     });
   }, { scope: root });
   return (
     <div ref={root} className="creator-home">
+      <FilmHud language={language} />
       <HeroSection copy={copy} />
 
       <section id="more" className="creator-marquee" aria-label={t("intro.story.work.label")}>
@@ -670,7 +627,7 @@ export default function IntroductionPage() {
         <div className="creator-about-text">
           <motion.p className="creator-kicker" {...reveal}>{t("intro.story.profile.kicker")}</motion.p>
           <RiseHeading>{copy.aboutTitle.split("\n").map((line, index) => <span key={line}>{index ? <em>{line}</em> : line}</span>)}</RiseHeading>
-          <motion.p className="creator-about-copy" {...reveal}>{copy.about}</motion.p>
+          <p className="creator-about-copy">{copy.about.split(" ").map((word, index) => <span key={index} className="sub-word">{word} </span>)}</p>
           <motion.div className="creator-about-meta" {...reveal}>
             <span>{copy.legal}<b translate="no">Lê Gia Huy (Hugo Wishpax)</b></span>
             <span>{copy.languages}<b>{copy.languagesValue}</b></span>
