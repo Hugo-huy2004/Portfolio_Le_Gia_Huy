@@ -257,8 +257,8 @@ function Portfolio() {
               </Link>
               <p className="portfolio-footer-bio">
                 {language.language.startsWith("vi")
-                  ? "Kỹ sư phần mềm — Web & Mobile Full-Stack. Xây dựng sản phẩm trọn vẹn, từ cơ sở dữ liệu đến từng chi tiết trên màn hình."
-                  : "Software Engineer — Web & Mobile Full-Stack. Building products end to end, from database architecture to every detail on screen."}
+                  ? "Lê Gia Huy, sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam. Làm web và app với React, Next.js và Node.js."
+                  : "Lê Gia Huy, final-year Software Engineering student at Greenwich Vietnam. Building web and mobile apps with React, Next.js and Node.js."}
               </p>
               <div className="portfolio-footer-socials">
                 <a href="https://www.tiktok.com/@pethugowishpaxle?_r=1&_t=ZS-9B96A7FnRyP" target="_blank" rel="noreferrer" title="TikTok" aria-label="TikTok">

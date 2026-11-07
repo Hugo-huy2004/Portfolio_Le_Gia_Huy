@@ -432,7 +432,7 @@ html{touch-action:pan-x pan-y}
 .hero-pool{z-index:0;left:50%;bottom:calc(clamp(3rem,7vh,5.5rem) - 2.5rem);width:calc(var(--portrait-h)*1.5);height:calc(var(--portrait-h)*.32);margin-left:calc(var(--portrait-h)*-.75);border-radius:50%;background:radial-gradient(closest-side,rgb(255 226 150/.55),rgb(255 191 8/.18) 55%,transparent);will-change:transform,opacity}
 .hero-title{z-index:3;top:clamp(6rem,14vh,9rem);left:0;right:0;display:grid;gap:.6rem;padding-inline:1rem;text-align:center}
 .hero-title p:first-child{color:#ffbf08;font-size:.85rem;font-weight:700;letter-spacing:.24em}
-.hero-title p:last-child{color:#f4f6fb;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.6rem,3.6vw,3.4rem);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.hero-title p:last-child{color:#f4f6fb;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.5rem,3vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
 @media(max-width:600px){.hero-pool{bottom:calc(82px + clamp(1.2rem,3vh,2.5rem) - 1.8rem)}.hero-title{top:5.5rem}}
 .edu-panel:after{position:absolute;z-index:5;inset:0;content:"";background:#000;opacity:var(--dim,0);pointer-events:none}
 .outro-name{margin-bottom:.22em} /* room for the handwritten g descender */

@@ -244,31 +244,25 @@ const socialLinks = [
 
 const profileCopy = {
   vi: {
-    summary: "Software Engineer — Web & Mobile Full-Stack. React · Next.js · Node.js · MongoDB.",
-    availability: "Open to Frontend · Backend · Full-Stack",
-    heroLine: "Tôi xây sản phẩm web và mobile trọn vẹn, từ cơ sở dữ liệu đến từng chi tiết trên màn hình.",
-    heroStatus: "Đang nhận việc frontend, backend và full-stack",
+    heroLine: "Tôi là Lê Gia Huy, sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam. Tôi làm web và app bằng React, Next.js và Node.js.",
+    heroStatus: "Đang tìm vị trí frontend, backend hoặc full-stack",
     heroPlace: "Sống và làm việc tại Việt Nam",
     sloganKicker: "LÊ GIA HUY · HUGO WISHPAX",
-    slogan: "Tỉ mỉ từng chi tiết · Trọn vẹn từng trải nghiệm",
-    sloganSub: "Tôi xây sản phẩm web và mobile trọn vẹn, từ cơ sở dữ liệu đến từng chi tiết trên màn hình.",
-    aboutTitle: "Kỹ sư phần mềm.\nLàm trọn từ giao diện tới máy chủ.",
-    about: "Lê Gia Huy — Hugo Wishpax. Thiết kế, code, API, dữ liệu và triển khai trong một mạch sản phẩm.",
+    slogan: "Sinh viên năm cuối Kỹ thuật phần mềm",
+    aboutTitle: "Tôi là Hugo.\nTên thật là Lê Gia Huy.",
+    about: "Tôi học cấp ba ở THPT Nguyễn Đình Chiểu, Mỹ Tho, và đang học năm cuối ngành Kỹ thuật phần mềm tại Greenwich Việt Nam, GPA quy đổi 3.80. Tôi đã làm cổng thông tin cho giáo xứ, website cho một studio cưới, một quán cà phê và một nền tảng trang sức định giá theo giá vàng. Ngoài code, tôi là Huynh trưởng Thiếu Nhi Thánh Thể ở xứ đoàn Chánh Tòa Mỹ Tho.",
     legal: "Tên chính thức", languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
-    techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng mình dùng hằng ngày.",
+    techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng tôi dùng hằng ngày.",
     education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối", grade: "Điểm trung bình tạm tính: 69% · US GPA tương đương: 3.80/4.00",
   },
   en: {
-    summary: "Software Engineer — Web & Mobile Full-Stack. React · Next.js · Node.js · MongoDB.",
-    availability: "Open to Frontend · Backend · Full-Stack",
-    heroLine: "I build web and mobile products end to end, from the database to the last detail on screen.",
+    heroLine: "I'm Lê Gia Huy, a final-year Software Engineering student at Greenwich Vietnam. I build web and mobile apps with React, Next.js and Node.js.",
     heroStatus: "Open to frontend, backend and full-stack roles",
     heroPlace: "Based in Vietnam",
     sloganKicker: "LE GIA HUY · HUGO WISHPAX",
-    slogan: "Crafted with Precision · Engineered with Soul",
-    sloganSub: "Building web and mobile products end to end, from database to screen.",
-    aboutTitle: "Software Engineer.\nFull-Stack Builder.",
-    about: "Lê Gia Huy — Hugo Wishpax. Interface, code, API, data and deployment in one product workflow.",
+    slogan: "Final-year Software Engineering student",
+    aboutTitle: "I'm Hugo.\nMy real name is Lê Gia Huy.",
+    about: "I went to Nguyễn Đình Chiểu High School in Mỹ Tho and I'm now in my final year of Software Engineering at Greenwich Vietnam, with a 3.80 US GPA equivalent. I've built a portal for a parish, websites for a wedding studio and a coffee shop, and a jewellery platform priced off the live gold rate. Outside code, I'm a Eucharistic Youth leader at the Mỹ Tho Cathedral chapter.",
     legal: "Official name", languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
     techHeading: "Technical Skills", techNote: "The languages, frameworks and platforms I use every day.",
     education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student", grade: "Provisional average: 69% · US GPA equivalent: 3.80/4.00",
@@ -393,7 +387,7 @@ function Contact({ language }) {
           <span>{vi ? "Kết nối cùng" : "Connect with"}</span>
           <OutroName />
         </h2>
-        <p className="outro-line">{vi ? "Một dự án, một câu hỏi hay chỉ một lời chào. Chọn nơi bạn thấy thoải mái nhất." : "A project, a question or just hello. Pick whichever feels most natural."}</p>
+        <p className="outro-line">{vi ? "Muốn hỏi thêm về tôi, hay chỉ ghé chào một câu, cứ nhắn cho tôi." : "Want to know more about me, or just say hi? Write to me."}</p>
         <a className="outro-mail" href={mail.href} onClick={playHapticTick}>hugowishpax@gmail.com <ArrowUpRight size={22} /></a>
         <ul className="outro-channels">
           {socialLinks.filter((social) => social !== mail).map((social) => <li key={social.name}>
@@ -680,7 +674,7 @@ export default function IntroductionPage() {
       <Education language={language} copy={copy} from={`${location.pathname}${location.search}${location.hash}`} />
 
       <section id="projects" className="journey">
-        <header className="journey-intro"><motion.p className="creator-kicker" {...reveal}>{t("intro.story.work.label")}</motion.p><RiseHeading>{t("intro.story.work.heading")}</RiseHeading><motion.p {...reveal}>{language === "vi" ? "Khách hàng thật, người dùng thật, và vài đêm không ngủ." : "Real clients, real users, and a few sleepless nights."}</motion.p></header>
+        <header className="journey-intro"><motion.p className="creator-kicker" {...reveal}>{t("intro.story.work.label")}</motion.p><RiseHeading>{t("intro.story.work.heading")}</RiseHeading><motion.p {...reveal}>{language === "vi" ? "Mỗi dự án là một chặng: tôi đã nghĩ gì và làm gì." : "Each project is a stop: what I thought, and what I built."}</motion.p></header>
         <div className="journey-reel">
           <div className="journey-track">
             <svg className="journey-path" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">

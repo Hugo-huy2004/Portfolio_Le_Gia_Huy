@@ -21,10 +21,10 @@ const ogImage = (name, lang) => `${ORIGIN}/og/${name}-${lang}.jpg`;
 const COPY = {
   vi: {
     homeTitle: "Hugo Wishpax — Kỹ sư phần mềm Full-Stack Web & Mobile",
-    homeDescription: "Portfolio của Lê Gia Huy (Hugo Wishpax): sản phẩm web và mobile làm trọn từ giao diện tới máy chủ với React, Next.js và Node.js. Xem các dự án thật đang chạy.",
+    homeDescription: "Portfolio của Lê Gia Huy (Hugo Wishpax), sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam: học vấn, kỹ năng và các dự án web, mobile đã làm.",
     homeAlt: "Hugo Wishpax ngồi trước chữ HUGO trên nền xanh cobalt, kèm dòng Kỹ sư phần mềm Full-Stack",
     listTitle: "Dự án — Hành trình của Hugo Wishpax",
-    listDescription: "Những dự án thật đang chạy, xếp theo hành trình: khách hàng thật, người dùng thật. Từ website studio cưới, trang sức cao cấp tới cổng thông tin giáo xứ.",
+    listDescription: "Những dự án Lê Gia Huy đã làm, kể theo hành trình: từ cổng thông tin giáo xứ, website studio cưới tới nền tảng trang sức.",
     listAlt: "Các màn hình dự án của Hugo Wishpax xếp như ảnh polaroid",
     projectSuffix: "Dự án của Hugo Wishpax",
     projects: "Dự án",
@@ -33,10 +33,10 @@ const COPY = {
   },
   en: {
     homeTitle: "Hugo Wishpax — Full-Stack Web & Mobile Software Engineer",
-    homeDescription: "Portfolio of Lê Gia Huy (Hugo Wishpax): web and mobile products built end to end, from interface to server, with React, Next.js and Node.js. See real projects running live.",
+    homeDescription: "Portfolio of Lê Gia Huy (Hugo Wishpax), a final-year Software Engineering student at Greenwich Vietnam: education, skills and web and mobile projects.",
     homeAlt: "Hugo Wishpax sitting in front of the word HUGO on a cobalt background, with the line Full-Stack Software Engineer",
     listTitle: "Projects — Hugo Wishpax's journey",
-    listDescription: "Real projects running live, told as a journey: real clients, real users. From a wedding studio site and fine jewellery to a parish portal.",
+    listDescription: "The projects Lê Gia Huy has built, told as a journey: from a parish portal and a wedding studio site to a jewellery platform.",
     listAlt: "Screens from Hugo Wishpax's projects laid out like polaroids",
     projectSuffix: "A project by Hugo Wishpax",
     projects: "Projects",

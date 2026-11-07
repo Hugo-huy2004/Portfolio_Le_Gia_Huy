@@ -47,7 +47,7 @@ for (const lang of ["vi", "en"]) {
     <div style="position:absolute;inset:0;background:radial-gradient(500px 400px at 85% 40%,rgb(40 61 183/.55),transparent 70%),radial-gradient(420px 380px at 60% 100%,rgb(180 69 42/.45),transparent 70%)"></div>
     <div style="position:absolute;left:64px;top:84px;width:520px"><span class="pill">${vi ? "Dự án" : "Projects"}</span>
       <div class="serif" style="margin-top:24px;font-size:128px;line-height:.92">${vi ? "Hành<br>trình" : "The<br>journey"}</div>
-      <p style="margin-top:22px;font-size:24px;line-height:1.4;opacity:.85">${vi ? "Khách hàng thật, người dùng thật." : "Real clients, real users."}</p></div>
+      <p style="margin-top:22px;font-size:24px;line-height:1.4;opacity:.85">${vi ? "Những dự án tôi đã làm." : "Projects I have built."}</p></div>
     ${polaroid(shot(a, a.cover || a.shots[0].src), "right:380px;top:110px;width:340px;rotate:-8deg")}
     ${polaroid(shot(b, b.cover || b.shots[0].src), "right:70px;top:60px;width:360px;rotate:6deg")}
     ${polaroid(shot(c, c.cover || c.shots[0].src), "right:200px;top:300px;width:380px;rotate:-2deg")}
