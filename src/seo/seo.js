@@ -3,25 +3,27 @@
 // static HTML per URL, because link-preview bots — Facebook, Zalo, Messenger, X, Slack — don't run JS).
 // `t(key, fallback)` reads the route language's translation file; the build passes its own lookup.
 import { projects } from "../data/projects.js";
+import { skillGroups } from "../data/skills.js";
 
 export const ORIGIN = "https://portfolio.hugowishpax.studio";
 export const LANGS = ["vi", "en"];
 const LOCALE = { vi: "vi_VN", en: "en_US" };
-const SAME_AS = [
+export const SAME_AS = [
   "https://github.com/Hugo-huy2004",
   "https://www.facebook.com/share/18jfh4AUPh/",
   "https://www.instagram.com/hugowishpax",
   "https://www.tiktok.com/@pethugowishpaxle",
   "https://www.youtube.com/@By_Hugo_Hi",
+  "https://chanhtoa.tnttgiaophanmytho.online/gioi-thieu/xu-doan?bio=bdh-le-gia-huy",
 ];
 
 // Vietnamese lives at the root (also served under /vi); English under /en.
 export const urlFor = (path, lang) => `${ORIGIN}${lang === "en" ? "/en" : ""}${path === "/" && lang === "en" ? "" : path}`;
 const ogImage = (name, lang) => `${ORIGIN}/og/${name}-${lang}.jpg`;
 
-const COPY = {
+export const COPY = {
   vi: {
-    homeTitle: "Hugo Wishpax — Kỹ sư phần mềm Full-Stack Web & Mobile",
+    homeTitle: "Lê Gia Huy (Hugo Wishpax) — Kỹ sư phần mềm Full-Stack Web & Mobile",
     homeDescription: "Portfolio của Lê Gia Huy (Hugo Wishpax), sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam: học vấn, kỹ năng và các dự án web, mobile đã làm.",
     homeAlt: "Hugo Wishpax ngồi trước chữ HUGO trên nền xanh cobalt, kèm dòng Kỹ sư phần mềm Full-Stack",
     listTitle: "Dự án — Hành trình của Hugo Wishpax",
@@ -34,9 +36,18 @@ const COPY = {
     projects: "Dự án",
     home: "Trang chủ",
     jobTitle: "Kỹ sư phần mềm Full-Stack",
+    // Plain facts, written once: the prerendered page copy and llms.txt both quote these.
+    bio: "Lê Gia Huy, còn được biết đến với tên Hugo Wishpax, là sinh viên năm cuối ngành Kỹ thuật phần mềm (Bachelor of Computing) tại University of Greenwich (Việt Nam). Lê Gia Huy làm website và ứng dụng di động cho khách hàng thật bằng React, Next.js, Node.js và React Native, và là Huynh trưởng Thiếu Nhi Thánh Thể tại Mỹ Tho, Tiền Giang.",
+    award: "Sinh viên xuất sắc nhất học phần Thiết kế và Phát triển Ứng dụng Di động (COMP1786, dự án M-Hike), University of Greenwich (Việt Nam), kỳ Summer 2026.",
+    education: "Học vấn",
+    skills: "Kỹ năng",
+    contact: "Liên hệ",
+    greenwich: "University of Greenwich (Việt Nam) — Cử nhân Kỹ thuật phần mềm (Bachelor of Computing), sinh viên năm cuối.",
+    ndc: "THPT Nguyễn Đình Chiểu (Collège de Mytho), Mỹ Tho, Tiền Giang — tốt nghiệp THPT, niên khoá 2019–2022.",
+    community: "Huynh trưởng Thiếu Nhi Thánh Thể, Xứ đoàn Các Thánh Tử Đạo Việt Nam, Giáo xứ Chánh Tòa Mỹ Tho.",
   },
   en: {
-    homeTitle: "Hugo Wishpax — Full-Stack Web & Mobile Software Engineer",
+    homeTitle: "Lê Gia Huy (Hugo Wishpax) — Full-Stack Web & Mobile Software Engineer",
     homeDescription: "Portfolio of Lê Gia Huy (Hugo Wishpax), a final-year Software Engineering student at Greenwich Vietnam: education, skills and web and mobile projects.",
     homeAlt: "Hugo Wishpax sitting in front of the word HUGO on a cobalt background, with the line Full-Stack Software Engineer",
     listTitle: "Projects — Hugo Wishpax's journey",
@@ -49,6 +60,14 @@ const COPY = {
     projects: "Projects",
     home: "Home",
     jobTitle: "Full-Stack Software Engineer",
+    bio: "Lê Gia Huy, also known as Hugo Wishpax, is a final-year Software Engineering (Bachelor of Computing) student at the University of Greenwich (Vietnam). Lê Gia Huy builds websites and mobile apps for real clients with React, Next.js, Node.js and React Native, and is a Eucharistic Youth leader in Mỹ Tho, Tiền Giang, Vietnam.",
+    award: "Best Student in Mobile Application Design and Development (COMP1786, M-Hike project), University of Greenwich (Vietnam), Summer 2026.",
+    education: "Education",
+    skills: "Skills",
+    contact: "Contact",
+    greenwich: "University of Greenwich (Vietnam) — Bachelor of Computing in Software Engineering, final year.",
+    ndc: "Nguyễn Đình Chiểu High School (Collège de Mytho), Mỹ Tho, Tiền Giang — high school diploma, class of 2019–2022.",
+    community: "Eucharistic Youth leader, Vietnamese Martyrs chapter, Mỹ Tho Cathedral parish.",
   },
 };
 
@@ -56,14 +75,25 @@ const person = (lang) => ({
   "@type": "Person",
   "@id": `${ORIGIN}/#person`,
   name: "Lê Gia Huy",
-  alternateName: "Hugo Wishpax",
+  alternateName: ["Hugo Wishpax", "Le Gia Huy"],
+  givenName: "Huy",
+  additionalName: "Gia",
+  familyName: "Lê",
+  description: COPY[lang].bio,
   jobTitle: COPY[lang].jobTitle,
   url: urlFor("/", lang),
   image: `${ORIGIN}/hugo-portrait.webp`,
   email: "mailto:hugowishpax@gmail.com",
-  nationality: "Vietnam",
-  alumniOf: [{ "@type": "CollegeOrUniversity", name: "University of Greenwich (Vietnam)" }, { "@type": "HighSchool", name: "THPT Nguyễn Đình Chiểu, Mỹ Tho" }],
-  knowsAbout: ["React", "Next.js", "Node.js", "Express", "MongoDB", "Firebase", "TypeScript", "Tailwind CSS", "React Native"],
+  nationality: { "@type": "Country", name: "Vietnam" },
+  homeLocation: { "@type": "Place", name: "Mỹ Tho, Tiền Giang, Vietnam" },
+  alumniOf: [
+    { "@type": "CollegeOrUniversity", name: "University of Greenwich (Vietnam)", url: "https://greenwich.edu.vn" },
+    { "@type": "HighSchool", name: "Trường THPT Nguyễn Đình Chiểu (Collège de Mytho)", alternateName: "Collège de Mytho", url: "https://ndc.edu.vn", foundingDate: "1879-03-17" },
+  ],
+  award: COPY[lang].award,
+  memberOf: { "@type": "Organization", name: "Thiếu Nhi Thánh Thể Việt Nam", alternateName: "Vietnamese Eucharistic Youth Movement" },
+  knowsLanguage: ["vi", "en", "zh"],
+  knowsAbout: skillGroups.flatMap((group) => group.items).concat(["Full-stack web development", "Mobile application development", "RESTful API design"]),
   sameAs: SAME_AS,
 });
 
@@ -151,6 +181,7 @@ export function seoFor(path, lang, t = (key, fallback) => fallback) {
           url: base.url, image: `${ORIGIN}/project-screenshots/${project.id}/${project.shots[0].src}.webp`, inLanguage: lang,
           dateCreated: project.startedAt, keywords: project.stack.join(", "), author: { "@id": `${ORIGIN}/#person`, "@type": "Person", name: "Lê Gia Huy", alternateName: "Hugo Wishpax" },
           ...(project.url ? { sameAs: project.url } : {}), ...(project.repo ? { codeRepository: project.repo } : {}),
+          ...(project.id === "mhike" ? { award: copy.award } : {}),
         },
         breadcrumbs([[copy.home, urlFor("/", lang)], [copy.projects, urlFor("/project", lang)], [project.title, base.url]]),
       ],

@@ -3,30 +3,21 @@ import { gsap } from "gsap";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import TechLogo from "./TechLogo";
+import { skillGroups as groups, skillLabel as label } from "../../data/skills.js";
 import "./skillVortex.css";
 
 /**
  * Skills: Hugo in front of a vortex of tinted glass petals that fills the section. Scrolling (pinned) turns the petals
  * around a pivot behind the photo; whichever petal sweeps over the card on the right picks the group shown there.
  * Drawn on one viewport-sized canvas and repainted only while the scroll moves: no huge layers, no blur.
- * Kept to what the projects use (same list as the CV, scripts/build-cv.py); coursework-only languages are their own group.
+ * The groups live in data/skills.js (shared with the prerendered SEO copy).
  */
-// One family, the site's cobalt and sky: deep and light panes alternate so neighbouring petals stay distinct.
-const groups = [
-  { color: "#283db7", title: { vi: "Ngôn ngữ", en: "Languages" }, items: ["TypeScript", "JavaScript", "Java", "SQL"], proof: ["hwj", "mhike", "chanh-toa"] },
-  { color: "#08a0ef", title: { vi: "Web", en: "Web" }, items: ["React", "Next.js", "Tailwind"], proof: ["hwj", "chanh-toa", "l3go-coffee"] },
-  { color: "#4a5bd0", title: { vi: "Mobile", en: "Mobile" }, items: ["Android", "React Native", "Expo"], proof: ["mhike"] },
-  { color: "#5fb8f5", title: { vi: "Backend & dữ liệu", en: "Backend & data" }, items: ["Node.js", "Express.js", "MongoDB", "Firebase", "SQLite"], proof: ["hwj", "mhike", "chanh-toa"] },
-  { color: "#1e2f8f", title: { vi: "Tích hợp & triển khai", en: "Integrations & delivery" }, items: ["JWT", "Google OAuth", "PayPal", "Git", "Vercel"], proof: ["hwj", "chanh-toa"] },
-  { color: "#7d8cf0", title: { vi: "Đã học trong chương trình", en: "Also studied" }, items: ["PHP", "Python", "C#", "C++"], studied: true },
-];
 // Sparkles: fixed, spread-out positions (deterministic, so server and client agree), twinkling in CSS.
 const sparkles = Array.from({ length: 16 }, (_, i) => ({ x: (i * 37 + 11) % 100, y: (i * 53 + 7) % 100, s: 8 + ((i * 7) % 14), d: (i * 0.37) % 3 }));
 const files = { SQL: "sql", PHP: "php", Python: "python", "C#": "csharp", "C++": "cplusplus" };
 const names = { hwj: "HWJ", mhike: "M-Hike", "chanh-toa": "Chánh Tòa", "l3go-coffee": "L3GO Coffee" };
 // Navy logos that would vanish on the navy page; the black ones are flagged by TechLogo itself (data-dark).
 const tint = new Set(["PayPal", "SQLite"]);
-const label = { "Express.js": "Express", Tailwind: "Tailwind CSS", Android: "Android (Java)" };
 
 // Petal i: the band between two curves leaving the pivot at i·STEP and i·STEP+STEP+OVER, sweeping TURN degrees outward.
 // Neighbours overlap by OVER degrees, where the two tints mix like stacked glass. Units: radius 0–100.

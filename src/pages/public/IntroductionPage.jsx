@@ -288,7 +288,7 @@ function greenwichGrades(vi) {
   };
 }
 
-// Education told in three chapters; facts for Nguyễn Đình Chiểu come from vi.wikipedia (founding 17/3/1879, renamed 1953).
+// Education told in three chapters; Nguyễn Đình Chiểu facts and wording follow the school's own site (ndc.edu.vn › Tổng quan).
 const educationChapters = (language, copy) => {
   const vi = language === "vi";
   return [
@@ -305,15 +305,19 @@ const educationChapters = (language, copy) => {
       ...greenwichGrades(vi),
     },
     {
-      id: "ndc", tone: "cobalt", label: vi ? "Trung học" : "High school",
-      visual: <img className="edu-logo edu-logo--round" src="/education/nguyen-dinh-chieu.webp" alt={vi ? "Logo Trường THPT Nguyễn Đình Chiểu, Mỹ Tho" : "Nguyễn Đình Chiểu High School, Mỹ Tho — logo"} />,
+      id: "ndc", tone: "ndc", label: vi ? "Trung học" : "High school",
+      visual: <figure className="edu-photo">
+        <img src="/education/ndc-12d2.webp" alt={vi ? "Ảnh tập thể lớp 12D2 tại Trường THPT Nguyễn Đình Chiểu, có Lê Gia Huy" : "Class photo of 12D2 at Nguyễn Đình Chiểu High School, including Lê Gia Huy"} width="1600" height="1068" />
+        <img className="edu-photo-logo" src="/education/nguyen-dinh-chieu.webp" alt="" />
+        <figcaption>{vi ? "Ảnh kỷ yếu lớp 12D2 · " : "Class 12D2 yearbook photo · "}<a href="https://ndc.edu.vn/wp-content/uploads/2026/01/31.-12D2.jpg" target="_blank" rel="noreferrer">{vi ? "nguồn: THPT Nguyễn Đình Chiểu" : "Source: Nguyễn Đình Chiểu High School"}</a></figcaption>
+      </figure>,
       kicker: vi ? "Tốt nghiệp THPT" : "High School Diploma",
       title: vi ? "THPT Nguyễn Đình Chiểu" : "Nguyễn Đình Chiểu High School",
-      sub: "Collège de Mytho · Mỹ Tho",
+      sub: "Collège de Mytho · Mỹ Tho, Tiền Giang",
       body: vi
-        ? "Thành lập ngày 17/3/1879 với tên Collège de Mytho, một trong những trường trung học lâu đời nhất Việt Nam. Trường mang tên nhà thơ Nguyễn Đình Chiểu từ năm 1953."
-        : "Founded on 17 March 1879 as the Collège de Mytho, one of the oldest high schools in Vietnam. It has carried the name of the poet Nguyễn Đình Chiểu since 1953.",
-      facts: [["2019 – 2022", vi ? "Niên khoá" : "Class years"]],
+        ? "Thành lập ngày 17/03/1879 với tên Collège de Mytho, đổi tên Collège Le Myre de Vilers năm 1942 và mang tên nhà thơ Nguyễn Đình Chiểu từ năm 1953: một trong những ngôi trường trung học phổ thông lâu đời nhất Việt Nam. Ba năm ở đây, tôi lớn lên cùng truyền thống “Dạy giỏi – Học giỏi” và tiêu chí “Thanh lịch – Thân thiện – Năng động – Tự tin”."
+        : "Founded on 17 March 1879 as the Collège de Mytho, renamed Collège Le Myre de Vilers in 1942, and named after the poet Nguyễn Đình Chiểu since 1953: one of the oldest high schools in Vietnam. My three years there were shaped by its tradition of “teaching well, learning well” and its ideal of students who are graceful, friendly, active and confident.",
+      facts: [["1879", vi ? "Năm thành lập" : "Founded"], ["2019 – 2022", vi ? "Niên khoá" : "Class years"]],
     },
     {
       id: "huynh-truong", tone: "paper", label: vi ? "Cộng đồng" : "Community",
@@ -325,7 +329,7 @@ const educationChapters = (language, copy) => {
         ? "Một chiếc khăn mới mà các em chưa từng được quàng. Một chương trình đào tạo những người dẫn dắt các em. Và những đêm muộn ngồi viết, chụp, đăng để cả xứ đoàn biết điều gì đang xảy ra. Phần còn lại của câu chuyện được kể ở xứ đoàn."
         : "A new scarf the children had never worn. A programme that trains the people who lead them. And late nights writing, shooting and posting so the whole chapter knows what's happening. The rest of the story is told at the chapter.",
       links: [
-        { href: "https://chanhtoa.tnttgiaophanmytho.online/gioi-thieu/xu-doan?bio=bdh-le-gia-huy", label: vi ? "Đọc tiếp ở xứ đoàn" : "Read the rest at the chapter" },
+        { href: "https://chanhtoa.tnttgiaophanmytho.online/gioi-thieu/xu-doan?bio=bdh-le-gia-huy", label: vi ? "Hồ sơ Huynh trưởng tại Xứ đoàn" : "Leader profile at the chapter" },
       ],
     },
   ];

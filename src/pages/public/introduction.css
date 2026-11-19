@@ -31,7 +31,7 @@
 .hero-name{position:absolute;z-index:0;inset:auto 0 clamp(6rem,17vh,11rem);display:flex;justify-content:center;margin:0;color:#f4f6fb;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(9rem,37vw,38rem);font-variation-settings:"opsz" 96;font-weight:800;letter-spacing:-.06em;line-height:.8}
 .hero-name-mask{display:inline-block;overflow:hidden;padding:0 .1em .24em;margin:0 -.1em -.24em}
 .hero-name-mask>span{display:inline-block}
-.hero-dock{position:relative;z-index:2;display:grid;width:min(1180px,100%);margin-inline:auto;padding:1rem 1rem 1rem 1.6rem;grid-row:2;grid-template-columns:auto 1fr auto;align-items:center;gap:clamp(1rem,3vw,2.5rem);border:1px solid rgb(255 255 255/.24);border-radius:1.75rem;background:rgb(20 28 80/.55);box-shadow:inset 0 1px 0 rgb(255 255 255/.38),0 24px 60px rgb(10 16 70/.35)}
+.hero-dock{position:relative;z-index:2;display:grid;width:min(1180px,100%);margin-inline:auto;padding:1rem 1rem 1rem 1.6rem;grid-row:2;grid-template-columns:auto 1fr auto;align-items:center;gap:clamp(1rem,3vw,2.5rem);border:1px solid rgb(255 255 255/.24);border-radius:1.75rem;background:rgb(22 32 110/.88);box-shadow:inset 0 1px 0 rgb(255 255 255/.38),0 24px 60px rgb(10 16 70/.35)}
 
 .hero-meta{display:grid;gap:.35rem;color:rgb(244 246 251/.75);font-size:.82rem}
 .hero-meta p{display:flex;align-items:center;gap:.55rem}
@@ -107,13 +107,22 @@
 .edu-panel{position:relative;display:grid;min-height:100svh;padding:clamp(6rem,12vh,8rem) clamp(1.25rem,6vw,6rem) clamp(2rem,6vh,4rem);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto 1fr;align-items:center;column-gap:clamp(2rem,6vw,6rem);overflow:hidden;transform-origin:50% 0}
 @media(prefers-reduced-motion:no-preference) and (min-width:821px){.edu-stage{position:relative;height:100svh;overflow:hidden}.edu-panel{position:absolute;inset:0;border-radius:clamp(1.5rem,3vw,2.5rem) clamp(1.5rem,3vw,2.5rem) 0 0}}
 .edu-panel--sky{background:#eef4ff;color:#0b1033}
-.edu-panel--cobalt{background:#283db7;color:#f4f6fb}
+/* Nguyễn Đình Chiểu: the school's own navy and gold (ndc.edu.vn). */
+.edu-panel--ndc{background:radial-gradient(90% 80% at 20% 60%,#0a2c6e 0%,#021844 60%);color:#f4f6fb}
+.edu-panel--ndc .edu-kicker{color:#ffc13c;opacity:1;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
+.edu-panel--ndc .edu-link{background:#ffc13c;color:#021844}
+.edu-panel--ndc .edu-link:hover{background:#ffd06a}
 .edu-panel--paper{background:#fbf8f1;color:#2a1610}
 .edu-chapters{display:flex;margin:0 0 clamp(1.5rem,4vh,3rem);padding:0;grid-column:1/-1;align-self:start;gap:clamp(1rem,3vw,2.5rem);list-style:none;font-size:.9rem;font-weight:600}
 .edu-chapters li{opacity:.4}
 .edu-chapters li.is-active{opacity:1;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 .edu-visual{display:grid;place-items:center}
 .edu-logo--round{width:min(100%,400px);filter:drop-shadow(0 30px 50px rgb(5 10 50/.4))}
+.edu-photo{position:relative;width:min(100%,560px);margin:0}
+.edu-photo img{display:block;width:100%;height:auto;border-radius:1rem;box-shadow:0 24px 60px rgb(0 0 0/.35)}
+.edu-photo .edu-photo-logo{position:absolute;top:.75rem;left:.75rem;width:clamp(3.5rem,9vw,5.5rem);height:auto;padding:.35rem;border:1px solid rgb(255 255 255/.7);border-radius:50%;background:rgb(255 255 255/.88);box-shadow:0 4px 16px rgb(0 0 0/.3)}
+.edu-photo figcaption{margin-top:.65rem;font-size:.8rem;line-height:1.45;opacity:.75}
+.edu-photo a{color:#ffc13c;text-decoration:underline;text-underline-offset:3px}
 .edu-kicker{font-size:.95rem;font-weight:600;opacity:.75}
 .edu-copy h2{margin-top:.75rem;font-size:clamp(2.4rem,5vw,5rem);font-weight:800;line-height:1}
 .edu-panel--sky h2{color:#0b1033}
@@ -131,7 +140,7 @@
 .edu-facts dt{font-size:.85rem;opacity:.7}
 .edu-facts dd{margin:0;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.8rem,3.4vw,3rem);font-weight:800;letter-spacing:-.03em;line-height:1}
 .edu-panel--sky dd{color:#283db7}
-.edu-panel--cobalt dd{color:#ffbf08}
+.edu-panel--ndc dd{color:#ffc13c}
 .edu-link{display:inline-flex;margin-top:2rem;align-items:center;gap:.5rem;padding:.85rem 1.35rem;border-radius:999px;background:#a33c22;color:#fff;font-weight:700;transition:background-color .2s}
 .edu-link:hover{background:#b8472b}
 .edu-link:focus-visible{outline:2px solid #a33c22;outline-offset:3px}
