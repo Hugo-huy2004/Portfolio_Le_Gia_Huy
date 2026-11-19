@@ -30,7 +30,8 @@
     "kinds": {
       "personal": "Dự án cá nhân",
       "client": "Khách hàng thật",
-      "live": "Người dùng thật"
+      "live": "Người dùng thật",
+      "coursework": "Đồ án môn học"
     },
     "periodNow": "nay",
     "items": {

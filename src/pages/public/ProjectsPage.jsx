@@ -44,7 +44,7 @@ export default function ProjectsPage() {
         </motion.p>
         <h1 className="pl-title">
           <motion.span initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ delay: 0.1, duration: 1, ease }}>
-            {vi ? "Hành trình" : "The journey"}
+            {vi ? "Dự án" : "Projects"}
           </motion.span>
         </h1>
         <motion.p className="pl-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.7, ease }}>
@@ -69,7 +69,7 @@ export default function ProjectsPage() {
               <Link to={`/project/${project.id}`} state={{ from: currentPath }} className="pl-card">
                 <motion.div className="pl-visual" initial={{ opacity: 0, x: flip ? 80 : -80, rotate: flip ? 4 : -4 }} whileInView={{ opacity: 1, x: 0, rotate: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.9, ease }}>
                   <figure className="pl-shot">
-                    <span className="pd-browser" aria-hidden="true"><i /><i /><i /><b>{project.urlLabel || project.title}</b></span>
+                    {project.device !== "phone" && <span className="pd-browser" aria-hidden="true"><i /><i /><i /><b>{project.urlLabel || project.title}</b></span>}
                     <SmartImg src={shotUrl(project.id, cover)} />
                   </figure>
                   {second && (

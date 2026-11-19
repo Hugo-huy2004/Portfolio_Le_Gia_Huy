@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ import "./portfolio.css";
 const Introduction = lazy(() => import("./pages/public/IntroductionPage"));
 const Projects = lazy(() => import("./pages/public/ProjectsPage"));
 const Project = lazy(() => import("./pages/public/ProjectDetailPage"));
+const Journey = lazy(() => import("./pages/public/JourneyPage"));
 const LANGS = [
   { code: "vi", short: "VI", name: "Tiếng Việt" },
   { code: "en", short: "EN", name: "English" },
@@ -27,14 +28,15 @@ gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 // Inertial scrolling for the whole site, driven by GSAP's ticker so ScrollTrigger scenes stay in sync.
+let lenis = null; // shared with ScrollPosition: Lenis keeps its own target, so a bare window.scrollTo gets pulled back
 function useSmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const lenis = new Lenis({ lerp: 0.09, anchors: true });
+    lenis = new Lenis({ lerp: 0.09, anchors: true });
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
-    return () => { gsap.ticker.remove(tick); lenis.destroy(); };
+    return () => { gsap.ticker.remove(tick); lenis.destroy(); lenis = null; };
   }, []);
 }
 
@@ -132,11 +134,24 @@ function clearGoogleTranslate() {
 
 const prefix = window.location.pathname.match(/^\/(en|vi)(?=\/|$)/)?.[0] || "";
 
+// Every page change starts at the top (or at its #section), instantly, through Lenis when it runs.
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 function ScrollPosition() {
   const { pathname, hash } = useLocation();
-  useEffect(() => {
-    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView();
-    else window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    const go = () => {
+      const target = (hash && document.getElementById(hash.slice(1))) || 0;
+      if (lenis) lenis.scrollTo(target, { immediate: true, force: true });
+      else if (target) target.scrollIntoView();
+      else window.scrollTo(0, 0);
+    };
+    go();
+    if (!hash) return undefined;
+    // Pinned scenes are built after this runs and push the section down: aim again once ScrollTrigger has measured.
+    const again = () => { ScrollTrigger.removeEventListener("refresh", again); go(); };
+    ScrollTrigger.addEventListener("refresh", again);
+    const late = setTimeout(again, 1200);
+    return () => { ScrollTrigger.removeEventListener("refresh", again); clearTimeout(late); };
   }, [pathname, hash]);
   return null;
 }
@@ -201,8 +216,7 @@ function Portfolio() {
           </Link>
           <div className="portfolio-nav-links">
             <Link to="/#projects" {...hover("projects")}>{pill("projects")}{t("projectsPage.navLabel", "Dự Án")}</Link>
-            <Link to="/#about" {...hover("about")}>{pill("about")}{t("intro.story.profile.kicker", "Hồ sơ")}</Link>
-            <Link to="/#skills" {...hover("skills")}>{pill("skills")}{language.language.startsWith("vi") ? "Kỹ năng" : "Skills"}</Link>
+            <Link to="/journey" {...hover("journey")}>{pill("journey")}{language.language.startsWith("vi") ? "Hành trình" : "Journey"}</Link>
             <a href={cvPdf()} target="_blank" rel="noreferrer" {...hover("cv")}>{pill("cv")}CV</a>
           </div>
           <div className="portfolio-nav-actions">
@@ -241,6 +255,7 @@ function Portfolio() {
             <Route path="/introduction" element={<Navigate to="/" replace />} />
             <Route path="/project" element={<Projects />} />
             <Route path="/project/:slug" element={<Project />} />
+            <Route path="/journey" element={<Journey />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense></ErrorBoundary> : <PageSkeleton />}
@@ -318,6 +333,7 @@ function Portfolio() {
               <ul>
                 <li><Link to="/#about">{language.language.startsWith("vi") ? "Về Hugo Wishpax" : "About Hugo"}</Link></li>
                 <li><a href={cvPdf(language.language)} download>{language.language.startsWith("vi") ? "Tải CV PDF" : "Download CV"}</a></li>
+                <li><Link to="/journey">{language.language.startsWith("vi") ? "Hành trình" : "Journey"}</Link></li>
                 <li><Link to="/#education">{language.language.startsWith("vi") ? "Học vấn & Bằng cấp" : "Education"}</Link></li>
                 <li><a href={SERVICES_ORIGIN} target="_blank" rel="noreferrer">{t("navbar.services", "Dịch vụ")}</a></li>
               </ul>

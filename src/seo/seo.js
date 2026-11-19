@@ -27,6 +27,9 @@ const COPY = {
     listTitle: "Dự án — Hành trình của Hugo Wishpax",
     listDescription: "Những dự án Lê Gia Huy đã làm, kể theo hành trình: từ cổng thông tin giáo xứ, website studio cưới tới nền tảng trang sức.",
     listAlt: "Các màn hình dự án của Hugo Wishpax xếp như ảnh polaroid",
+    journeyTitle: "Hành trình — Học vấn và những chuyến đi của Hugo Wishpax",
+    journeyDescription: "Những bước ngoặt học vấn của Lê Gia Huy, từ THPT Nguyễn Đình Chiểu tới giải Sinh viên xuất sắc nhất môn Mobile App tại Greenwich, cùng những nơi đã đặt chân đến.",
+    journey: "Hành trình",
     projectSuffix: "Dự án của Hugo Wishpax",
     projects: "Dự án",
     home: "Trang chủ",
@@ -39,6 +42,9 @@ const COPY = {
     listTitle: "Projects — Hugo Wishpax's journey",
     listDescription: "The projects Lê Gia Huy has built, told as a journey: from a parish portal and a wedding studio site to a jewellery platform.",
     listAlt: "Screens from Hugo Wishpax's projects laid out like polaroids",
+    journeyTitle: "Journey — Hugo Wishpax's education and travels",
+    journeyDescription: "Lê Gia Huy's turning points in education, from Nguyễn Đình Chiểu High School to Best Student in Mobile App Development at Greenwich, and the places along the way.",
+    journey: "Journey",
     projectSuffix: "A project by Hugo Wishpax",
     projects: "Projects",
     home: "Home",
@@ -53,7 +59,7 @@ const person = (lang) => ({
   alternateName: "Hugo Wishpax",
   jobTitle: COPY[lang].jobTitle,
   url: urlFor("/", lang),
-  image: `${ORIGIN}/hugo-portrait.png`,
+  image: `${ORIGIN}/hugo-portrait.webp`,
   email: "mailto:hugowishpax@gmail.com",
   nationality: "Vietnam",
   alumniOf: [{ "@type": "CollegeOrUniversity", name: "University of Greenwich (Vietnam)" }, { "@type": "HighSchool", name: "THPT Nguyễn Đình Chiểu, Mỹ Tho" }],
@@ -112,6 +118,18 @@ export function seoFor(path, lang, t = (key, fallback) => fallback) {
     };
   }
 
+  if (path === "/journey") {
+    return {
+      ...base,
+      title: copy.journeyTitle,
+      description: copy.journeyDescription,
+      image: ogImage("home", lang), // ponytail: shares the home card; add og/journey-*.jpg in generate-og.mjs if previews need their own
+      imageAlt: copy.homeAlt,
+      type: "website",
+      jsonLd: { "@context": "https://schema.org", "@graph": [breadcrumbs([[copy.home, urlFor("/", lang)], [copy.journey, base.url]])] },
+    };
+  }
+
   const id = path.split("/")[2];
   const project = projects.find((item) => item.id === id);
   if (!project) return seoFor("/", lang, t);
@@ -141,4 +159,4 @@ export function seoFor(path, lang, t = (key, fallback) => fallback) {
 }
 
 /** Every indexable route, for prerendering and the sitemap. */
-export const routes = () => ["/", "/project", ...projects.map((project) => `/project/${project.id}`)];
+export const routes = () => ["/", "/project", "/journey", ...projects.map((project) => `/project/${project.id}`)];

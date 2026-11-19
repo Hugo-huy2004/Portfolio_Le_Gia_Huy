@@ -30,7 +30,8 @@
     "kinds": {
       "personal": "Personal project",
       "client": "Client work",
-      "live": "In real use"
+      "live": "In real use",
+      "coursework": "Coursework"
     },
     "periodNow": "now",
     "items": {
@@ -68,28 +69,29 @@
         "closing": "The site is live and parishioners open it daily. For a parish portal, success isn't traffic — it's that nobody has to phone around to find out when Mass is."
       },
       "hwj": {
-        "tagline": "A fine jewellery platform priced against live gold and silver rates.",
-        "role": "Design & full-stack development",
-        "summary": "A single piece costs more than a motorbike. What does the storefront selling it look like? The answer here is a magazine — large serif type, plenty of air, and not one \"BUY NOW\" button.",
-        "techNote": "Built end to end: React and Tailwind in the browser; Node.js with MongoDB on the server for accounts, consultation bookings and the cart; product imagery on Cloudinary; sign-in through Google OAuth; and a metals API so pricing tracks live gold and silver rates.",
+        "tagline": "A luxury jewellery e-commerce system on MERN: metal-linked pricing, server-verified PayPal checkout, one admin dashboard.",
+        "role": "Design & full build",
+        "summary": "Coursework for COMP1842 Web Programming 2, University of Greenwich (Vietnam): digitising the whole jewellery business, from product presentation to financial transactions and after-sales management.",
+        "techNote": "A MERN architecture in four layers: a React 19 + TypeScript interface (Vite, Zustand, Tailwind, Material UI); a Node.js/Express REST server; MongoDB Atlas through Mongoose; and third-party services — Google OAuth 2.0, the PayPal SDK and Cloudinary.",
         "highlights": [
           {
-            "title": "It began as a doubt",
-            "body": "Card grids, discount badges, red buttons — the familiar e-commerce kit was built for things bought quickly. Put it next to something considered for months and it works against the very piece it is selling."
+            "title": "Payments verified on the server",
+            "body": "After PayPal reports success, the backend calls the PayPal API to reconcile status and amount. An order whose total differs from PayPal's figure is rejected, so a payment result cannot be forged from the browser."
           },
           {
-            "title": "So the site was built like a publication",
-            "body": "Very large serif headlines, a wide grid, cream and antique gold. Products don't sit in a card grid; they sit inside an article with chapters, at the pace of an auction house catalogue."
+            "title": "Layered security",
+            "body": "Customers sign in with Google OAuth 2.0 and sessions are held by JWT. Admin passwords are hashed with bcrypt; admin APIs sit behind role checks, an API key, CORS and rate limiting."
           },
           {
-            "title": "Vocabulary in place of buttons",
-            "body": "\"Acquisition Consultation\" instead of \"Add to cart\". \"Registry no.\" instead of a product code. At this level, language positions a piece more than colour does, and an invitation to sit down reads better than an instruction to buy."
+            "title": "A flexible data model for jewellery",
+            "body": "MongoDB stores each piece's variable attributes (karat, metal weight, stones, SKU) as documents. Mongoose enforces required fields and unique voucher and product codes; hooks update total spend and loyalty points after every order."
           },
           {
-            "title": "But the price can't just be beautiful",
-            "body": "Gold and silver rates come straight from a market API, shown as a sell and buyback table per mace. Behind the printed page, the server side carries accounts, consultation bookings and the cart — enough for an enquiry to travel its whole distance."
+            "title": "One dashboard for all operations",
+            "body": "When an admin signs in, the account page becomes a dashboard: products (images on Cloudinary), orders, consultation appointments, support tickets, customers and system settings such as vouchers and shipping fees."
           }
         ],
+        "closing": "The biggest lesson: most of a full-stack project's success lies in getting the data structure right from the start, and the defences that matter most always belong on the backend.",
         "shots": {
           "home": "Home — \"The Art of Preservation\".",
           "collections": "The collections, laid out at the pace of a magazine.",
@@ -98,7 +100,443 @@
           "heritage": "The atelier timeline, told in chapters.",
           "appointment": "Booking an acquisition consultation, in place of a buy button."
         },
-        "closing": "This was a brief I set myself, and the biggest lesson is barely technical: at this end of the market, restraint sells more than urgency."
+        "report": {
+          "title": "Project report",
+          "abstract": "HWJ (Hugo Wishpax Jewellery) is a luxury jewellery e-commerce system built on a full-stack MERN architecture. The project aims to digitise the jewellery business, from product presentation to financial transactions and after-sales management. Its core differentiator is the integration of a real service chain: precious-metal prices that follow the market, third-party authentication, payments reconciled on the server and transparent electronic invoices. The system implements full CRUD with a clear separation of permissions between customers and administrators.",
+          "sections": [
+            {
+              "title": "Development process",
+              "paragraphs": [
+                "The project followed an iterative and incremental model, allowing quality control after each cycle and flexible integration of new features. It ran in six phases:"
+              ],
+              "list": [
+                "Business requirements: defining customer and admin roles, the order flow, and warranty and return policies specific to jewellery.",
+                "Overall architecture: separating the interface (React), server (Express/Node.js), database (MongoDB) and third-party integration layer (PayPal, Cloudinary).",
+                "Interface and navigation design: a standard sitemap for both customers and administrators.",
+                "Data model design: normalised entities, validation and query indexes.",
+                "Security and payments: JWT authentication, protected admin APIs, rate limiting and server-side PayPal verification.",
+                "Integration testing: manual end-to-end testing of every business flow."
+              ]
+            },
+            {
+              "title": "Interface and navigation design",
+              "paragraphs": [
+                "The interface follows a Luxury Minimalism style with the brand colours #ec003f and #020618. Pages are grouped by task to shape the customer journey: Explore (Heritage, Collections, Product Detail), Transaction (Cart, Confirm Order, Valuation), Service (Appointment, Policies, Support) and Account (member profile and admin dashboard).",
+                "Client-side navigation is handled by React Router; the server is split into independent REST modules behind the /api gateway: /auth and /admins for identity, /products, /orders and /vouchers for the core business, /appointments and /support/tickets for customer care, and /settings for system configuration."
+              ],
+              "table": {
+                "caption": "UX objective and main components of each page.",
+                "head": [
+                  "Page",
+                  "UX objective",
+                  "Main components"
+                ],
+                "rows": [
+                  [
+                    "Heritage",
+                    "Build trust and brand impression",
+                    "Hero banner, historical narrative, calls to action"
+                  ],
+                  [
+                    "Collections",
+                    "Make searching easy",
+                    "Product grid, filters by category, material and price"
+                  ],
+                  [
+                    "Product Detail",
+                    "Support the purchase decision",
+                    "High-resolution images, gold/silver specifications, dynamic price, add to cart"
+                  ],
+                  [
+                    "Cart",
+                    "Check the order before paying",
+                    "Product list, quantity controls, subtotal"
+                  ],
+                  [
+                    "Confirm Order",
+                    "Complete the transaction securely",
+                    "Delivery details, voucher, loyalty points, PayPal button"
+                  ],
+                  [
+                    "Account",
+                    "Personalise the experience",
+                    "Profile, membership tier, order history, e-invoices"
+                  ],
+                  [
+                    "Appointment",
+                    "Bespoke consultation",
+                    "Booking form, time slot and service type"
+                  ],
+                  [
+                    "Policies",
+                    "Transparency and compliance",
+                    "Privacy, warranty, returns"
+                  ]
+                ]
+              },
+              "wide": true,
+              "figures": [
+                {
+                  "src": "r12",
+                  "caption": "Client-side navigation flow."
+                },
+                {
+                  "src": "r21",
+                  "caption": "Backend API module structure."
+                }
+              ]
+            },
+            {
+              "title": "Technology",
+              "subsections": [
+                {
+                  "title": "Front end",
+                  "body": "A single-page application in React 19 and TypeScript; TypeScript types for Product and Order catch errors during development in the complex checkout flow. Zustand manages global state (cart, session, settings) without prop drilling. Tailwind CSS handles layout and Material UI provides data tables and forms (React, 2024; Zustand, 2024)."
+                },
+                {
+                  "title": "Back end",
+                  "body": "Node.js and Express provide a REST API split into modules (Auth, Products, Orders, Appointments), so features such as vouchers can be added without touching the rest. JWT holds sessions; bcrypt hashes admin passwords; middleware applies CORS, brute-force rate limiting and an admin-only API key check. The key technical point is verifying the final payment status through the PayPal API on the server (Node.js Foundation, 2024; PayPal Developer, 2024)."
+                },
+                {
+                  "title": "Database",
+                  "body": "MongoDB Atlas stores documents, which suits jewellery's variable attributes without the migrations of a traditional SQL schema. Mongoose enforces required fields, email format and unique voucher and product codes; hooks recalculate loyalty points and total spend after each successful order; order numbers and customer emails are indexed (MongoDB, 2024)."
+                },
+                {
+                  "title": "Rationale",
+                  "body": "One language, JavaScript, across interface and server allows shared logic such as validation and reduces context switching. MongoDB's NoSQL model and Node.js's asynchronous processing let the system scale when traffic peaks during promotions."
+                }
+              ]
+            },
+            {
+              "title": "Legal, ethical and social issues",
+              "subsections": [
+                {
+                  "title": "GDPR compliance",
+                  "body": "The system follows Privacy by Design: it collects only what a transaction needs (email, phone, address) and states the purpose in the Privacy Policy, in line with data minimisation under Article 5 GDPR. Customers can view and edit their data and ask for consultation history to be deleted. Full compliance would add machine-readable data export and records of processing activities (European Parliament and Council, 2016)."
+                },
+                {
+                  "title": "Ethical design",
+                  "body": "The interface avoids dark patterns: cancelling an appointment or clearing the cart is easy, respecting customer autonomy. Loyalty points and vouchers are computed on the backend for fairness. Server-side payment verification is both a technical measure and a commitment to protecting customers' money (Gotterbarn, Miller and Rogerson, 1997; OWASP Foundation, 2021)."
+                }
+              ]
+            },
+            {
+              "title": "Interface evidence — customer experience",
+              "wide": true,
+              "figures": [
+                {
+                  "src": "r41",
+                  "caption": "Heritage page: \"The Art of Preservation\"."
+                },
+                {
+                  "src": "r42",
+                  "caption": "Heritage: \"The Dialogue of Fire & Gold\"."
+                },
+                {
+                  "src": "r43",
+                  "caption": "Heritage: the \"Chronicle\" timeline."
+                },
+                {
+                  "src": "r44",
+                  "caption": "Heritage: \"The Curated Archive\"."
+                },
+                {
+                  "src": "r45",
+                  "caption": "Heritage: material and provenance commitments."
+                },
+                {
+                  "src": "r51",
+                  "caption": "Collections page with category filters."
+                },
+                {
+                  "src": "r6b1",
+                  "caption": "Filtering products with the search bar."
+                },
+                {
+                  "src": "r81",
+                  "caption": "Product card marked as new."
+                },
+                {
+                  "src": "r91",
+                  "caption": "Product card with a discount."
+                },
+                {
+                  "src": "r101",
+                  "caption": "Product detail: specifications, material and price."
+                },
+                {
+                  "src": "r111",
+                  "caption": "Cart with selected products."
+                },
+                {
+                  "src": "r131",
+                  "caption": "Entering a voucher and loyalty points at checkout."
+                },
+                {
+                  "src": "r141",
+                  "caption": "Total after fees and discounts."
+                },
+                {
+                  "src": "r151",
+                  "caption": "Order confirmation after paying with PayPal."
+                },
+                {
+                  "src": "r161",
+                  "caption": "Valuation page: gold and silver prices following the market."
+                },
+                {
+                  "src": "r171",
+                  "caption": "Bespoke consultation page."
+                },
+                {
+                  "src": "r172",
+                  "caption": "Choosing a service and time slot."
+                },
+                {
+                  "src": "r181",
+                  "caption": "Customer sign-in with Google."
+                },
+                {
+                  "src": "r261",
+                  "caption": "Concierge Liaison: sending a support request."
+                },
+                {
+                  "src": "r601",
+                  "caption": "Policies page: privacy, warranty, returns."
+                }
+              ]
+            },
+            {
+              "title": "Interface evidence — admin mode",
+              "wide": true,
+              "figures": [
+                {
+                  "src": "r271",
+                  "caption": "Admin sign-in."
+                },
+                {
+                  "src": "r28a1",
+                  "caption": "Error message when authentication is rejected."
+                },
+                {
+                  "src": "r291",
+                  "caption": "Collection management."
+                },
+                {
+                  "src": "r301",
+                  "caption": "Editing product details and specifications."
+                },
+                {
+                  "src": "r311",
+                  "caption": "Product delete confirmation."
+                },
+                {
+                  "src": "r32a1",
+                  "caption": "Adding a new product, image uploaded to Cloudinary."
+                },
+                {
+                  "src": "r331",
+                  "caption": "The new product on the Collections page."
+                },
+                {
+                  "src": "r531",
+                  "caption": "System settings: creating a voucher."
+                },
+                {
+                  "src": "r541",
+                  "caption": "Turning a voucher on and off."
+                }
+              ]
+            },
+            {
+              "title": "Interface evidence — mobile",
+              "note": "The system is designed mobile-first, with a fixed bottom navigation bar for one-handed use.",
+              "figures": [
+                {
+                  "src": "r611",
+                  "caption": "Home (The Story) on a phone."
+                },
+                {
+                  "src": "r621",
+                  "caption": "Shop (Collections)."
+                },
+                {
+                  "src": "r631",
+                  "caption": "Valuation."
+                },
+                {
+                  "src": "r651",
+                  "caption": "Cart."
+                },
+                {
+                  "src": "r851",
+                  "caption": "Product view."
+                },
+                {
+                  "src": "r861",
+                  "caption": "Choosing a quantity."
+                },
+                {
+                  "src": "r841",
+                  "caption": "Payment successful."
+                },
+                {
+                  "src": "r821",
+                  "caption": "Booking a consultation."
+                },
+                {
+                  "src": "r831",
+                  "caption": "Booking confirmed."
+                },
+                {
+                  "src": "r711",
+                  "caption": "Collection management in admin mode."
+                }
+              ]
+            },
+            {
+              "title": "Testing and evaluation",
+              "paragraphs": [
+                "Testing combined two methods: static checks with ESLint and TypeScript type checking on the front end, and manual business-flow testing that simulated users from product search and payment through to after-sales service."
+              ],
+              "table": {
+                "caption": "Main test cases.",
+                "head": [
+                  "Code",
+                  "Scenario",
+                  "Expected result",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "HWJ01",
+                    "Sign in with Google OAuth",
+                    "Customer profile created or updated",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ02",
+                    "Update profile",
+                    "Name, phone and address saved to MongoDB",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ03",
+                    "Checkout with an incomplete profile",
+                    "Payment blocked",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ04",
+                    "Valid PayPal order",
+                    "Order saved with paymentStatus: \"paid\"",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ05",
+                    "Simulated payment amount mismatch",
+                    "Backend rejects the order",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ06",
+                    "Apply a voucher",
+                    "Discount matches the voucher settings",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ07",
+                    "Unauthorised admin API access",
+                    "403 Forbidden",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ08",
+                    "Product CRUD",
+                    "Add, edit, delete and sync images to Cloudinary",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ09",
+                    "Change order status",
+                    "Customer sees the latest status",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ10",
+                    "Book a consultation",
+                    "Appointment saved as Pending",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ11",
+                    "Dynamic membership tier",
+                    "Tier updates at the spending threshold",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ12",
+                    "Metal valuation",
+                    "Reference prices follow the market",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ13",
+                    "Responsive test",
+                    "Displays well on phones and tablets",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ14",
+                    "Add an out-of-stock item",
+                    "Button disabled or shows out of stock",
+                    "Pass"
+                  ],
+                  [
+                    "HWJ15",
+                    "Change cart quantity",
+                    "Subtotal updates immediately",
+                    "Pass"
+                  ]
+                ]
+              }
+            },
+            {
+              "title": "Limitations and future work",
+              "list": [
+                "Test automation: move from manual testing to unit, integration and end-to-end tests with Jest or Cypress.",
+                "SEO and performance: move to Next.js for server-side rendering so products are easier for search engines to index.",
+                "AI: a consultation chatbot based on customer preferences and automatic categorisation of support tickets.",
+                "Interface: further optimisation for mobile devices and users of all ages."
+              ]
+            },
+            {
+              "title": "Reflection",
+              "paragraphs": [
+                "Technically, the project showed how to join the separate parts of MERN into one system, from a flexible MongoDB schema to an optimised React 19 interface; managing state with Zustand changed how I approach SPA performance.",
+                "The hardest part was integrating the PayPal SDK and verifying payments on the server for financial accuracy, alongside syncing the cart, handling API errors and balancing aesthetics with load speed when serving high-quality images through Cloudinary.",
+                "The biggest lesson was to design the data structure correctly from the start, and that the important defences belong on the backend rather than the client."
+              ]
+            },
+            {
+              "title": "Conclusion",
+              "paragraphs": [
+                "HWJ meets its goal of a specialised e-commerce platform for luxury jewellery. The MERN architecture addresses three demands: a refined experience, flexible data management and secure financial transactions. The project brings together full-stack programming, UI/UX design standards and real business processes."
+              ]
+            }
+          ],
+          "references": [
+            "Cloudinary (2024) Cloudinary Image Management for Web Developers. Available at: https://cloudinary.com/documentation",
+            "European Parliament and Council (2016) Regulation (EU) 2016/679 (General Data Protection Regulation). Available at: https://gdpr-info.eu/",
+            "Gotterbarn, D., Miller, K. and Rogerson, S. (1997) Software Engineering Code of Ethics. Communications of the ACM, 40(11), pp. 110–118.",
+            "MongoDB (2024) What is MongoDB? Available at: https://www.mongodb.com/what-is-mongodb",
+            "Node.js Foundation (2024) Node.js v20.x Documentation. Available at: https://nodejs.org/docs/latest/api/",
+            "OWASP Foundation (2021) OWASP Top 10:2021. Available at: https://owasp.org/www-project-top-ten/",
+            "PayPal Developer (2024) Integration Guide for PayPal Checkout. Available at: https://developer.paypal.com/docs/checkout/",
+            "React Team (2024) React 19. Available at: https://react.dev/blog/2024/04/25/react-19",
+            "Zustand (2024) Getting started. Available at: https://docs.pmnd.rs/zustand/getting-started/introduction"
+          ]
+        }
       },
       "minh-oi-media": {
         "tagline": "A wedding documentary studio site — pricing, portfolio and the enquiry flow.",
@@ -155,6 +593,359 @@
           "khong-gian": "The space page — three storeys, spiral staircase."
         },
         "closing": "A short project, but the clearest lesson in it: the hard part of a menu isn't listing dishes, it's helping someone stop hesitating."
+      },
+      "mhike": {
+        "tagline": "A hiking-trip manager built twice: native Android (Java) and cross-platform (React Native).",
+        "role": "Design & full build",
+        "summary": "Coursework for COMP1786 Mobile Application Design and Development, University of Greenwich (Vietnam). Marked 77% and named Best Student in the module, Summer 2026.",
+        "techNote": "Two implementations on one Firebase data branch. The native Android app is written in Java on an Activity–Adapter–Model structure. The cross-platform app is written in React Native (Expo) and TypeScript, organised local-first around SQLite.",
+        "highlights": [
+          {
+            "title": "Local-first for a setting without signal",
+            "body": "The React Native app writes every operation to SQLite first, then mirrors it to Firebase on a best-effort basis. The app keeps working when the connection drops, which is the normal case on a trail."
+          },
+          {
+            "title": "The hike–observation relationship is preserved",
+            "body": "The SQLite schema separates hikes and observations and enables foreign keys with ON DELETE CASCADE. One hike holds many observations; deleting a hike removes its observations."
+          },
+          {
+            "title": "Multi-criteria search with parameterised queries",
+            "body": "Basic search matches a name prefix; advanced search builds a WHERE clause from name, location, length range, date range and difficulty, without concatenating user input into SQL."
+          },
+          {
+            "title": "Features beyond the specification",
+            "body": "GPS journey tracking, weather, an SOS beacon, a 12-week training plan, an English–Vietnamese interface and a dark theme."
+          }
+        ],
+        "closing": "Building one app two ways made it clear that a finished-looking interface is not the same as meeting the specification.",
+        "shots": {
+          "h01": "Native home: weather, quick actions, total distance.",
+          "h27": "React Native home on iPhone 16 Pro.",
+          "h46": "Advanced search by difficulty, length, date and location.",
+          "h51": "Journey tracking: time, speed, distance, GPS status.",
+          "h57": "Emergency SOS Beacon.",
+          "award-stage": "Receiving Best Student in the module, 17.09.2026."
+        },
+        "report": {
+          "title": "Project report",
+          "abstract": "This report evaluates two implementations of M-Hike: the MHike Android App, written natively in Java, and the cross-platform MHike App, written in React Native/Expo and TypeScript. The evaluation draws on the module specification, source-code review, experimental builds, runs on a Pixel 7 and an iPhone 16 Pro, and a logic test suite. The React Native implementation provides a more complete SQLite layer and advanced search, while the native implementation has a comparatively polished interface but departs from the specification in the role of SQLite, advanced search and the observation link during editing.",
+          "sections": [
+            {
+              "title": "Scope and method",
+              "list": [
+                "Each requirement (a)–(g) of the brief was traced to the actual interface flow and source code.",
+                "The native app was built with Gradle, installed as a debug APK and run on a Pixel 7 emulator.",
+                "The React Native app was run on a Pixel 7 and an iPhone 16 Pro, with typecheck, lint, logic tests and an Expo web build to compare responsive layouts.",
+                "HCI, security, screen adaptability and deployment readiness were assessed against official documentation and OWASP MASVS."
+              ]
+            },
+            {
+              "title": "Architecture",
+              "paragraphs": [
+                "The native Android app follows an Activity–Adapter–Model structure, uses Firebase Realtime Database as its primary store and SQLite as a cache for the hike list. This keeps the interface responsive but does not fully meet the requirement that SQLite be the storage mechanism for features (b) and (c).",
+                "The React Native app is local-first: db.ts manages SQLite (WAL mode, foreign keys) and api.ts wraps local operations and mirrors them to Firebase on a best-effort basis. This suits hiking, where connectivity is intermittent."
+              ]
+            },
+            {
+              "title": "Requirements traceability",
+              "table": {
+                "caption": "The specification against both M-Hike implementations.",
+                "head": [
+                  "Requirement",
+                  "Native (Java)",
+                  "React Native",
+                  "Evidence"
+                ],
+                "rows": [
+                  [
+                    "(a) Enter a hike",
+                    "Partial",
+                    "Complete",
+                    "Required and custom fields, GPS, date and a confirmation step; the native app does not show errors for some text fields."
+                  ],
+                  [
+                    "(b) Store, view, edit, delete, reset",
+                    "Partial",
+                    "Complete",
+                    "Native CRUD goes through Firebase with SQLite as a cache; React Native uses SQLite for CRUD and reset."
+                  ],
+                  [
+                    "(c) Observations",
+                    "Partial",
+                    "Complete",
+                    "React Native has a foreign key, many observations per hike and cascade delete."
+                  ],
+                  [
+                    "(d) Search",
+                    "Partial",
+                    "Complete",
+                    "React Native filters by name, location, length range, date range and difficulty."
+                  ],
+                  [
+                    "(e) Cross-platform prototype",
+                    "—",
+                    "Complete",
+                    "Runs on Android and iOS; the form reproduces requirement (a) with validation and confirmation."
+                  ],
+                  [
+                    "(f) Cross-platform storage",
+                    "—",
+                    "Complete",
+                    "Schema, migration, CRUD, search and the observation–hike relationship on SQLite."
+                  ],
+                  [
+                    "(g) Additional features",
+                    "Partial",
+                    "Partial",
+                    "GPS, weather, SOS, photos, training plan, bilingual UI, dark theme; some integrations need real configuration keys."
+                  ]
+                ]
+              }
+            },
+            {
+              "title": "Technical verification",
+              "table": {
+                "caption": "Technical verification results.",
+                "head": [
+                  "Component",
+                  "Check",
+                  "Result"
+                ],
+                "rows": [
+                  [
+                    "Native Android",
+                    "./gradlew clean assembleDebug",
+                    "Pass — APK installs and runs on Pixel 7"
+                  ],
+                  [
+                    "React Native",
+                    "npm run typecheck",
+                    "Pass — no type errors"
+                  ],
+                  [
+                    "React Native",
+                    "npm run lint",
+                    "Pass, 3 unused-import warnings"
+                  ],
+                  [
+                    "React Native",
+                    "health.check.ts",
+                    "Pass — 7 logic check groups"
+                  ],
+                  [
+                    "Expo web",
+                    "npm run build",
+                    "Pass"
+                  ],
+                  [
+                    "React Native – Android",
+                    "Run on Pixel 7",
+                    "Pass"
+                  ],
+                  [
+                    "React Native – iOS",
+                    "Run on iPhone 16 Pro",
+                    "Pass"
+                  ],
+                  [
+                    "npm dependencies",
+                    "npm audit",
+                    "Action needed — transitive vulnerabilities"
+                  ]
+                ]
+              }
+            },
+            {
+              "title": "Interface evidence — native Android",
+              "figures": [
+                {
+                  "src": "h01",
+                  "caption": "Home: weather, quick actions, total distance and bottom navigation."
+                },
+                {
+                  "src": "h02",
+                  "caption": "Hike list: search, status filters and data cards."
+                },
+                {
+                  "src": "h03",
+                  "caption": "Basic search by name and location."
+                },
+                {
+                  "src": "h05",
+                  "caption": "Hike form: required fields, extra fields, GPS, date and time."
+                },
+                {
+                  "src": "h08",
+                  "caption": "Validation message when parking has not been chosen."
+                },
+                {
+                  "src": "h10",
+                  "caption": "Confirmation screen summarising the data before saving."
+                },
+                {
+                  "src": "h11",
+                  "caption": "Hike detail: status, difficulty, distance, edit, delete, add note."
+                },
+                {
+                  "src": "h12",
+                  "caption": "Statistics: hikes, distance and a six-month chart."
+                },
+                {
+                  "src": "h17",
+                  "caption": "Choosing a hike before creating an observation."
+                },
+                {
+                  "src": "h18",
+                  "caption": "Observation: title, time, trail condition, wildlife, vegetation."
+                },
+                {
+                  "src": "h21",
+                  "caption": "Edit form pre-filled from the selected record."
+                },
+                {
+                  "src": "h22",
+                  "caption": "Delete confirmation guarding against accidental loss."
+                }
+              ]
+            },
+            {
+              "title": "Interface evidence — React Native on Android and iOS",
+              "figures": [
+                {
+                  "src": "h33",
+                  "caption": "Android onboarding presenting the core benefits."
+                },
+                {
+                  "src": "h34",
+                  "caption": "Android sign-in with Google."
+                },
+                {
+                  "src": "h27",
+                  "caption": "iOS home in English."
+                },
+                {
+                  "src": "h28",
+                  "caption": "The same iOS home after switching to Vietnamese."
+                },
+                {
+                  "src": "h29",
+                  "caption": "iOS settings: language, units, theme, offline."
+                },
+                {
+                  "src": "h30",
+                  "caption": "iOS settings in Vietnamese."
+                },
+                {
+                  "src": "h31",
+                  "caption": "The iOS location permission dialog."
+                },
+                {
+                  "src": "h55",
+                  "caption": "Android settings: theme, language, database, sync."
+                },
+                {
+                  "src": "h56",
+                  "caption": "Android settings in Vietnamese; data unchanged."
+                }
+              ]
+            },
+            {
+              "title": "Functional evidence — React Native (Expo web, phone viewport)",
+              "note": "A web export of the same React Native code, used to check functions and interface states; it does not replace on-device evidence.",
+              "figures": [
+                {
+                  "src": "h38",
+                  "caption": "Validation errors shown beside each required field."
+                },
+                {
+                  "src": "h40",
+                  "caption": "Confirmation screen before saving."
+                },
+                {
+                  "src": "h41",
+                  "caption": "Hike detail: weather, estimated energy, emergency contact."
+                },
+                {
+                  "src": "h44",
+                  "caption": "Observation detail with edit and delete."
+                },
+                {
+                  "src": "h46",
+                  "caption": "Advanced search combining difficulty, length, date and location."
+                },
+                {
+                  "src": "h47",
+                  "caption": "Statistics: total hikes, distance and a time chart."
+                },
+                {
+                  "src": "h51",
+                  "caption": "Journey tracking: time, speed, distance, GPS."
+                },
+                {
+                  "src": "h57",
+                  "caption": "Emergency SOS Beacon: signal state and emergency actions."
+                },
+                {
+                  "src": "h58",
+                  "caption": "Weekly training plan."
+                },
+                {
+                  "src": "h48",
+                  "caption": "Vietnamese settings in the dark theme."
+                },
+                {
+                  "src": "h60",
+                  "caption": "Delete-all dialog stating the consequence, with a cancel button."
+                }
+              ]
+            },
+            {
+              "title": "Evaluation",
+              "subsections": [
+                {
+                  "title": "Human–computer interaction (HCI)",
+                  "body": "Large headings, cards on a neutral background, a five-item bottom bar, empty states and button-style choices reduce memory load. The form is grouped, pre-fills the date, supports GPS and confirms before saving. Native limitations: some required fields are blocked silently, the form is long in locked portrait, and TalkBack, large text and contrast are untested. Improvements: errors beside each field, focus moved to the first error, touch targets of at least 48 dp and 4.5:1 contrast (Android Developers, 2026a)."
+                },
+                {
+                  "title": "Security and privacy",
+                  "body": "Strengths: Google sign-in, internal Activities set to exported=false, offline caching in Firebase. Limitations: no Firebase Security Rules in the repository, the REST layer sends no ID token, encryptData is reversible Base64 encoding, and allowBackup is on. Priorities: Rules scoped to auth.uid, App Check, tokens in Keystore/SecureStore, minimal permissions and dependency scanning in CI (Firebase, 2026; OWASP Foundation, 2026)."
+                },
+                {
+                  "title": "Screen size and state",
+                  "body": "Both apps use dp/sp, ScrollView or Flexbox and work well on a phone in portrait. There is no layout for tablets, foldables or split screen. Improvements: window-size classes and useWindowDimensions for a list–detail layout, tested at 200% font size (Android Developers, 2026b; React Native, 2026)."
+                },
+                {
+                  "title": "Live deployment",
+                  "body": "A development/release build is needed instead of Expo Go, along with a single applicationId, a real Maps key, separate dev/staging/prod Firebase projects and a CI pipeline running Gradle, typecheck, lint, migration tests and App Bundle signing. Because the app handles location, photos and emergency contacts, a Data safety declaration and a privacy policy are required before release (Expo, 2026; Google Play, 2026)."
+                }
+              ]
+            },
+            {
+              "title": "Reflection",
+              "paragraphs": [
+                "The early phase prioritised the home screen, list, form and navigation, which produced a consistent experience early but left the foundational requirements — SQLite, the hike–observation relationship and advanced search — loosely traced. The most effective part was the local-first React Native prototype, where the schema, typecheck and logic tests caught errors without relying on manual runs.",
+                "Done again, a requirement–screen–data layer–test case matrix would come before any interface, each requirement would carry explicit acceptance criteria, and security would be part of the architecture from the start rather than handled at the end."
+              ]
+            },
+            {
+              "title": "Conclusion",
+              "paragraphs": [
+                "M-Hike reaches a substantial functional base: hike CRUD, a multi-field form, observations, sign-in, GPS and several extensions, with the React Native app adding local-first SQLite and multi-criteria search. The next steps are moving native CRUD onto SQLite, completing native advanced search, configuring release builds, then locking down Firebase Rules, tokens and permissions before optimising for tablets."
+              ]
+            }
+          ],
+          "references": [
+            "Android Developers (2026a) Make apps more accessible. Available at: https://developer.android.com/guide/topics/ui/accessibility/apps",
+            "Android Developers (2026b) Responsive and adaptive layouts with Views. Available at: https://developer.android.com/develop/ui/views/layout/responsive-adaptive-design-with-views",
+            "Expo (2026) Introduction to development builds. Available at: https://docs.expo.dev/develop/development-builds/introduction/",
+            "Firebase (2026) Realtime Database Security Rules. Available at: https://firebase.google.com/docs/database/security",
+            "Google Play (2026) Provide information for Google Play's Data safety section. Available at: https://support.google.com/googleplay/android-developer/answer/10787469",
+            "OWASP Foundation (2026) Mobile Application Security Verification Standard (MASVS). Available at: https://mas.owasp.org/MASVS/",
+            "React Native (2026) useWindowDimensions. Available at: https://reactnative.dev/docs/usewindowdimensions",
+            "SQLite Consortium (2026) SQLite Foreign Key Support. Available at: https://www.sqlite.org/foreignkeys.html",
+            "University of Greenwich (2025) COMP1786 Mobile Application Design and Development: Practical Coursework 1 2025/26. Unpublished module specification."
+          ]
+        }
       }
     },
     "openSite": "Open {{label}}",

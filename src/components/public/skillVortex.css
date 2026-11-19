@@ -1,0 +1,49 @@
+/* Skills vortex: glass petals on a canvas behind, photo bottom-left, copy on the right over a still pool of light
+   painted in the canvas (no backdrop blur: it would re-filter every frame the glass turns). */
+.creator-skills{background:#020b33;color:#eef2ff}
+.vx{position:relative;background:radial-gradient(110% 90% at 22% 100%,#1530a8 0%,#071a66 42%,#020b33 100%);height:100svh;overflow:hidden;isolation:isolate}
+.vx-glass{position:absolute;inset:0;z-index:-1;width:100%;height:100%}
+/* Bling: four-point stars that twinkle (transform + opacity only). Paused off-screen via [data-off] (IntroductionPage). */
+.vx-sparkles{position:absolute;inset:0;pointer-events:none}
+.vx-sparkles i{position:absolute;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M12 0c.6 6.4 5.6 11.4 12 12-6.4.6-11.4 5.6-12 12-.6-6.4-5.6-11.4-12-12C6.4 11.4 11.4 6.4 12 0Z'/%3E%3C/svg%3E") center/contain no-repeat;opacity:0;animation:vx-twinkle 3.2s ease-in-out infinite}
+@keyframes vx-twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:.9;transform:scale(1) rotate(45deg)}}
+@media(prefers-reduced-motion:reduce){.vx-sparkles i{animation:none;opacity:.35}}
+/* A die-cut sticker (white border baked into public/hugo-skills.webp), stuck on at a slight tilt. Static, so the shadow is free. */
+.vx-photo{position:absolute;left:clamp(1rem,7vw,8rem);bottom:5%;height:min(72%,660px);width:auto;rotate:-3deg;filter:drop-shadow(0 18px 28px rgb(1 6 22/.45))}
+
+.vx-card{position:absolute;top:50%;right:clamp(1.25rem,7vw,8rem);display:grid;width:min(520px,44vw);gap:.75rem;transform:translateY(-50%)}
+.vx-card h2{color:#f4f6fb;font-size:clamp(2rem,3.6vw,3.6rem);font-weight:800;letter-spacing:-.04em;line-height:.95}
+.vx-group{min-height:16rem;margin-top:1.25rem}
+.vx-group h3{color:#8db6f2;font-size:clamp(1.4rem,2.2vw,2rem);font-weight:800;letter-spacing:-.02em;transition:color .4s}
+/* Bare logos; the name appears on hover, tap or keyboard focus (it stays in the DOM for screen readers). */
+.vx-logos{display:flex;margin:1.5rem 0 0;padding:0 0 1.6rem;flex-wrap:wrap;gap:1.75rem 2.25rem;list-style:none}
+.vx-logos li{position:relative;display:grid;justify-items:center;outline:none;cursor:default}
+.vx-logo{display:grid;width:52px;height:52px;place-items:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.vx-logo img,.vx-logo svg{width:100%;height:100%}
+.vx-logo svg[data-dark],.vx-logo.is-tinted svg{fill:#f4f6fb}
+.vx-logos.is-studied .vx-logo{opacity:.8}
+.vx-name{position:absolute;top:calc(100% + .5rem);padding:.2rem .55rem;border-radius:999px;background:rgb(244 246 251/.95);color:#0b1033;font-size:.75rem;font-weight:700;white-space:nowrap;opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none}
+.vx-logos li:hover .vx-logo,.vx-logos li:focus-visible .vx-logo,.vx-logos li:focus .vx-logo{transform:translateY(-4px) scale(1.08)}
+.vx-logos li:hover .vx-name,.vx-logos li:focus .vx-name{opacity:1;transform:none}
+.vx-logos li:focus-visible .vx-logo{outline:2px solid #8db6f2;outline-offset:6px;border-radius:.5rem}
+.vx .vx-proof{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem .8rem;margin-top:1.25rem;font-size:.9rem}
+.vx-proof span{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.vx-proof a{color:#b8c9ea;font-weight:700;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.vx-dots{display:flex;margin:0;padding:0;gap:.6rem;list-style:none}
+.vx-dots button{width:12px;height:12px;padding:0;border:2px solid rgb(255 255 255/.7);border-radius:999px;background:var(--dot);opacity:.45;cursor:pointer;transition:width .3s,opacity .3s}
+.vx-dots button[aria-current]{width:32px;opacity:1}
+.vx-dots button:focus-visible{outline:2px solid var(--dot);outline-offset:3px}
+
+/* Phone: copy up top, Hugo standing on the bottom edge with the vortex behind him. */
+@media(max-width:820px){
+  .vx-photo{left:50%;bottom:2%;height:min(52svh,calc(92vw * 553 / 519));transform:translateX(-50%)}
+  .vx-card{top:4.5rem;right:1.25rem;left:1.25rem;width:auto;gap:.4rem;transform:none}
+  .vx-card h2{font-size:clamp(1.6rem,7vw,2.2rem)}
+  .vx-group{min-height:0;margin-top:.35rem}
+  .vx-group h3{font-size:1.3rem}
+  .vx-logos{margin-top:1rem;gap:1.4rem 1.6rem}
+  .vx-logo{width:40px;height:40px}
+  .vx .vx-proof{margin-top:.75rem;font-size:.85rem}
+  .vx-dots{margin-top:.35rem}
+}
+/* Reduced motion: no glass is drawn; the navy gradient stays and the dots switch groups. */

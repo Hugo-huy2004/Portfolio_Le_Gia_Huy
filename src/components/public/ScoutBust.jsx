@@ -1,8 +1,8 @@
-// Youth leader (Huynh trưởng TNTT) — the reference illustration itself (public/education/huynh-truong.png, 856×974).
+// Youth leader (Huynh trưởng TNTT) — the reference illustration itself (public/education/huynh-truong.webp, 856×974).
 // A grayscale copy sits over the scarf through a mask; the page's scroll timeline draws black strokes into
 // that mask (.scout-reveal) in tying order — left side, right side, knot, tail — so the red scarf "goes on".
 // Without the timeline (reduced motion) the reveal strokes are fully drawn, i.e. the full-colour picture.
-const SRC = "/education/huynh-truong.png";
+const SRC = "/education/huynh-truong.webp";
 // Centre-lines of the scarf in image pixels, in the order it is tied.
 const SCARF = [
   "M286 258 C250 290 222 330 240 380 C256 420 300 440 336 448",

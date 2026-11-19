@@ -12,8 +12,10 @@ import scriptFont from "../../fonts/heroScript";
 import { cvPdf } from "../../config/publicSites";
 import { useHeadMeta } from "../../hooks/useHeadMeta";
 import { projects, shotUrl } from "../../data/projects";
-import TechLogo from "../../components/public/TechLogo";
+import { standing } from "../../data/grades";
+import SkillVortex, { playSkillVortex } from "../../components/public/SkillVortex";
 import ScoutBust from "../../components/public/ScoutBust";
+import GreenwichStage from "../../components/public/GreenwichStage";
 import { SmartImg } from "../../components/public/Resilience";
 import { playHapticTick } from "../../utils/CinematicSoundEngine";
 import "./introduction.css";
@@ -39,10 +41,6 @@ function RiseHeading({ children }) {
   );
 }
 
-const languageLogos = [
-  ["JavaScript", "javascript"], ["TypeScript", "typescript"], ["PHP", "php"],
-  ["Python", "python"], ["C#", "csharp"], ["C++", "cplusplus"], ["SQL", "sql"],
-];
 
 // Liquid glass: backdrop-filter: url() refraction only renders in Chromium; other engines keep the frosted blur.
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -159,7 +157,7 @@ function HeroSection({ copy }) {
           initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 1.1, ease }}>
           <Podium />
         </motion.div>
-        <motion.img className="hero-portrait" src="/hugo-portrait.png" alt="Hugo Wishpax — Lê Gia Huy"
+        <motion.img className="hero-portrait" src="/hugo-portrait.webp" alt="Hugo Wishpax — Lê Gia Huy"
           initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 1.1, ease }} />
       </div>
 
@@ -182,7 +180,7 @@ function HeroSection({ copy }) {
   );
 }
 
-// Signature reveal: thick strokes traced over public/hugo-signature.png (617×405) in signing order,
+// Signature reveal: thick strokes traced over public/hugo-signature.webp (617×405) in signing order,
 // used as a mask so the real ink appears as if being signed. [path, seconds to draw]
 const signatureStrokes = [
   ["M72 215 C110 188 150 170 192 158 C230 150 240 176 226 204 C214 230 198 256 180 270", 0.55],
@@ -207,32 +205,10 @@ function Signature() {
           ))}
         </mask>
       </defs>
-      <image href="/hugo-signature.png" width="617" height="405" mask="url(#signature-reveal)" />
+      <image href="/hugo-signature.webp" width="617" height="405" mask="url(#signature-reveal)" />
     </svg>
   );
 }
-
-const skillFrames = (language) => [
-  { title: language === "vi" ? "Ngôn ngữ" : "Languages", logos: languageLogos.map(([name, icon]) => [name, icon && `/tech-logos/${icon}.svg`]) },
-  ...techGroups.map((group) => ({
-    title: group.title[language] ?? group.title.en,
-    text: group.text?.[language] ?? group.text?.en,
-    logos: group.logos?.map((name) => [name, name === "SQL" ? "/tech-logos/sql.svg" : null]),
-  })),
-];
-
-const techGroups = [
-  { title: { vi: "Giao diện", en: "Frontend" }, logos: ["React", "Next.js", "Tailwind", "Expo"] },
-  { title: { vi: "Máy chủ", en: "Backend" }, logos: ["Node.js", "Express.js", "Firebase"] },
-  { title: { vi: "Cơ sở dữ liệu", en: "Databases" }, logos: ["MongoDB", "SQL"] },
-  { title: { vi: "Công cụ & nền tảng", en: "Tools & platforms" }, logos: ["Git", "GitHub", "Docker", "Vercel", "Render"] },
-  { title: { vi: "Khái niệm", en: "Concepts" }, text: {
-    vi: ["Thiết kế RESTful API", "OAuth", "Mô hình MVC", "Thiết kế đáp ứng"],
-    en: ["RESTful API design", "OAuth", "MVC pattern", "Responsive design"],
-  } },
-];
-
-
 
 const socialLinks = [
   { name: "Facebook", icon: "facebook", href: "https://www.facebook.com/share/18jfh4AUPh/?mibextid=wwXIfr" },
@@ -251,10 +227,10 @@ const profileCopy = {
     sloganKicker: "LÊ GIA HUY · HUGO WISHPAX",
     slogan: "Sinh viên năm cuối Kỹ thuật phần mềm",
     aboutTitle: "Tôi là Hugo.\nTên thật là Lê Gia Huy.",
-    about: "Sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam, GPA 3.80. Tôi làm web và app cho khách hàng thật, và là Huynh trưởng Thiếu Nhi Thánh Thể ở Mỹ Tho.",
+    about: "Sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam, sinh viên xuất sắc nhất môn Mobile App kỳ Summer 2026. Tôi làm web và app cho khách hàng thật, và là Huynh trưởng Thiếu Nhi Thánh Thể ở Mỹ Tho.",
     languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
     techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng tôi dùng hằng ngày.",
-    education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối", grade: "Điểm trung bình tạm tính: 69% · US GPA tương đương: 3.80/4.00",
+    education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối",
   },
   en: {
     heroLine: "I'm Lê Gia Huy, a final-year Software Engineering student at Greenwich Vietnam. I build web and mobile apps with React, Next.js and Node.js.",
@@ -263,10 +239,10 @@ const profileCopy = {
     sloganKicker: "LE GIA HUY · HUGO WISHPAX",
     slogan: "Final-year Software Engineering student",
     aboutTitle: "I'm Hugo.\nMy real name is Lê Gia Huy.",
-    about: "Final-year Software Engineering student at Greenwich Vietnam, 3.80 GPA. I build web and mobile apps for real clients, and lead a Eucharistic Youth chapter in Mỹ Tho.",
+    about: "Final-year Software Engineering student at Greenwich Vietnam, Best Student in Mobile App Development (Summer 2026). I build web and mobile apps for real clients, and lead a Eucharistic Youth chapter in Mỹ Tho.",
     languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
     techHeading: "Technical Skills", techNote: "The languages, frameworks and platforms I use every day.",
-    education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student", grade: "Provisional average: 69% · US GPA equivalent: 3.80/4.00",
+    education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student",
   },
 };
 
@@ -302,24 +278,35 @@ function JourneySlide({ project, index, total, t, from, stopLabel }) {
   );
 }
 
+// Greenwich honours algorithm (10:90), computed from data/grades.js so a new mark updates every number.
+function greenwichGrades(vi) {
+  return {
+    facts: [[`${Math.round(standing().score)}%`, vi ? "Điểm trung bình tạm tính" : "Provisional average"]],
+    note: vi
+      ? "Điểm được quy đổi chuẩn theo quy chế xếp loại bằng của University of Greenwich (10:90)."
+      : "Mark converted under the University of Greenwich degree classification rules (10:90).",
+  };
+}
+
 // Education told in three chapters; facts for Nguyễn Đình Chiểu come from vi.wikipedia (founding 17/3/1879, renamed 1953).
 const educationChapters = (language, copy) => {
   const vi = language === "vi";
   return [
     {
-      id: "greenwich", tone: "sky", label: vi ? "Đại học" : "University",
-      visual: <img className="edu-logo edu-logo--round" src="/education/greenwich-emblem.png" alt="University of Greenwich" />,
+      id: "greenwich", tone: "greenwich", label: vi ? "Đại học" : "University",
+      visual: <GreenwichStage alt={vi ? "Lê Gia Huy nhận Certificate of Merit tại lễ tôn vinh sinh viên kỳ Summer 2026" : "Lê Gia Huy receiving a Certificate of Merit at the Summer 2026 Student Honoring Ceremony"} />,
       kicker: vi ? "Đang theo học" : "Currently studying",
       title: "University of Greenwich (Vietnam)",
       sub: copy.degree,
       body: <mark className="edu-award"><Trophy size="1.1em" aria-hidden="true" />{vi
-        ? "Nhà trường ghi danh Sinh viên Xuất sắc kỳ Summer 2026."
-        : "Named an Outstanding Student, Summer 2026."}</mark>,
-      facts: [["3.80/4.00", vi ? "GPA quy đổi hệ Mỹ, tạm tính" : "US GPA equivalent, provisional"], ["69%", vi ? "Điểm trung bình tạm tính" : "Provisional average"]],
+        ? "Sinh viên xuất sắc nhất môn Thiết kế & Phát triển Ứng dụng Di động (dự án MHike), kỳ Summer 2026."
+        : "Best Student in Mobile Application Design & Development (MHike project), Summer 2026."}</mark>,
+      links: [{ to: "/journey", label: vi ? "Xem cả hành trình" : "See the whole journey" }],
+      ...greenwichGrades(vi),
     },
     {
       id: "ndc", tone: "cobalt", label: vi ? "Trung học" : "High school",
-      visual: <img className="edu-logo edu-logo--round" src="/education/nguyen-dinh-chieu.png" alt={vi ? "Logo Trường THPT Nguyễn Đình Chiểu, Mỹ Tho" : "Nguyễn Đình Chiểu High School, Mỹ Tho — logo"} />,
+      visual: <img className="edu-logo edu-logo--round" src="/education/nguyen-dinh-chieu.webp" alt={vi ? "Logo Trường THPT Nguyễn Đình Chiểu, Mỹ Tho" : "Nguyễn Đình Chiểu High School, Mỹ Tho — logo"} />,
       kicker: vi ? "Tốt nghiệp THPT" : "High School Diploma",
       title: vi ? "THPT Nguyễn Đình Chiểu" : "Nguyễn Đình Chiểu High School",
       sub: "Collège de Mytho · Mỹ Tho",
@@ -360,6 +347,7 @@ function Education({ language, copy, from }) {
             {chapter.sub && <p className="edu-sub" translate={chapter.id === "huynh-truong" ? "no" : undefined}>{chapter.sub}</p>}
             {chapter.body && <p className="edu-body">{chapter.body}</p>}
             {chapter.facts && <dl className="edu-facts">{chapter.facts.map(([value, label]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
+            {chapter.note && <p className="edu-note">{chapter.note}</p>}
             {chapter.links && <div className="edu-links">{chapter.links.map((link, index) => link.href
               ? <a key={link.href} className={`edu-link${index ? " edu-link--quiet" : ""}`} href={link.href} target="_blank" rel="noreferrer" onClick={playHapticTick}>{link.label} <ArrowUpRight size={18} /></a>
               : <Link key={link.to} className={`edu-link${index ? " edu-link--quiet" : ""}`} to={link.to} state={{ from }} onClick={playHapticTick}>{link.label} <ArrowUpRight size={18} /></Link>)}</div>}
@@ -410,7 +398,7 @@ function Contact({ language }) {
 // a HUD in the corner reads the scene and a timecode off the scroll position.
 const scenes = [
   [".hero", "Mở màn", "Opening"], [".creator-marquee", "Thước phim", "Showreel"], [".creator-about", "Hồ sơ", "Profile"],
-  [".creator-skills", "Kỹ năng", "Skills"], [".edu", "Học vấn", "Education"], [".journey", "Hành trình", "Journey"], [".outro", "Lời kết", "Credits"],
+  [".creator-skills", "Kỹ năng", "Skills"], [".edu", "Học vấn", "Education"], [".journey", "Dự án", "Projects"], [".outro", "Lời kết", "Credits"],
 ];
 const FILM_SECONDS = 180; // ponytail: whole page reads as a 3-minute reel; the timecode is scroll progress × this
 
@@ -456,6 +444,12 @@ export default function IntroductionPage() {
   const marquee = useMemo(() => projects.map((project) => ({ id: project.id, title: project.title, src: shotUrl(project.id, project.cover || project.shots[0].src) })), []);
   useHeadMeta("/");
   const root = useRef(null);
+  // Looping CSS animations (marquee, coin, glints) keep the GPU busy even off-screen; pause them there.
+  useEffect(() => {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => e.target.toggleAttribute("data-off", !e.isIntersecting)));
+    root.current?.querySelectorAll(".creator-marquee, .edu-panel, .vx").forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   // One timeline script for the whole film, written in page order: ScrollTrigger measures each scene
   // after the pins above it, so the order below is load-bearing. Hero (scene 1) pins in HeroSection, which mounts first.
@@ -512,23 +506,9 @@ export default function IntroductionPage() {
       if (desktop) gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
         scrollTrigger: { trigger: ".creator-about", start: "top bottom", end: "bottom top", scrub: 0.5 } });
 
-      // ── Scene 4 · Skills: pinned, the frames slide sideways (phones too: the reel is short enough to fit one screen).
+      // ── Scene 4 · Skills: pinned colour vortex, one skill group per arm (components/public/SkillVortex.jsx).
       cut(".creator-skills", true);
-      {
-        const track = root.current.querySelector(".skills-track");
-        const distance = () => track.scrollWidth - track.parentElement.clientWidth;
-        gsap.set(".skills-reel", { overflow: "hidden" });
-        gsap.set(".skills-progress", { display: "block" });
-        const reelTween = gsap.to(track, { x: () => -distance(), ease: "none",
-          scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
-        gsap.to(".skills-progress i", { scaleX: 1, ease: "none",
-          scrollTrigger: { trigger: ".creator-skills", start: "top top", end: () => `+=${distance()}`, scrub: true } });
-        gsap.utils.toArray(".skills-frame").forEach((frame) => {
-          const inReel = (start, end) => ({ trigger: frame, containerAnimation: reelTween, start, end, scrub: 0.6 });
-          gsap.from(frame.querySelector("h3"), { xPercent: 35, autoAlpha: 0, ease: "power2.out", scrollTrigger: inReel("left 95%", "left 45%") });
-          gsap.from(frame.querySelectorAll("li"), { yPercent: 140, rotate: -28, scale: 0.4, autoAlpha: 0, stagger: 0.08, ease: "back.out(1.7)", scrollTrigger: inReel("left 85%", "left 30%") });
-        });
-      }
+      playSkillVortex(root.current.querySelector(".vx"));
 
       // ── Scene 5 · Education: desktop stacks the chapters on a pinned stage; phones stack them as sticky cards (chapters can be taller than a phone screen).
       cut(".edu", true);
@@ -562,14 +542,15 @@ export default function IntroductionPage() {
         const panels = gsap.utils.toArray(".edu-panel");
         panels.forEach((panel, index) => {
           if (index < panels.length - 1) {
-            gsap.set(panel, { position: "sticky", top: () => Math.min(0, window.innerHeight - panel.offsetHeight) });
+            // marginBottom = a read pause: the card stays stuck, fully visible, for that much scroll before the next one rises.
+            gsap.set(panel, { position: "sticky", top: () => Math.min(0, window.innerHeight - panel.offsetHeight), marginBottom: "35vh" });
             gsap.fromTo(panel, { scale: 1, "--dim": 0 }, { scale: 0.9, "--dim": 0.65, ease: "none", transformOrigin: "50% 0", // dim via overlay: fading the card would show the one beneath
               scrollTrigger: { trigger: panels[index + 1], start: "top bottom", end: "top top", scrub: true } });
           }
           if (index) gsap.fromTo(panel, { clipPath: "inset(8% 6% 0% 6% round 2rem)" }, { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "none",
             scrollTrigger: { trigger: panel, start: "top bottom", end: "top 30%", scrub: 0.5 } });
           scrubIn(panel.querySelector(".edu-visual"), { scale: 0.5, rotate: -16, autoAlpha: 0 }, panel, "top 80%", "top 25%");
-          scrubIn(panel.querySelectorAll(".edu-copy > *"), { y: 60, autoAlpha: 0, stagger: 0.1 }, panel.querySelector(".edu-copy"));
+          scrubIn(panel.querySelectorAll(".edu-copy > *"), { y: 60, autoAlpha: 0, stagger: 0.1 }, panel.querySelector(".edu-copy"), "top 95%", "top 60%");
         });
         gsap.to(".scout-reveal", { strokeDashoffset: 0, stagger: 0.2, ease: "power1.inOut", scrollTrigger: { trigger: ".scout-bust", start: "top 75%", end: "bottom 60%", scrub: 0.5 } });
       }
@@ -613,7 +594,7 @@ export default function IntroductionPage() {
 
       // Resizing across 820px swaps scripts: hand the reels back to native scrolling.
       return () => {
-        gsap.set(".skills-reel, .skills-progress, .journey-reel", { clearProps: "overflow,display" });
+        gsap.set(".journey-reel", { clearProps: "overflow,display" });
         gsap.set(".edu-panel", { clearProps: "all" });
       };
     });
@@ -652,7 +633,7 @@ export default function IntroductionPage() {
               </feComponentTransfer>
             </filter>
           </svg>
-          <motion.img src="/hugo-about.png" alt={language === "vi" ? "Hugo Wishpax quàng khăn len, nhìn sang bên" : "Hugo Wishpax in a knitted scarf, looking to the side"} loading="lazy"
+          <motion.img src="/hugo-about.webp" alt={language === "vi" ? "Hugo Wishpax quàng khăn len, nhìn sang bên" : "Hugo Wishpax in a knitted scarf, looking to the side"} loading="lazy"
             initial={{ opacity: 0, scale: 1.18, rotate: -12 }} whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
             viewport={{ once: true, amount: 0.4 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} />
           <Signature />
@@ -660,24 +641,7 @@ export default function IntroductionPage() {
       </section>
 
       <section id="skills" className="creator-skills">
-        <header><RiseHeading>{copy.techHeading}</RiseHeading><motion.p {...reveal}>{copy.techNote}</motion.p></header>
-        {/* Reel: pinned while the frames travel sideways; GSAP drives it, native horizontal scroll is the fallback. */}
-        <div className="skills-reel">
-          <div className="skills-track">
-            {skillFrames(language).map((frame, index, all) => <article key={frame.title} className="skills-frame">
-              <p className="skills-frame-count">{index + 1} / {all.length}</p>
-              <h3>{frame.title}</h3>
-              <ul className={frame.text ? "skills-frame-words" : "skills-frame-logos"}>
-                {frame.text?.map((name) => <li key={name}><span>{name}</span></li>)}
-                {frame.logos?.map(([name, src]) => <li key={name} title={name}><span>
-                  {src ? <img src={src} alt={name} /> : <TechLogo name={name} size={96} />}
-                  {!src && <span className="sr-only">{name}</span>}
-                </span></li>)}
-              </ul>
-            </article>)}
-          </div>
-        </div>
-        <div className="skills-progress" aria-hidden="true"><i /></div>
+        <SkillVortex language={language} heading={<RiseHeading>{copy.techHeading}</RiseHeading>} />
       </section>
 
       <Education language={language} copy={copy} from={`${location.pathname}${location.search}${location.hash}`} />

@@ -19,6 +19,72 @@ import "./projectDetail.css";
 const ease = [0.16, 1, 0.3, 1];
 const rise = { initial: { opacity: 0, y: 28 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.3 }, transition: { duration: 0.7, ease } };
 
+// Academic report: abstract, numbered sections (paragraphs, lists, tables, figures, subsections), references.
+// Tables and figures are numbered across the whole report; any figure opens large in a native <dialog>.
+function Report({ report, projectId, vi }) {
+  const [zoom, setZoom] = useState(null);
+  let table = 0;
+  let figure = 0;
+  return (
+    <section className="pd-report" aria-labelledby="pd-report-title">
+      <motion.h2 id="pd-report-title" {...rise}>{report.title}</motion.h2>
+      <motion.div className="pd-report-abstract" {...rise}>
+        <h3>{vi ? "Tóm tắt" : "Abstract"}</h3>
+        <p>{report.abstract}</p>
+      </motion.div>
+      {report.sections.map((section, index) => (
+        <section key={section.title} className="pd-report-section">
+          <h3><span>{index + 1}.</span> {section.title}</h3>
+          {section.note && <p className="pd-report-note">{section.note}</p>}
+          {section.paragraphs?.map((text) => <p key={text.slice(0, 40)}>{text}</p>)}
+          {section.list && <ul>{section.list.map((item) => <li key={item}>{item}</li>)}</ul>}
+          {section.table && (
+            <figure className="pd-report-table">
+              <figcaption>{vi ? "Bảng" : "Table"} {++table}. {section.table.caption}</figcaption>
+              <div className="pd-report-scroll">
+                <table>
+                  <thead><tr>{section.table.head.map((cell) => <th key={cell} scope="col">{cell}</th>)}</tr></thead>
+                  <tbody>{section.table.rows.map((row) => <tr key={row[0] + row[1]}>{row.map((cell, i) => i === 0 ? <th key={i} scope="row">{cell}</th> : <td key={i}>{cell}</td>)}</tr>)}</tbody>
+                </table>
+              </div>
+            </figure>
+          )}
+          {section.subsections?.map((sub, subIndex) => (
+            <div key={sub.title} className="pd-report-sub">
+              <h4>{index + 1}.{subIndex + 1} {sub.title}</h4>
+              <p>{sub.body}</p>
+            </div>
+          ))}
+          {section.figures && (
+            <div className={`pd-report-figures${section.wide ? " is-wide" : ""}`}>
+              {section.figures.map((fig) => {
+                const label = `${vi ? "Hình" : "Figure"} ${++figure}. ${fig.caption}`;
+                return (
+                  <figure key={fig.src + figure}>
+                    <button type="button" onClick={() => setZoom({ src: shotUrl(projectId, fig.src), label })} aria-label={vi ? `Phóng to: ${label}` : `Enlarge: ${label}`}>
+                      <SmartImg src={shotUrl(projectId, fig.src)} alt={fig.caption} />
+                    </button>
+                    <figcaption>{label}</figcaption>
+                  </figure>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      ))}
+      {report.references && (
+        <section className="pd-report-section pd-report-refs">
+          <h3>{vi ? "Tài liệu tham khảo" : "References"}</h3>
+          <ol>{report.references.map((ref) => <li key={ref}>{ref.split(/(https?:\/\/\S+)/).map((part, i) => /^https?:/.test(part) ? <a key={i} href={part} target="_blank" rel="noreferrer">{part}</a> : part)}</li>)}</ol>
+        </section>
+      )}
+      <dialog className="pd-zoom" open={!!zoom} onClick={() => setZoom(null)} onKeyDown={(e) => e.key === "Escape" && setZoom(null)}>
+        {zoom && <figure><img src={zoom.src} alt="" /><figcaption>{zoom.label}</figcaption></figure>}
+      </dialog>
+    </section>
+  );
+}
+
 export default function ProjectDetailPage() {
   const { slug } = useParams();
   const location = useLocation();
@@ -44,6 +110,8 @@ export default function ProjectDetailPage() {
   const summary = t(`${base}.summary`, project.summary);
   const highlights = t(`${base}.highlights`, { returnObjects: true, defaultValue: project.highlights });
   const caption = (src, fallback) => t(`${base}.shots.${src}`, fallback);
+  const report = project.report && t(`${base}.report`, { returnObjects: true, defaultValue: project.report });
+  const phone = project.device === "phone";
   const shots = project.shots;
   const shot = shots[active];
   const pad = (n) => String(n).padStart(2, "0");
@@ -66,8 +134,8 @@ export default function ProjectDetailPage() {
             {project.repo && <a className="pd-cta pd-cta--quiet" href={project.repo} target="_blank" rel="noreferrer"><TechLogo name="GitHub" size={17} /> {vi ? "Mã nguồn" : "Source"}</a>}
           </motion.div>
         </div>
-        <motion.figure className="pd-hero-shot" initial={{ opacity: 0, y: 60, rotate: 2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ delay: 0.2, duration: 1.1, ease }}>
-          <span className="pd-browser" aria-hidden="true"><i /><i /><i /><b>{project.urlLabel || project.title}</b></span>
+        <motion.figure className={`pd-hero-shot${phone ? " pd-hero-shot--phone" : ""}`} initial={{ opacity: 0, y: 60, rotate: 2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ delay: 0.2, duration: 1.1, ease }}>
+          {!phone && <span className="pd-browser" aria-hidden="true"><i /><i /><i /><b>{project.urlLabel || project.title}</b></span>}
           <SmartImg src={shotUrl(project.id, shots[0].src)} alt={caption(shots[0].src, shots[0].caption)} loading="eager" fetchPriority="high" />
         </motion.figure>
       </section>
@@ -126,7 +194,7 @@ export default function ProjectDetailPage() {
       </section>
 
       {/* ── Screens: one large view, polaroids to switch ───── */}
-      <section className="pd-screens">
+      <section className={`pd-screens${phone ? " pd-screens--phone" : ""}`}>
         <motion.h2 {...rise}>{vi ? "Xem tận mắt" : "See it for yourself"}</motion.h2>
         <div className="pd-viewer">
           <AnimatePresence mode="wait">
@@ -149,6 +217,8 @@ export default function ProjectDetailPage() {
           )}
         </div>
       </section>
+
+      {report && <Report report={report} projectId={project.id} vi={vi} />}
 
       {/* ── Next stop ───────────────────────────────────────── */}
       <Link to={`/project/${next.id}`} state={{ from: backTo }} className="pd-next" onClick={() => { setActive(0); setOpen(null); }}>

@@ -35,7 +35,7 @@ for (const lang of ["vi", "en"]) {
   pages.push({ name: `home-${lang}`, html: `<body style="background:#283db7;color:#f4f6fb">
     <div style="position:absolute;right:120px;top:70px;width:460px;height:460px;border-radius:50%;background:#b4452a"></div>
     <div style="position:absolute;left:64px;top:70px;font-family:'Bricolage Grotesque';font-size:250px;font-weight:800;letter-spacing:-.06em;line-height:.8">Hugo</div>
-    <img src="${asset("hugo-portrait.png")}" style="position:absolute;right:150px;bottom:-40px;height:610px;filter:${sticker}">
+    <img src="${asset("hugo-portrait.webp")}" style="position:absolute;right:150px;bottom:-40px;height:610px;filter:${sticker}">
     <div style="position:absolute;left:64px;top:300px;width:560px">
       <div class="serif" style="font-size:58px;line-height:1.02;color:#ffbf08">${vi ? "Kỹ sư phần mềm<br>Full-Stack" : "Full-Stack<br>Software Engineer"}</div>
       <p style="margin-top:20px;font-size:24px;line-height:1.4;opacity:.9">${vi ? "Web &amp; mobile, làm trọn từ giao diện tới máy chủ." : "Web &amp; mobile, built end to end."}</p>

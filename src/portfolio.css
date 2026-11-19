@@ -12,18 +12,15 @@
   z-index: 70;
   inset: 0 0 auto 0;
   width: 100%;
-  padding: 0;
+  padding: 0 0 34px;
   pointer-events: none;
-  background: rgba(8, 11, 22, 0.45);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background .3s ease, border-color .3s ease;
+  /* Heavy at the top, fading out below: no card, no blur (blur repaints every scroll frame). */
+  background: linear-gradient(to bottom, rgb(8 11 22 / .92), rgb(8 11 22 / .62) 45%, rgb(8 11 22 / .22) 75%, transparent);
+  transition: background .4s ease;
 }
 
 .portfolio-nav-wrap.is-light {
-  background: rgba(255, 255, 255, 0.78);
-  border-bottom: 1px solid rgba(12, 18, 48, 0.08);
+  background: linear-gradient(to bottom, rgb(255 255 255 / .95), rgb(255 255 255 / .7) 45%, rgb(255 255 255 / .25) 75%, transparent);
 }
 
 .portfolio-nav {
@@ -48,7 +45,7 @@
 
 /* Creator landing: the navigation stays quiet so the oversized hero can lead. */
 body:has(.creator-home) { background: #0c0c0c; }
-body:has(.creator-home) .portfolio-nav-wrap { inset-block-start: 0; padding: 0; }
+body:has(.creator-home) .portfolio-nav-wrap { inset-block-start: 0; }
 body:has(.creator-home) .portfolio-nav {
   width: 100%;
   max-width: 1280px;
@@ -344,31 +341,6 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
 
 @media (prefers-reduced-motion: reduce) {
   .portfolio-progress { display: none; }
-}
-
-/* Progressive blur behind the header */
-body:has(.creator-home) .portfolio-nav-wrap::before,
-body:has(.creator-home) .portfolio-nav-wrap::after {
-  display: none;
-}
-.portfolio-nav-wrap::before,
-.portfolio-nav-wrap::after {
-  position: fixed;
-  z-index: -1;
-  inset: 0 0 auto;
-  height: 110px;
-  content: "";
-  pointer-events: none;
-}
-.portfolio-nav-wrap::before {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  mask-image: linear-gradient(to bottom, #000 40%, transparent);
-}
-.portfolio-nav-wrap::after {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  mask-image: linear-gradient(to bottom, #000, transparent 65%);
 }
 
 /* Hover pill: one shared layoutId element that slides between nav items. */

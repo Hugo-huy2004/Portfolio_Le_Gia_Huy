@@ -6,7 +6,7 @@
 
 Check after editing: `pdfinfo` must say Pages: 1.
 Grade line follows UoG Academic Regulations D6.1(c): 10% Stage 2 (all Level 5) + 90% best 90 credits of Stage 3,
-rounded to a whole number; US GPA from Appendix A of the same regulations.
+rounded to a whole number. Source of truth: src/data/grades.js (node scripts/check-grades.mjs).
 """
 import sys
 from pathlib import Path
@@ -50,54 +50,51 @@ P("Portfolio: portfolio.hugowishpax.studio | GitHub: github.com/Hugo-huy2004", c
 story.append(HRFlowable(width="100%", thickness=0.8, color=DARK, spaceBefore=6, spaceAfter=0))
 
 section("PROFESSIONAL SUMMARY")
-P("Final-year Computing student at the University of Greenwich (Vietnam) with hands-on experience building full-stack "
-  "web and mobile applications using React, Next.js, Node.js, Express and MongoDB. Experienced in RESTful API design, "
-  "OAuth authentication, Firebase-backed applications, responsive design and the MVC pattern. Comfortable across "
-  "JavaScript/TypeScript, PHP, Python, C# and C++. Seeking a Frontend, Backend or Full-Stack Developer role.", body)
+P("Final-year Software Engineering student at the University of Greenwich (Vietnam), named Best Student in Mobile "
+  "Application Design and Development (Summer 2026). Builds full-stack web apps with React, Next.js, Node.js and MongoDB, "
+  "and mobile apps in native Android (Java) and React Native. Seeking a Frontend, Backend, Mobile or Full-Stack Developer role.", body)
 
 section("TECHNICAL SKILLS")
 for line in [
-    "Programming Languages: JavaScript, TypeScript, PHP, Python, C#, C++, SQL",
-    "Frontend: ReactJS, NextJS, TailwindCSS, Expo",
-    "Backend: ExpressJS, NodeJS, Firebase",
-    "Databases: MongoDB, SQL",
-    "Tools and Platforms: Git, GitHub, Docker, Vercel, Render",
-    "Concepts: RESTful API Design, OAuth, MVC Pattern, Responsive Design",
-    "Core Skills: Teamwork, Task Coordination, Time Management, Planning",
+    "Languages: TypeScript, JavaScript, Java, SQL",
+    "Web and Mobile: React, Next.js, Tailwind CSS, Android (Java), React Native, Expo",
+    "Backend and Data: Node.js, Express, MongoDB, Firebase, SQLite",
+    "Integrations and Tools: JWT, Google OAuth 2.0, PayPal, Git, Vercel",
+    "Concepts: RESTful API Design, MVC Pattern, Offline-first Sync, Responsive Design",
+    "Also studied (coursework): PHP, Python, C#, C++",
 ]:
     P(line, body)
 
 section("PROJECTS")
-P("Minh Hoi Media - Wedding Photo Studio Website | HTML, JavaScript, CSS, Vercel", item)
-P("Live: minhoimedia.digital | Freelance project", meta)
-bullets("Built and deployed a marketing website for a wedding photography studio, showcasing portfolios and packages to prospective clients.",
-        "Delivered a responsive, static front end hosted on Vercel as an independent freelance engagement.")
-P("HWJ - Jewelry E-Commerce Platform | React, Express, Node.js, MongoDB, TailwindCSS", item)
-P("Academic project - Web Programming 2 module | Deployed on Vercel (frontend) and Render (backend)", meta)
-bullets("Built a full-stack jewelry storefront with a React front end and an Express/Node.js/MongoDB backend, following the MVC design pattern.",
-        "Implemented OAuth-based authentication and a fully responsive UI with TailwindCSS.")
-P("Chanh Toa FAQ - Parish Youth Ministry Website | Next.js, React, TypeScript, Firebase", item)
+P("Chanh Toa My Tho - Parish Portal | Next.js, React, TypeScript, Tailwind, Firebase | 08/2026 - present", item)
 P("Live: chanhtoa.tnttgiaophanmytho.online | Source: github.com/HuynhDutruong/FAQ", meta)
-bullets("Developed a content and FAQ site for a parish youth ministry group on Next.js (App Router) with TypeScript.",
-        "Used Firebase (Firestore and Authentication, with the Admin SDK for server-side operations) for data storage and user access control, deployed on Vercel.")
-P("L3GO Coffee - Coffee Shop Website | React, TailwindCSS", item)
+bullets("Built a server-rendered parish portal (Mass times across 27 dioceses, full Bible, catechism Q&amp;A) that syncs the parish Facebook page into Firestore via the Graph API.")
+P("M-Hike - Hiking Trip Manager | Java, React Native, TypeScript, SQLite, Firebase | 07 - 08/2026", item)
+P("Coursework COMP1786 | 77%, Best Student in the module | Live: hiking.hugowishpax.studio", meta)
+bullets("Built the app twice: native Android in Java and cross-platform React Native running on Android and iOS, sharing one Firebase data branch.",
+        "Designed an offline-first SQLite layer with foreign keys and cascade delete, parameterised multi-criteria search, GPS tracking, SOS and a bilingual UI.")
+P("L3GO Coffee - Coffee Shop Website | React, TailwindCSS | 2026", item)
 P("Live: legocoffee.hwagfu.dev | UI/UX design, in collaboration with Jason Phan (data layer and deployment)", meta)
-bullets("Designed the UI/UX: colour system, typographic rhythm and a photo-led layout of the space.",
-        "Designed a 68-item menu filtered by mood instead of category, so visitors choose faster.")
+bullets("Designed the UI/UX, including a 68-item menu filtered by mood instead of category so visitors choose faster.")
+P("Minh Oi Media - Wedding Photo Studio Website | HTML, CSS, JavaScript | 03 - 04/2026", item)
+P("Live: minhoimedia.digital | Freelance project", meta)
+bullets("Built and deployed a responsive marketing website for a wedding photography studio, presenting its portfolio, packages and pricing.")
+P("HWJ - Luxury Jewellery E-Commerce | React, TypeScript, Express, MongoDB, PayPal | 01 - 04/2026", item)
+P("Coursework COMP1842 Web Programming 2 | Live: hwj-demo.hugowishpax.studio", meta)
+bullets("Built a MERN store with Google OAuth, JWT, bcrypt, rate limiting and role-checked admin APIs, plus one dashboard for products, orders and appointments.",
+        "Verified PayPal payments on the server, rejecting any order whose total differs from PayPal's.")
 
 section("LEADERSHIP AND EXTRACURRICULAR ACTIVITIES")
 P("Youth Activity Coordinator (Huynh Truong) - Local Community Youth Group, My Tho", item)
-bullets("Led and coordinated weekly programs and events for a community youth group, scheduling activities, organizing volunteer teams and managing timetables.",
-        "Designed and built the group's official website (see Chanh Toa FAQ project above) to support its activities and outreach.")
+bullets("Lead weekly programmes, events and volunteer teams; built the group's website (Chanh Toa project above).")
 
 section("EDUCATION")
 P("University of Greenwich - Vietnam", item)
 P("Bachelor of Computing - Software Engineering | Final-year student", body)
-P("Provisional average (to date): 69% | US GPA equiv.: 3.80/4.00", body)
-P("Honors: Outstanding Student - Summer 2026 (named to the University's Outstanding Student List)", body)
-P("THPT Nguyen Dinh Chieu, My Tho (Coll&egrave;ge de Mytho)", item)
-P("High School Diploma", body)
-P("Languages: VSTEP English B2 (Overall 6.5), Chinese HSK 2", body)
+P("Provisional classification mark (Greenwich 10:90 algorithm): 69%", body)
+P("Honors: Certificate of Merit - Best Student in Mobile Application Design and Development (MHike), Summer 2026", body)
+P("THPT Nguyen Dinh Chieu, My Tho (Coll&egrave;ge de Mytho) - High School Diploma", item)
+P("Languages: Vietnamese (native), English VSTEP B2 (Overall 6.5), Chinese HSK 2", body)
 
 SimpleDocTemplate(OUT, pagesize=letter, leftMargin=M, rightMargin=M, topMargin=30, bottomMargin=22,
                   title="Le Gia Huy - CV", author="Le Gia Huy").build(story)
