@@ -1,5 +1,5 @@
 /**
- * /journey — những bước ngoặt học vấn và những chuyến đi, xếp theo `date` (cũ nhất trước).
+ * /journey — báo tường những kỷ niệm, mới nhất lên đầu (bài mới nhất là bài trang nhất).
  *
  * Thêm một chặng = thêm một object:
  *   date    "YYYY" | "YYYY-MM" | "YYYY-MM-DD" (độ chi tiết hiển thị theo đúng độ dài này).
@@ -7,10 +7,8 @@
  *           Bỏ trống: chặng không hiện ngày và đứng ngay sau chặng phía trên nó trong danh sách này.
  *   until   (tuỳ chọn) ngày kết thúc cùng định dạng, cho chặng kéo dài nhiều năm: hiển thị "2024 – 2025"
  *   kind    "education" | "travel" | "community" | "milestone" | "culture"
- *   layout  "frame" | "tall" | "split" | "mosaic" | "scatter", thêm "-flip" để lật trái/phải.
- *           Hai chặng liền nhau nên khác layout. Bỏ trống: tự chọn theo ảnh.
  *   place   nơi chốn (tuỳ chọn), title, body: { vi, en }
- *   photos  tạo bằng scripts/journey-photo.sh <ảnh gốc> <tên> → public/journey-photos/<tên>.webp (+ -800, -bg). Ảnh 1 là ảnh chính, các ảnh sau là polaroid.
+ *   photos  tạo bằng scripts/journey-photo.sh <ảnh gốc> <tên> → public/journey-photos/<tên>.webp (+ -800, -bg). Ảnh 1 là ảnh dán chính, các ảnh sau là polaroid.
  *           Ảnh chính chụp dọc thì thêm `tall: true` để không bị cắt thành khung ngang.
  *           `focus` (tuỳ chọn, CSS object-position, vd "center 20%") chọn phần giữ lại khi ảnh bị cắt.
  *   logo    dùng khi chưa có ảnh.
@@ -32,7 +30,6 @@ export const journey = [
   },
   {
     id: "dalat-2026",
-    layout: "split",
     date: "2026-02",
     kind: "travel",
     place: { vi: "Đà Lạt · Lâm Đồng", en: "Đà Lạt · Lâm Đồng" },
@@ -48,7 +45,6 @@ export const journey = [
   },
   {
     id: "ao-dai-tet-2025",
-    layout: "mosaic",
     date: "2025",
     kind: "culture",
     place: { vi: "Nhà hát Thành phố · TP. Hồ Chí Minh", en: "Saigon Opera House · Ho Chi Minh City" },
@@ -66,7 +62,6 @@ export const journey = [
   },
   {
     id: "dalat-2024",
-    layout: "mosaic-flip",
     date: "2024",
     kind: "travel",
     place: { vi: "Đà Lạt · Lâm Đồng", en: "Đà Lạt · Lâm Đồng" },
@@ -86,7 +81,6 @@ export const journey = [
   },
   {
     id: "lotte-hanoi",
-    layout: "frame",
     date: "2022-08-04",
     kind: "travel",
     place: { vi: "Hà Nội", en: "Hanoi" },
@@ -103,7 +97,6 @@ export const journey = [
   },
   {
     id: "eighteen",
-    layout: "tall",
     kind: "milestone",
     title: { vi: "Mười tám tủi", en: "Eighteen" },
     body: {
@@ -117,7 +110,6 @@ export const journey = [
   },
   {
     id: "korea",
-    layout: "scatter",
     date: "2018",
     kind: "travel",
     place: { vi: "Seoul & đảo Nami · Hàn Quốc", en: "Seoul & Nami Island · South Korea" },
@@ -133,7 +125,6 @@ export const journey = [
   },
   {
     id: "trang-an",
-    layout: "split",
     date: "2020-07-08",
     kind: "travel",
     place: { vi: "Tràng An · Ninh Bình", en: "Tràng An · Ninh Bình" },
@@ -149,7 +140,6 @@ export const journey = [
   },
   {
     id: "ha-long",
-    layout: "frame",
     date: "2020-07-07",
     kind: "travel",
     place: { vi: "Vịnh Hạ Long · Quảng Ninh", en: "Hạ Long Bay · Quảng Ninh" },
@@ -164,7 +154,6 @@ export const journey = [
   },
   {
     id: "fansipan",
-    layout: "tall-flip",
     date: "2020-07-06",
     kind: "travel",
     place: { vi: "Fansipan, Sa Pa · Lào Cai", en: "Fansipan, Sa Pa · Lào Cai" },
@@ -192,7 +181,6 @@ export const journey = [
   },
   {
     id: "ndc-graduate",
-    layout: "mosaic",
     date: "2022",
     kind: "education",
     place: { vi: "Mỹ Tho, Tiền Giang", en: "Mỹ Tho, Tiền Giang" },
@@ -209,7 +197,6 @@ export const journey = [
   },
   {
     id: "huynh-truong-promise",
-    layout: "split-flip",
     date: "2023-11-19",
     kind: "community",
     place: { vi: "Thiếu Nhi Thánh Thể · Mỹ Tho", en: "Eucharistic Youth · Mỹ Tho" },
@@ -226,7 +213,6 @@ export const journey = [
   },
   {
     id: "tabor-03",
-    layout: "scatter",
     date: "2024",
     until: "2025",
     kind: "community",
@@ -244,7 +230,6 @@ export const journey = [
   },
   {
     id: "huynh-truong-2-promise",
-    layout: "scatter",
     date: "2025-11-16",
     kind: "community",
     place: { vi: "Liên Đoàn Các Thánh Tử Đạo Việt Nam · Gp. Mỹ Tho", en: "Vietnamese Martyrs Federation · Diocese of Mỹ Tho" },
@@ -260,7 +245,6 @@ export const journey = [
   },
   {
     id: "greenwich-award",
-    layout: "frame",
     date: "2026-09-17",
     kind: "education",
     place: { vi: "University of Greenwich (Việt Nam)", en: "University of Greenwich (Vietnam)" },

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatePresence, MotionConfig, motion, useMotionValueEvent, useScroll, useSpring } from "motion/react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-import { installSound } from "./sound.js";
+import { installSound, isMuted, setMuted } from "./sound.js";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import i18n, { ensureTranslations } from "./i18n/config";
@@ -204,6 +204,7 @@ function Portfolio() {
   }, [pathname, theme, ready]);
   const progress = useSpring(scrollYProgress, { stiffness: 180, damping: 28, mass: 0.25 });
   useEffect(() => { ensureTranslations().then(() => setReady(true)); }, []);
+  const [muted, setMutedState] = useState(isMuted);
   return (
     <MotionConfig reducedMotion="user" transition={{ type: "spring", stiffness: 260, damping: 28 }}>
       <motion.div className="portfolio-progress" style={{ scaleX: progress }} />
@@ -224,6 +225,11 @@ function Portfolio() {
               aria-label={language.language.startsWith("vi") ? (theme === "dark" ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối") : (theme === "dark" ? "Switch to light theme" : "Switch to dark theme")}>
               {pill("theme")}
               <span className="material-symbols-outlined" aria-hidden="true">{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+            </button>
+            <button type="button" className="portfolio-theme" onClick={() => { setMuted(!muted); setMutedState(!muted); }} aria-pressed={muted} {...hover("sound")}
+              aria-label={language.language.startsWith("vi") ? "Tắt âm thanh" : "Mute sounds"}>
+              {pill("sound")}
+              <span className="material-symbols-outlined" aria-hidden="true">{muted ? "volume_off" : "volume_up"}</span>
             </button>
             <details className="portfolio-languages">
               <summary aria-label="Language" {...hover("lang")}>
@@ -331,8 +337,9 @@ function Portfolio() {
             <div className="portfolio-footer-col">
               <h4>{language.language.startsWith("vi") ? "Giới thiệu" : "About"}</h4>
               <ul>
-                <li><Link to="/#about">{language.language.startsWith("vi") ? "Về Hugo Wishpax" : "About Hugo"}</Link></li>
-                <li><a href={cvPdf(language.language)} download>{language.language.startsWith("vi") ? "Tải CV PDF" : "Download CV"}</a></li>
+                <li><Link to="/#contact">{language.language.startsWith("vi") ? "Liên hệ Hugo Wishpax" : "Contact Hugo"}</Link></li>
+                <li><a href={cvPdf(language.language)} download>{language.language.startsWith("vi") ? "Tải CV · Web" : "CV · Web"}</a></li>
+                <li><a href="/CV_Le_Gia_Huy_Mobile.pdf" download>{language.language.startsWith("vi") ? "Tải CV · Mobile" : "CV · Mobile"}</a></li>
                 <li><Link to="/journey">{language.language.startsWith("vi") ? "Hành trình" : "Journey"}</Link></li>
                 <li><Link to="/#education">{language.language.startsWith("vi") ? "Học vấn & Bằng cấp" : "Education"}</Link></li>
                 <li><a href={SERVICES_ORIGIN} target="_blank" rel="noreferrer">{t("navbar.services", "Dịch vụ")}</a></li>

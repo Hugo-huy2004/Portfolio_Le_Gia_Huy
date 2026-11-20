@@ -44,7 +44,7 @@
 }
 
 /* Creator landing: the navigation stays quiet so the oversized hero can lead. */
-body:has(.creator-home) { background: #0c0c0c; }
+body:has(.creator-home) { background: #050817; }
 body:has(.creator-home) .portfolio-nav-wrap { inset-block-start: 0; }
 body:has(.creator-home) .portfolio-nav {
   width: 100%;
@@ -55,7 +55,7 @@ body:has(.creator-home) .portfolio-nav {
   background: transparent !important;
   box-shadow: none !important;
   color: #d7e2ea;
-  font-family: "Nunito", sans-serif;
+  font-family: "Be Vietnam Pro", sans-serif;
   backdrop-filter: none !important;
 }
 body:has(.creator-home) .portfolio-wordmark { color: #d7e2ea; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
@@ -64,7 +64,7 @@ body:has(.creator-home) .portfolio-nav-links a { color: rgba(215, 226, 234, 0.75
 body:has(.creator-home) .portfolio-nav-links a:hover { color: #ffffff; }
 body:has(.creator-home) .portfolio-languages summary { background: rgb(255 255 255 / .08); color: #d7e2ea; }
 body:has(.creator-home) .portfolio-languages [role="menu"] { border-color: rgb(255 255 255 / .14); background: #171717; color: #d7e2ea; }
-body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: clamp(1.25rem, 6vw, 6rem); background: #0c0c0c; color: #7d858f; font-family: "Nunito", sans-serif; }
+body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: clamp(1.25rem, 6vw, 6rem); background: #050817; color: #7d858f; font-family: "Be Vietnam Pro", sans-serif; }
 
 .dark .portfolio-nav {
   border-color: rgb(255 255 255 / 0.1);
@@ -145,7 +145,7 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: #090a10;
   color: #8a93a0;
-  font-family: "Nunito", sans-serif;
+  font-family: "Be Vietnam Pro", sans-serif;
   padding-top: clamp(4rem, 8vw, 6rem);
   padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
 }
@@ -268,7 +268,7 @@ body:has(.creator-home) .portfolio-footer { max-width: none; padding-inline: cla
 /* Giant typographic background watermark */
 .portfolio-footer-watermark {
   margin-top: 2rem;
-  font-family: "Bricolage Grotesque", "Nunito", sans-serif;
+  font-family: "Bricolage Grotesque", "Be Vietnam Pro", sans-serif;
   font-variation-settings: "opsz" 96;
   font-size: 15.2cqi; /* "HUGO WISHPAX" is ~6.48em wide: 100 / 6.48 ≈ 15.4, so it always fits the column in full */
   font-weight: 900;
@@ -442,8 +442,7 @@ body:has(.creator-home) .is-light .portfolio-theme { background: rgb(12 18 48 / 
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* Light theme: the dark "night" surfaces turn to paper; colour-blocked scenes (hero, skills, education, outro) keep their palette. */
-:root[data-theme="light"] body:has(.creator-home) { background: #f6f4ef; }
-:root[data-theme="light"] body:has(.creator-home) .portfolio-footer { background: #f6f4ef; color: #5d6470; }
+:root[data-theme="light"] body:has(.creator-home) { background: #050817; } /* home scenes are the screen: same in both themes */
 
 /* Google Translate (other languages): keep its widget inside our menu, hide its banner and hover tooltips. */
 .portfolio-languages-more { display: flex; width: 100%; min-height: 44px; padding-inline: 12px; align-items: center; border: 0; border-radius: 9px; background: none; color: inherit; font: inherit; font-size: 14px; font-weight: 600; text-align: left; cursor: pointer; opacity: .75; }
@@ -451,7 +450,7 @@ body:has(.creator-home) .is-light .portfolio-theme { background: rgb(12 18 48 / 
 .portfolio-gt { padding: 6px 4px 2px; border-top: 1px solid rgb(127 127 127 / .2); }
 .portfolio-gt .goog-te-gadget { color: transparent; font-size: 0; }
 .portfolio-gt .goog-te-gadget > span, .portfolio-gt .goog-logo-link { display: none !important; }
-.portfolio-gt .goog-te-combo { width: 100%; min-height: 40px; margin: 0; padding: 0 10px; border: 1px solid rgb(127 127 127 / .3); border-radius: 9px; background: transparent; color: #f4f6fb; font: 600 14px "Nunito", sans-serif; }
+.portfolio-gt .goog-te-combo { width: 100%; min-height: 40px; margin: 0; padding: 0 10px; border: 1px solid rgb(127 127 127 / .3); border-radius: 9px; background: transparent; color: #f4f6fb; font: 600 14px "Be Vietnam Pro", sans-serif; }
 .portfolio-gt .goog-te-combo option { color: #0c1230; }
 .goog-te-banner-frame, .skiptranslate > iframe, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
 body { top: 0 !important; }
@@ -502,7 +501,7 @@ body:has(.creator-home) .portfolio-languages summary { height: 36px; padding-inl
 .scene-title { max-width: 18ch; margin-top: 1.25rem; font-family: "Fraunces", Georgia, serif; font-size: clamp(2.6rem, 6vw, 5rem); font-style: italic; font-weight: 500; line-height: 1; }
 .scene-body { max-width: 46ch; margin-top: 1.25rem; font-size: clamp(1rem, 1.4vw, 1.15rem); line-height: 1.6; opacity: .8; }
 .scene-actions { display: flex; margin-top: 2rem; flex-wrap: wrap; justify-content: center; gap: .75rem; }
-.scene-cta { display: inline-flex; min-height: 50px; padding: 0 1.4rem; align-items: center; border: 0; border-radius: 999px; background: #a33c22; color: #fff; font: 700 1rem "Nunito", sans-serif; cursor: pointer; transition: transform .25s, background-color .25s; }
+.scene-cta { display: inline-flex; min-height: 50px; padding: 0 1.4rem; align-items: center; border: 0; border-radius: 999px; background: #a33c22; color: #fff; font: 700 1rem "Be Vietnam Pro", sans-serif; cursor: pointer; transition: transform .25s, background-color .25s; }
 .scene-cta:hover { background: #b8472b; transform: translateY(-2px); }
 .scene-cta--quiet { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; color: inherit; }
 .scene-cta--quiet:hover { background: rgb(127 127 127 / .12); }

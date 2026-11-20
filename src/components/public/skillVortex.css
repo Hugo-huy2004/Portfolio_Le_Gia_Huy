@@ -1,7 +1,7 @@
 /* Skills vortex: glass petals on a canvas behind, photo bottom-left, copy on the right over a still pool of light
    painted in the canvas (no backdrop blur: it would re-filter every frame the glass turns). */
-.creator-skills{background:#020b33;color:#eef2ff}
-.vx{position:relative;background:radial-gradient(110% 90% at 22% 100%,#1530a8 0%,#071a66 42%,#020b33 100%);height:100svh;overflow:hidden;isolation:isolate}
+.creator-skills{background:#050817;color:#eef2ff}
+.vx{position:relative;background:radial-gradient(110% 90% at 22% 100%,#1530a8 0%,#071a66 42%,#050817 100%);height:100svh;overflow:hidden;isolation:isolate}
 .vx-glass{position:absolute;inset:0;z-index:-1;width:100%;height:100%}
 /* Bling: four-point stars that twinkle (transform + opacity only). Paused off-screen via [data-off] (IntroductionPage). */
 .vx-sparkles{position:absolute;inset:0;pointer-events:none}
@@ -47,3 +47,7 @@
   .vx-dots{margin-top:.35rem}
 }
 /* Reduced motion: no glass is drawn; the navy gradient stays and the dots switch groups. */
+/* Depth (utils/depth.js): the sticker sits nearer than the glass, the sparkles nearest, the copy drifts the other way. */
+.vx-photo{translate:calc(var(--mx)*18px) calc(var(--my)*10px)}
+.vx-sparkles{translate:calc(var(--mx)*32px) calc(var(--my)*20px)}
+.vx-card{translate:calc(var(--mx)*-8px) calc(var(--my)*-5px)}

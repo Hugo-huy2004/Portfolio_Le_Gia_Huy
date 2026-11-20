@@ -136,7 +136,7 @@ export default function ProjectDetailPage() {
         </div>
         <motion.figure className={`pd-hero-shot${phone ? " pd-hero-shot--phone" : ""}`} initial={{ opacity: 0, y: 60, rotate: 2 }} animate={{ opacity: 1, y: 0, rotate: -2 }} transition={{ delay: 0.2, duration: 1.1, ease }}>
           {!phone && <span className="pd-browser" aria-hidden="true"><i /><i /><i /><b>{project.urlLabel || project.title}</b></span>}
-          <SmartImg src={shotUrl(project.id, shots[0].src)} alt={caption(shots[0].src, shots[0].caption)} loading="eager" fetchPriority="high" />
+          <SmartImg src={shotUrl(project.id, shots[0].src)} alt={caption(shots[0].src, shots[0].caption)} loading="eager" fetchpriority="high" />
         </motion.figure>
       </section>
 

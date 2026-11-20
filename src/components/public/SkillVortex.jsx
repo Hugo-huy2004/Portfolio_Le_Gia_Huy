@@ -137,7 +137,7 @@ export default function SkillVortex({ language, heading }) {
   }, []);
   const group = groups[active];
   return (
-    <div ref={frame} className="vx">
+    <div ref={frame} className="vx" data-depth>
       <canvas className="vx-glass" aria-hidden="true" />
       <div className="vx-sparkles" aria-hidden="true">
         {sparkles.map(({ x, y, s: size, d }) => <i key={`${x}-${y}`} style={{ left: `${x}%`, top: `${y}%`, width: size, height: size, animationDelay: `${d}s` }} />)}

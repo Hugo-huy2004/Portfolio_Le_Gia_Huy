@@ -40,7 +40,7 @@ function staticBody(route, lang) {
 <h2>${copy.skills}</h2>${list(skillGroups.map((group) => `${escape(group.title[lang])}: ${escape(group.items.map((name) => skillLabel[name] || name).join(", "))}`))}
 <h2>${copy.projects}</h2>${list(projectItems)}
 <h2>${copy.contact}</h2>${list([link(MAIL, MAIL.replace("mailto:", "")), ...SAME_AS.map((href) => link(href, href.replace(/^https:\/\/(www\.)?/, "")))])}
-<p>${link(at("/journey"), copy.journey)} · ${link(at("/project"), copy.projects)} · ${link(`${ORIGIN}/CV_Le_Gia_Huy.pdf`, "CV (PDF)")}</p>`;
+<p>${link(at("/journey"), copy.journey)} · ${link(at("/project"), copy.projects)} · ${link(`${ORIGIN}/CV_Le_Gia_Huy.pdf`, "CV Web (PDF)")} · ${link(`${ORIGIN}/CV_Le_Gia_Huy_Mobile.pdf`, "CV Mobile (PDF)")}</p>`;
   }
   if (route === "/project") return `<h1>${escape(copy.listTitle)}</h1><p>${escape(copy.listDescription)}</p>${list(projectItems)}`;
   if (route === "/journey") {
@@ -111,7 +111,8 @@ fs.writeFileSync(path.join(dist, "llms.txt"), `# Lê Gia Huy (Hugo Wishpax)
 - [Home](${urlFor("/", "en")}): profile, education, skills and projects (Vietnamese: ${urlFor("/", "vi")})
 - [Projects](${urlFor("/project", "en")}): every project with its stack and links
 - [Journey](${urlFor("/journey", "en")}): education milestones and travels
-- [CV (PDF)](${ORIGIN}/CV_Le_Gia_Huy.pdf)
+- [CV, web track (PDF)](${ORIGIN}/CV_Le_Gia_Huy.pdf)
+- [CV, mobile track (PDF)](${ORIGIN}/CV_Le_Gia_Huy_Mobile.pdf)
 
 ## Projects
 

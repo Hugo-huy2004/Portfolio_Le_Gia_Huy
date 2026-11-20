@@ -1,14 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowDown, ArrowUpRight, FileText, MapPin, Trophy } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowUpRight, FileText, Trophy } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { sound } from "../../sound.js";
-import { TegakiRenderer } from "tegaki";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import scriptFont from "../../fonts/heroScript";
 import { cvPdf } from "../../config/publicSites";
 import { useHeadMeta } from "../../hooks/useHeadMeta";
 import { projects, shotUrl } from "../../data/projects";
@@ -17,8 +15,9 @@ import SkillVortex, { playSkillVortex } from "../../components/public/SkillVorte
 import ScoutBust from "../../components/public/ScoutBust";
 import GreenwichStage from "../../components/public/GreenwichStage";
 import { SmartImg } from "../../components/public/Resilience";
-import { playHapticTick } from "../../utils/CinematicSoundEngine";
+import { startDepth } from "../../utils/depth";
 import "./introduction.css";
+import "./hero.css";
 
 const reveal = {
   initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 },
@@ -48,134 +47,87 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const desktopMotion = "(min-width: 821px) and (prefers-reduced-motion: no-preference)";
 const phoneMotion = "(max-width: 820px) and (prefers-reduced-motion: no-preference)";
 
-const supportsLiquid = typeof navigator !== "undefined" && "userAgentData" in navigator;
 const ease = [0.16, 1, 0.3, 1];
 
-// Handwritten lines: "Creation" starts once the name has risen, "Development" follows when it finishes.
-function HeroScript() {
-  const [step, setStep] = useState(0);
-  useEffect(() => { const timer = setTimeout(() => setStep(1), 900); return () => clearTimeout(timer); }, []);
-  return (
-    <div className="hero-script" aria-hidden="true" translate="no">
-      {/* Wrappers carry the positioning: the renderer sets its own inline position. */}
-      <div className="hero-script-creation">
-        <TegakiRenderer font={scriptFont} reducedMotion="user" fallbackFont="cursive"
-          time={{ mode: "uncontrolled", speed: 1.3, playing: step >= 1 }} onComplete={() => setStep(2)}>Creation</TegakiRenderer>
-      </div>
-      <div className="hero-script-development">
-        <TegakiRenderer font={scriptFont} reducedMotion="user"
-          time={{ mode: "uncontrolled", speed: 1.5, playing: step >= 2 }}>Development</TegakiRenderer>
-      </div>
-    </div>
-  );
-}
-
-// Two-tier gold podium the portrait sits on: brushed-metal sides, lit top faces, a bright rim on each edge.
-function Podium() {
-  return (
-    <svg viewBox="0 0 600 244" preserveAspectRatio="xMidYMax meet">
-      <defs>
-        <linearGradient id="podium-side" x1="0" x2="1">
-          <stop offset="0" stopColor="#7a5418" /><stop offset=".12" stopColor="#c9952f" /><stop offset=".3" stopColor="#f6d78a" />
-          <stop offset=".46" stopColor="#d6a743" /><stop offset=".62" stopColor="#a8761f" /><stop offset=".8" stopColor="#e9c56c" /><stop offset="1" stopColor="#6e4a12" />
-        </linearGradient>
-        <radialGradient id="podium-top" cx=".42" cy=".35" r=".75">
-          <stop offset="0" stopColor="#f8e2a4" /><stop offset=".55" stopColor="#d9ab4c" /><stop offset="1" stopColor="#a9781f" />
-        </radialGradient>
-        <linearGradient id="podium-shade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity=".28" />
-        </linearGradient>
-      </defs>
-      {/* base tier */}
-      <path d="M8 140 A292 42 0 0 0 592 140 V196 A292 42 0 0 1 8 196 Z" fill="url(#podium-side)" />
-      <path d="M8 140 A292 42 0 0 0 592 140 V196 A292 42 0 0 1 8 196 Z" fill="url(#podium-shade)" />
-      <ellipse cx="300" cy="140" rx="292" ry="42" fill="url(#podium-top)" />
-      <ellipse cx="300" cy="140" rx="292" ry="42" fill="none" stroke="#fff3cf" strokeOpacity=".7" strokeWidth="2.5" />
-      <ellipse cx="300" cy="146" rx="212" ry="26" fill="#4d3208" opacity=".22" />
-      {/* top tier */}
-      <path d="M90 52 A210 30 0 0 0 510 52 V120 A210 30 0 0 1 90 120 Z" fill="url(#podium-side)" />
-      <path d="M90 52 A210 30 0 0 0 510 52 V120 A210 30 0 0 1 90 120 Z" fill="url(#podium-shade)" />
-      <ellipse cx="300" cy="52" rx="210" ry="30" fill="url(#podium-top)" />
-      <ellipse cx="300" cy="52" rx="210" ry="30" fill="none" stroke="#fff3cf" strokeOpacity=".75" strokeWidth="2.5" />
-    </svg>
-  );
-}
+// Opening credits, poster style: Hugo sits on his own name.
+// On load a projector line flashes, the shutter opens, the letters rise, he sits down onto them, the credits come up
+// and a gold light leak sweeps once. Scrolling (pinned) closes an iris of light onto him, then the title card.
+const credit = (delay) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { delay, duration: 0.9, ease } });
 
 function HeroSection({ copy }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const ref = useRef(null);
-
-  // Opening scene: hero pins, dock & type recede, the room darkens, Hugo steps forward on the podium.
-  // Lighting is plain gradient divs animated by opacity/transform only: the old full-screen SVG beams with blend modes lagged.
+  const vi = i18n.language.startsWith("vi");
   useGSAP(() => {
     const mm = gsap.matchMedia();
-    const build = (end, frontScale) => gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top top", end, scrub: true, pin: true, anticipatePin: 1 } })
-      .to(".hero-dock-wrap", { autoAlpha: 0, y: 30, duration: 0.22, ease: "none" }, 0)
-      .to(".hero-layer--back", { autoAlpha: 0, yPercent: -10, scale: 0.88, duration: 0.3, ease: "none" }, 0)
-      .to(".hero-museum-backdrop", { autoAlpha: 1, duration: 0.35, ease: "none" }, 0.05)
-      .fromTo(".hero-beam", { autoAlpha: 0, scaleY: 0.2 }, { autoAlpha: 1, scaleY: 1, duration: 0.3, ease: "power2.out" }, 0.15)
-      .fromTo(".hero-pool", { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 0.3)
-      .to(".hero-layer--front", { scale: frontScale, transformOrigin: "50% 80%", duration: 0.45, ease: "none" }, 0.18)
+    const build = (end) => gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top top", end, scrub: true, pin: true, anticipatePin: 1 } })
+      .to(".hero-credits, .hero-sub", { autoAlpha: 0, y: -40, duration: 0.25, ease: "none" }, 0)
+      .fromTo(".hero-iris", { scale: 3.2 }, { scale: 1, duration: 0.45, ease: "power1.inOut" }, 0.05)
+      .to(".hero-mark", { autoAlpha: 0.4, duration: 0.45, ease: "none" }, 0.05)
+      .to(".hero-actor", { scale: 1.06, transformOrigin: "57% 70%", duration: 0.45, ease: "none" }, 0.05)
       .fromTo(".hero-title", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, ease: "none" }, 0.4)
       .from(".hero-title > *", { y: 40, opacity: 0, stagger: 0.08, duration: 0.25, ease: "power2.out" }, 0.4)
       .to({}, { duration: 0.25 });
-    mm.add(desktopMotion, () => { build("+=80%", 1.05); });
-    mm.add(phoneMotion, () => { build("+=60%", 1.02); });
+    mm.add(desktopMotion, () => { build("+=80%"); });
+    mm.add(phoneMotion, () => { build("+=60%"); });
   }, { scope: ref });
 
   return (
-    <section ref={ref} className="hero">
-
-      {/* Dark atmospheric backdrop */}
-      <div className="hero-museum-backdrop" aria-hidden="true" />
-      {/* Stage light: one beam from above, a pool on the floor, and the title card once the room is dark. */}
-      <div className="hero-beam" aria-hidden="true" />
-      <div className="hero-pool" aria-hidden="true" />
-      <div className="hero-title" aria-hidden="true">
-        <p>{copy.sloganKicker}</p>
-        <p>{copy.slogan}</p>
+    <section ref={ref} className="hero" data-depth>
+      <div className="hero-light" aria-hidden="true" />
+      <h1 className="hero-mark" aria-label="Hugo Wishpax — Lê Gia Huy" translate="no">
+        {"HUGO".split("").map((letter, index) => (
+          <span key={letter} className="hero-mark-mask" aria-hidden="true">
+            <motion.span data-l={letter} initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ delay: 0.55 + index * 0.08, duration: 1.1, ease }}>{letter}</motion.span>
+          </span>
+        ))}
+      </h1>
+      {/* "Wishpax" in Hugo's script (Sugar Script), written on left to right, clear of him on the right. */}
+      <p className="hero-sub" aria-hidden="true" translate="no">
+        <motion.span initial={{ clipPath: "inset(-20% 100% -40% 0)" }} animate={{ clipPath: "inset(-20% -5% -40% 0)" }} transition={{ delay: 1.6, duration: 1.4, ease: [0.45, 0, 0.25, 1] }}>Wishpax</motion.span>
+      </p>
+      {/* The stone plinth the letters stand on, and Hugo sits on: seat height = a chair, so his feet reach the floor. */}
+      <div className="hero-plinth" aria-hidden="true" />
+      {/* He sits down onto the letters: drops in and settles with a little give. GSAP scales the wrapper, motion moves the image. */}
+      {/* Five recessed uplights set into the plinth, evenly spaced, throwing white light up the letters. They switch on in turn. */}
+      <div className="hero-uplights" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <motion.i key={i} initial={{ opacity: 0 }} animate={{ opacity: [0, 1, 0.35, 1] }} transition={{ delay: 1.0 + i * 0.14, duration: 0.5, times: [0, 0.3, 0.55, 1] }} />
+        ))}
       </div>
-
-      {/* Background layer: sun, handwritten script, Hugo name */}
-      <div className="hero-layer hero-layer--back">
-        <motion.span className="hero-sun" aria-hidden="true" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.25, duration: 1.2, ease }} />
-        <HeroScript />
-        <motion.h1 className="hero-name" aria-label="Hugo" translate="no">
-          {"Hugo".split("").map((letter, index) => (
-            <span key={letter} className="hero-name-mask" aria-hidden="true">
-              <motion.span initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ delay: 0.1 + index * 0.07, duration: 1.1, ease }}>{letter}</motion.span>
-            </span>
-          ))}
-        </motion.h1>
-      </div>
-
-
-
-      {/* Centerpiece: Golden Podium and Portrait with Full Feet Visible */}
-      <div className="hero-layer hero-layer--front">
-        <motion.div className="hero-podium" aria-hidden="true"
-          initial={{ opacity: 0, y: 60 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 1.1, ease }}>
-          <Podium />
-        </motion.div>
-        <motion.img className="hero-portrait" src="/hugo-portrait.webp" alt="Hugo Wishpax — Lê Gia Huy"
-          initial={{ opacity: 0, y: 80 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 1.1, ease }} />
-      </div>
-
-      {/* Hero dock banner */}
-      <div className="hero-dock-wrap">
-        <motion.div className={`hero-dock${supportsLiquid ? " is-liquid" : ""}`}
-          initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.85, duration: 0.9, ease }}>
-          <div className="hero-meta">
-            <p><i aria-hidden="true" />{copy.heroStatus}</p>
-            <p><MapPin size={14} aria-hidden="true" />{copy.heroPlace}</p>
-          </div>
-          <p className="hero-line">{copy.heroLine}</p>
-          <div className="hero-actions">
-            <a href="#more" className="hero-cta" onClick={playHapticTick}>{i18n.language.startsWith("vi") ? "Xem thêm" : i18n.language.startsWith("zh") ? "查看更多" : "See more"}<ArrowDown size={16} aria-hidden="true" /></a>
-            <a href={cvPdf(i18n.language)} target="_blank" rel="noreferrer" className="hero-cta hero-cta--quiet" onClick={playHapticTick}>{t("intro.story.hero.ctaCv")}<FileText size={15} aria-hidden="true" /></a>
-          </div>
+      {/* White uplight from the floor: washes up the plinth, the foot of the letters and him (no fixture in shot). */}
+      <motion.div className="hero-wash" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9, duration: 0.8 }} />
+      {/* He sits down onto the plinth: portrait, its shadow and its uplit copy drop in together (one moving layer, so they never split).
+          GSAP scales the outer wrapper on scroll, motion moves the inner one. */}
+      <div className="hero-actor">
+        <motion.div className="hero-actor-body" initial={{ opacity: 0, y: -70 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ opacity: { delay: 1.0, duration: 0.3 }, y: { delay: 1.0, type: "spring", stiffness: 140, damping: 13 } }}>
+          {/* Footlights throw his shadow up onto the letters; contact shadows where he sits and where his shoes meet the floor. */}
+          <img className="hero-cast" src="/hugo-portrait.webp" alt="" aria-hidden="true" width="1001" height="1570" />
+          <i className="hero-contact" aria-hidden="true" />
+          <i className="hero-feet" aria-hidden="true" />
+          <img className="hero-portrait" src="/hugo-portrait.webp" alt="Hugo Wishpax — Lê Gia Huy" width="1001" height="1570" fetchpriority="high" />
+          <img className="hero-uplit" src="/hugo-portrait.webp" alt="" aria-hidden="true" width="1001" height="1570" />
         </motion.div>
       </div>
+      <div className="hero-credits">
+        <motion.p className="hero-kicker" {...credit(1.2)}>Lê Gia Huy · Hugo Wishpax</motion.p>
+        <motion.p className="hero-line" {...credit(1.3)}>{vi ? <>Kỹ sư phần mềm<br /><em>Full&#8209;Stack</em>, web &amp; mobile.</> : <>Full&#8209;stack<br /><em>software engineer</em>, web &amp; mobile.</>}</motion.p>
+        <motion.div className="hero-actions" {...credit(1.4)}>
+          <a href="#projects" className="hero-cta">{vi ? "Xem dự án" : "See the work"}<ArrowDown size={16} aria-hidden="true" /></a>
+          <a href={cvPdf(i18n.language)} target="_blank" rel="noreferrer" className="hero-cta hero-cta--quiet">{vi ? "Xem CV" : "View CV"}<FileText size={15} aria-hidden="true" /></a>
+        </motion.div>
+      </div>
+      <div className="hero-iris" aria-hidden="true" />
+      <div className="hero-title" aria-hidden="true"><p>{copy.heroPlace}</p><p>{copy.heroStatus}</p></div>
+      {/* Opening: projector line, shutter, light leak. One-shot, transform/opacity only. */}
+      <div className="hero-shutter" aria-hidden="true">
+        <motion.i initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ delay: 0.4, duration: 0.9, ease }} />
+        <motion.i initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ delay: 0.4, duration: 0.9, ease }} />
+        <motion.b initial={{ scaleX: 0, opacity: 1 }} animate={{ scaleX: [0, 1, 1], opacity: [1, 1, 0] }} transition={{ duration: 0.8, times: [0, 0.5, 1], ease: "easeOut" }} />
+      </div>
+      <motion.div className="hero-leak" aria-hidden="true" initial={{ x: "-100%", opacity: 0 }} animate={{ x: "100%", opacity: [0, 0.9, 0] }}
+        transition={{ delay: 1.5, duration: 1.6, ease: "easeInOut" }} />
     </section>
   );
 }
@@ -221,58 +173,45 @@ const socialLinks = [
 
 const profileCopy = {
   vi: {
-    heroLine: "Tôi là Lê Gia Huy, sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam. Tôi làm web và app bằng React, Next.js và Node.js.",
     heroStatus: "Đang tìm vị trí frontend, backend hoặc full-stack",
     heroPlace: "Sống và làm việc tại Việt Nam",
-    sloganKicker: "LÊ GIA HUY · HUGO WISHPAX",
-    slogan: "Sinh viên năm cuối Kỹ thuật phần mềm",
-    aboutTitle: "Tôi là Hugo.\nTên thật là Lê Gia Huy.",
-    about: "Sinh viên năm cuối Kỹ thuật phần mềm tại Greenwich Việt Nam, sinh viên xuất sắc nhất môn Mobile App kỳ Summer 2026. Tôi làm web và app cho khách hàng thật, và là Huynh trưởng Thiếu Nhi Thánh Thể ở Mỹ Tho.",
     languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
     techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng tôi dùng hằng ngày.",
     education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối",
   },
   en: {
-    heroLine: "I'm Lê Gia Huy, a final-year Software Engineering student at Greenwich Vietnam. I build web and mobile apps with React, Next.js and Node.js.",
     heroStatus: "Open to frontend, backend and full-stack roles",
     heroPlace: "Based in Vietnam",
-    sloganKicker: "LE GIA HUY · HUGO WISHPAX",
-    slogan: "Final-year Software Engineering student",
-    aboutTitle: "I'm Hugo.\nMy real name is Lê Gia Huy.",
-    about: "Final-year Software Engineering student at Greenwich Vietnam, Best Student in Mobile App Development (Summer 2026). I build web and mobile apps for real clients, and lead a Eucharistic Youth chapter in Mỹ Tho.",
     languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
     techHeading: "Technical Skills", techNote: "The languages, frameworks and platforms I use every day.",
     education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student",
   },
 };
 
-// Projects as a journey: one full-screen slide per project — stop number and dates, the name set large,
-// one hero shot that carries the project, and frosted-glass polaroids of other screens with their captions.
-function JourneySlide({ project, index, total, t, from, stopLabel }) {
+// Projects as a deck of cards: each card sticks while the next one slides over it. Number and dates, the name,
+// what it is, the stack, one big screen and a strip of three more.
+function ProjectCard({ project, index, t, from }) {
   const base = `projectsPage.items.${project.id}`;
   const shots = [project.cover || project.shots[0].src, ...project.shots.map(({ src }) => src)]
     .filter((name, position, all) => all.indexOf(name) === position);
   const caption = (src) => t(`${base}.shots.${src}`, project.shots.find((shot) => shot.src === src)?.caption || project.title);
   const [hero, ...rest] = shots;
   return (
-    <article className="journey-slide" style={{ "--ambient": `url(${shotUrl(project.id, hero)})` }}>
-      <div className="journey-copy">
-        <p className="journey-stop"><span>{stopLabel} {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}</span>{project.period.replace("{now}", t("projectsPage.periodNow"))}</p>
+    <article className="pj-card" style={{ "--i": index }}>
+      <div className="pj-info">
+        <span className="pj-no" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <p className="pj-period">{project.period.replace("{now}", t("projectsPage.periodNow"))}</p>
         <h3 translate="no">{project.title}</h3>
-        <p className="journey-kind">{t(`projectsPage.kinds.${project.kind}`, project.kind)}</p>
-        <p className="journey-tagline">{t(`${base}.tagline`, project.tagline)}</p>
-        <Link className="journey-cta" to={`/project/${project.id}`} state={{ from }} onClick={playHapticTick}>
+        <p className="pj-kind">{t(`projectsPage.kinds.${project.kind}`, project.kind)}</p>
+        <p className="pj-tagline">{t(`${base}.tagline`, project.tagline)}</p>
+        <ul className="pj-stack">{project.stack.slice(0, 5).map((tech) => <li key={tech}>{tech}</li>)}</ul>
+        <Link className="journey-cta" to={`/project/${project.id}`} state={{ from }}>
           {t("projectsPage.openProject", "Xem dự án")} <ArrowUpRight size={18} />
         </Link>
       </div>
-      <div className="journey-visual">
-        <figure className="journey-hero"><SmartImg src={shotUrl(project.id, hero)} alt={caption(hero)} /></figure>
-        {rest.slice(0, 3).map((src, polaroid) => (
-          <figure key={src} className={`journey-polaroid journey-polaroid--${polaroid + 1}`}>
-            <SmartImg src={shotUrl(project.id, src)} />
-            <figcaption>{caption(src)}</figcaption>
-          </figure>
-        ))}
+      <div className="pj-frame">
+        <figure className="pj-shot"><SmartImg src={shotUrl(project.id, hero)} alt={caption(hero)} /></figure>
+        <ul className="pj-strip">{rest.slice(0, 3).map((src) => <li key={src}><SmartImg src={shotUrl(project.id, src)} alt={caption(src)} loading="lazy" /></li>)}</ul>
       </div>
     </article>
   );
@@ -338,7 +277,7 @@ const educationChapters = (language, copy) => {
 function Education({ language, copy, from }) {
   const chapters = educationChapters(language, copy);
   return (
-    <section id="education" className="edu" aria-label={copy.education}>
+    <section id="education" className="edu" aria-label={copy.education} data-depth>
       <div className="edu-stage">
         {chapters.map((chapter, index) => <article key={chapter.id} className={`edu-panel edu-panel--${chapter.tone}`}>
           <ol className="edu-chapters" aria-hidden="true">
@@ -353,8 +292,8 @@ function Education({ language, copy, from }) {
             {chapter.facts && <dl className="edu-facts">{chapter.facts.map(([value, label]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>}
             {chapter.note && <p className="edu-note">{chapter.note}</p>}
             {chapter.links && <div className="edu-links">{chapter.links.map((link, index) => link.href
-              ? <a key={link.href} className={`edu-link${index ? " edu-link--quiet" : ""}`} href={link.href} target="_blank" rel="noreferrer" onClick={playHapticTick}>{link.label} <ArrowUpRight size={18} /></a>
-              : <Link key={link.to} className={`edu-link${index ? " edu-link--quiet" : ""}`} to={link.to} state={{ from }} onClick={playHapticTick}>{link.label} <ArrowUpRight size={18} /></Link>)}</div>}
+              ? <a key={link.href} className={`edu-link${index ? " edu-link--quiet" : ""}`} href={link.href} target="_blank" rel="noreferrer">{link.label} <ArrowUpRight size={18} /></a>
+              : <Link key={link.to} className={`edu-link${index ? " edu-link--quiet" : ""}`} to={link.to} state={{ from }}>{link.label} <ArrowUpRight size={18} /></Link>)}</div>}
           </div>
         </article>)}
       </div>
@@ -364,45 +303,71 @@ function Education({ language, copy, from }) {
 
 // Closing scene: the film ends on the same cobalt as the hero. An iris opens on it while you scroll in,
 // the line is handed to the visitor, and each channel is one tile to tap.
+// His full name in his script (Sugar Script, public/fonts), written on left to right once the scene is in view.
 function OutroName() {
-  const [play, setPlay] = useState(false);
+  // The wrapper is what the viewport observer sees (an element hidden by its own clip-path never counts as in view).
   return (
-    <motion.span translate="no" className="outro-name" onViewportEnter={() => setPlay(true)} viewport={{ once: true, amount: 0.8 }}>
-      <TegakiRenderer font={scriptFont} reducedMotion="user" time={{ mode: "uncontrolled", speed: 1.2, playing: play }}>Hugo</TegakiRenderer>
+    <motion.span className="outro-name-wrap" initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.6 }}>
+      <motion.span translate="no" className="outro-name" variants={{ hidden: { clipPath: "inset(-30% 100% -40% 0)" }, show: { clipPath: "inset(-30% -5% -40% 0)" } }}
+        transition={{ duration: 1.8, ease: [0.45, 0, 0.25, 1] }}><span className="outro-name-x">Petrus </span>Hugo Wishpax<span className="outro-name-x"> Lê</span></motion.span>
     </motion.span>
   );
 }
 
-function Contact({ language }) {
+function Contact({ language, copy }) {
   const vi = language === "vi";
   const mail = socialLinks.find((social) => social.icon === "gmail");
   return (
-    <section id="contact" className="outro">
+    <section id="contact" className="outro" data-depth>
       <div className="outro-iris">
-        <h2 className="outro-title">
-          <span>{vi ? "Kết nối cùng" : "Connect with"}</span>
-          <OutroName />
-        </h2>
-        <p className="outro-line">{vi ? "Muốn hỏi thêm về tôi, hay chỉ ghé chào một câu, cứ nhắn cho tôi." : "Want to know more about me, or just say hi? Write to me."}</p>
-        <a className="outro-mail" href={mail.href} onClick={playHapticTick}>hugowishpax@gmail.com <ArrowUpRight size={22} /></a>
-        <ul className="outro-channels">
-          {socialLinks.filter((social) => social !== mail).map((social) => <li key={social.name}>
-            <a href={social.href} target="_blank" rel="noreferrer" aria-label={social.name} title={social.name} onClick={playHapticTick}>
-              <img src={`/social-logos/${social.icon}.svg`} alt="" />
-            </a>
-          </li>)}
-        </ul>
-        <p className="outro-credits">{vi ? "Hết phim · Cảm ơn bạn đã xem" : "The end · Thanks for watching"}</p>
+        {/* The set: an event backdrop (step-and-repeat) lit by two spots, on a dark glossy stage floor. */}
+        <div className="outro-wall" aria-hidden="true" />
+        <div className="outro-runway" aria-hidden="true" />
+        {/* The last shot: Hugo in his scarf, and the film signed off on it (strokes drawn by the scene script). */}
+        <figure className="creator-about-photo">
+          <svg width="0" height="0" aria-hidden="true" focusable="false">
+            {/* Duotone in the page palette: shadows → night cobalt, highlights → gold */}
+            <filter id="about-duotone" colorInterpolationFilters="sRGB">
+              <feColorMatrix type="saturate" values="0" />
+              <feComponentTransfer>
+                <feFuncR type="table" tableValues="0.06 1" />
+                <feFuncG type="table" tableValues="0.1 0.749" />
+                <feFuncB type="table" tableValues="0.42 0.031" />
+              </feComponentTransfer>
+            </filter>
+          </svg>
+          <motion.img src="/hugo-about.webp" alt={vi ? "Hugo Wishpax quàng khăn len, nhìn sang bên" : "Hugo Wishpax in a knitted scarf, looking to the side"} loading="lazy"
+            initial={{ opacity: 0, scale: 1.18, rotate: -12 }} whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
+            viewport={{ once: true, amount: 0.4 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} />
+          <Signature />
+        </figure>
+        <div className="outro-copy">
+          <h2 className="outro-title">
+            <span>{vi ? "Kết nối cùng" : "Connect with"}</span>
+            <OutroName />
+          </h2>
+          <p className="outro-line">{vi ? "Muốn hỏi thêm về tôi, hay chỉ ghé chào một câu, cứ nhắn cho tôi." : "Want to know more about me, or just say hi? Write to me."}</p>
+          <p className="outro-langs"><span>{copy.languages}</span>{vi ? "Tiếng Việt · " : "Vietnamese · "}{copy.languagesValue}</p>
+          <a className="outro-mail" href={mail.href}>hugowishpax@gmail.com <ArrowUpRight size={22} /></a>
+          <ul className="outro-channels">
+            {socialLinks.filter((social) => social !== mail).map((social) => <li key={social.name}>
+              <a href={social.href} target="_blank" rel="noreferrer" aria-label={social.name} title={social.name}>
+                <img src={`/social-logos/${social.icon}.svg`} alt="" />
+              </a>
+            </li>)}
+          </ul>
+          <p className="outro-credits">{vi ? "Hết phim · Cảm ơn bạn đã xem" : "The end · Thanks for watching"}</p>
+        </div>
       </div>
     </section>
   );
 }
 
-// The page is cut like a film: seven scenes, letterbox bars close and reopen on every cut,
+// The page is cut like a film: five scenes, letterbox bars close and reopen on every cut,
 // a HUD in the corner reads the scene and a timecode off the scroll position.
 const scenes = [
-  [".hero", "Mở màn", "Opening"], [".creator-marquee", "Thước phim", "Showreel"], [".creator-about", "Hồ sơ", "Profile"],
-  [".creator-skills", "Kỹ năng", "Skills"], [".edu", "Học vấn", "Education"], [".journey", "Dự án", "Projects"], [".outro", "Lời kết", "Credits"],
+  [".hero", "Mở màn", "Opening"], [".journey", "Dự án", "Projects"], [".creator-skills", "Kỹ năng", "Skills"],
+  [".edu", "Học vấn", "Education"], [".outro", "Lời kết", "Credits"],
 ];
 const FILM_SECONDS = 180; // ponytail: whole page reads as a 3-minute reel; the timecode is scroll progress × this
 
@@ -415,7 +380,7 @@ function FilmHud({ language }) {
   useMotionValueEvent(scrollYProgress, "change", (progress) => {
     const middle = window.innerHeight / 2;
     const current = scenes.reduce((found, [selector], index) => (document.querySelector(selector)?.getBoundingClientRect().top <= middle ? index : found), 0);
-    if (current !== sceneRef.current) sound.scene(current > sceneRef.current);
+    if (current !== sceneRef.current) sound.scene(current > sceneRef.current, current === scenes.length - 1);
     sceneRef.current = current;
     setScene(current);
     const frames = Math.round(progress * FILM_SECONDS * 24);
@@ -445,13 +410,13 @@ export default function IntroductionPage() {
   const language = i18n.language.startsWith("vi") ? "vi" : "en";
   const copy = profileCopy[language];
   const featured = ["minh-oi-media", "hwj", "chanh-toa"].map((id) => projects.find((project) => project.id === id));
-  const marquee = useMemo(() => projects.map((project) => ({ id: project.id, title: project.title, src: shotUrl(project.id, project.cover || project.shots[0].src) })), []);
   useHeadMeta("/");
   const root = useRef(null);
-  // Looping CSS animations (marquee, coin, glints) keep the GPU busy even off-screen; pause them there.
+  useEffect(() => startDepth(), []); // pointer parallax + 3D tilt on the [data-depth] sections (CSS at the end of introduction.css)
+  // Looping CSS animations (coin, glints, sparkles) keep the GPU busy even off-screen; pause them there.
   useEffect(() => {
     const io = new IntersectionObserver((entries) => entries.forEach((e) => e.target.toggleAttribute("data-off", !e.isIntersecting)));
-    root.current?.querySelectorAll(".creator-marquee, .edu-panel, .vx").forEach((el) => io.observe(el));
+    root.current?.querySelectorAll(".edu-panel, .vx").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
 
@@ -475,46 +440,24 @@ export default function IntroductionPage() {
       // Phones: every scene plays with the scroll (scrubbed), so dragging back rewinds it like a film.
       const scrubIn = (targets, vars, trigger, start = "top 90%", end = "top 45%") => gsap.from(targets, { ease: "none", ...vars, scrollTrigger: { trigger: trigger || targets, start, end, scrub: 0.5 } });
 
-      // ── Scene 2 · Showreel: strips advance with scroll and lean into the scroll speed like film through a gate.
-      cut(".creator-marquee");
-      const reel = { trigger: ".creator-marquee", start: "top bottom", end: "bottom top", scrub: 0.5 };
-      gsap.fromTo(".creator-marquee-track:not(.is-reverse)", { xPercent: 0 }, { xPercent: -30, ease: "none", scrollTrigger: reel });
-      gsap.fromTo(".creator-marquee-track.is-reverse", { xPercent: -30 }, { xPercent: 0, ease: "none", scrollTrigger: reel });
-      const lean = gsap.quickSetter(".creator-marquee-viewport", "skewX", "deg");
-      const proxy = { skew: 0 };
-      ScrollTrigger.create({ trigger: ".creator-marquee", start: "top bottom", end: "bottom top", onUpdate: (self) => {
-        const skew = gsap.utils.clamp(-10, 10, self.getVelocity() / -300);
-        if (Math.abs(skew) > Math.abs(proxy.skew)) {
-          proxy.skew = skew;
-          gsap.to(proxy, { skew: 0, duration: 0.8, ease: "power3", overwrite: true, onUpdate: () => lean(proxy.skew) });
-        }
-      } });
-
-      // ── Scene 3 · Profile: pinned; the line plays out word by word like a subtitle, then the signature is signed.
-      cut(".creator-about");
-      const words = gsap.utils.toArray(".sub-word");
-      const strokes = gsap.utils.toArray(".sig-stroke");
-      gsap.set(words, { opacity: 0.14 });
-      gsap.set(strokes, { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 0 }); // opacity hides each round-cap dot until its stroke starts
-      // Phones: the stacked profile is taller than the screen, so pinning it would crop the heading; it plays as it scrolls past instead.
-      const profile = gsap.timeline({ scrollTrigger: desktop
-        ? { trigger: ".creator-about", start: "top top", end: "+=150%", scrub: 0.5, pin: true, anticipatePin: 1 }
-        : { trigger: ".creator-about-copy", start: "top 85%", end: () => `+=${innerHeight * 0.9}`, scrub: 0.5 } });
-      profile.to(words, { opacity: 1, stagger: 0.05, duration: 0.2, ease: "none" }).to({}, { duration: 0.15 });
-      // Phones show the photo above the copy, so the signature is signed while the photo itself scrolls by.
-      const signing = desktop ? profile
-        : gsap.timeline({ scrollTrigger: { trigger: ".creator-about-photo", start: "top 70%", end: "bottom 35%", scrub: 0.5 } });
-      strokes.forEach((stroke) => {
-        signing.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
+      // ── Scene 2 · Projects (right after the opening: the work leads): a deck of sticky cards.
+      cut(".journey", true);
+      // Each card drifts back (smaller, darker) as the next one slides over it; its screen settles from a zoom as it arrives.
+      const cards = gsap.utils.toArray(".pj-card");
+      cards.forEach((card, index) => {
+        const next = cards[index + 1];
+        if (next) gsap.fromTo(card, { scale: 1, filter: "brightness(1)" }, { scale: 0.9, filter: "brightness(0.4)", ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 20%", scrub: true } });
+        gsap.from(card.querySelector(".pj-shot img"), { scale: 1.3, ease: "none", scrollTrigger: { trigger: card, start: "top bottom", end: "top 20%", scrub: true } });
+        // The CTA stays out: its CSS transform transition fights a scrubbed y and left it parked 50px low.
+        scrubIn(card.querySelectorAll(".pj-info > :not(.journey-cta)"), { y: 50, autoAlpha: 0, stagger: 0.05 }, card, "top 90%", "top 40%");
+        scrubIn(card.querySelectorAll(".pj-strip li"), { y: 60, autoAlpha: 0, stagger: 0.08 }, card, "top 70%", "top 30%");
       });
-      if (desktop) gsap.fromTo(".creator-about-photo", { yPercent: 14 }, { yPercent: -14, ease: "none",
-        scrollTrigger: { trigger: ".creator-about", start: "top bottom", end: "bottom top", scrub: 0.5 } });
 
-      // ── Scene 4 · Skills: pinned colour vortex, one skill group per arm (components/public/SkillVortex.jsx).
+      // ── Scene 3 · Skills: pinned colour vortex, one skill group per arm (components/public/SkillVortex.jsx).
       cut(".creator-skills", true);
       playSkillVortex(root.current.querySelector(".vx"));
 
-      // ── Scene 5 · Education: desktop stacks the chapters on a pinned stage; phones stack them as sticky cards (chapters can be taller than a phone screen).
+      // ── Scene 4 · Education: desktop stacks the chapters on a pinned stage; phones stack them as sticky cards (chapters can be taller than a phone screen).
       cut(".edu", true);
       gsap.set(".scout-reveal", { strokeDasharray: "1 1", strokeDashoffset: 1 });
       if (desktop) {
@@ -559,46 +502,25 @@ export default function IntroductionPage() {
         gsap.to(".scout-reveal", { strokeDashoffset: 0, stagger: 0.2, ease: "power1.inOut", scrollTrigger: { trigger: ".scout-bust", start: "top 75%", end: "bottom 60%", scrub: 0.5 } });
       }
 
-      // ── Scene 6 · Journey: desktop pins and travels sideways, the path drawing as it goes; phones stack the stops and scrub each one in.
-      cut(".journey", true);
-      if (desktop) {
-        const journey = root.current.querySelector(".journey-track");
-        const journeyDistance = () => journey.scrollWidth - journey.parentElement.clientWidth;
-        gsap.set(".journey-reel", { overflow: "hidden" });
-        gsap.set(".journey-path path", { strokeDasharray: "0.012 0.012" });
-        const journeyTween = gsap.to(journey, { x: () => -journeyDistance(), ease: "none",
-          scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: 0.8, pin: true, anticipatePin: 1, invalidateOnRefresh: true } });
-        gsap.fromTo(".journey-path path", { strokeDashoffset: 1, opacity: 0.2 }, { strokeDashoffset: 0, opacity: 1, ease: "none",
-          scrollTrigger: { trigger: ".journey-reel", start: "top top", end: () => `+=${journeyDistance() * 1.2}`, scrub: true } });
-        gsap.utils.toArray(".journey-slide").forEach((slide) => {
-          const stop = (start, end) => ({ trigger: slide, containerAnimation: journeyTween, start, end, scrub: 0.6 });
-          gsap.from(slide.querySelectorAll(".journey-copy > *"), { x: 120, autoAlpha: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: stop("left 90%", "left 35%") });
-          gsap.from(slide.querySelector(".journey-hero"), { scale: 0.78, rotate: -6, autoAlpha: 0, ease: "power2.out", scrollTrigger: stop("left 95%", "left 40%") });
-          gsap.from(slide.querySelectorAll(".journey-polaroid"), { y: 260, rotate: (index) => [-28, 22, -16][index], autoAlpha: 0, stagger: 0.08, ease: "back.out(1.4)", scrollTrigger: stop("left 75%", "left 15%") });
-        });
-      } else {
-        // Each stop: copy slides in from the left, the main shot lands, polaroids are tossed on top.
-        gsap.utils.toArray(".journey-slide").forEach((slide) => {
-          const visual = slide.querySelector(".journey-visual");
-          scrubIn(slide.querySelectorAll(".journey-copy > *"), { x: -60, autoAlpha: 0, stagger: 0.08 }, slide, "top 85%", "top 35%");
-          scrubIn(slide.querySelector(".journey-hero"), { scale: 0.75, rotate: -8, autoAlpha: 0 }, visual, "top 95%", "top 50%");
-          scrubIn(slide.querySelectorAll(".journey-polaroid"), { y: 160, rotate: (index) => [-24, 20, -14][index], autoAlpha: 0, stagger: 0.1 }, visual, "top 85%", "top 30%");
-        });
-      }
-
-      // ── Scene 7 · Credits: an iris opens on the cobalt frame, then the lines and channels step in.
+      // ── Scene 5 · Credits: an iris opens on the night frame; the photo comes in and Hugo signs off the film on it.
       cut(".outro");
+      const strokes = gsap.utils.toArray(".sig-stroke");
+      gsap.set(strokes, { strokeDasharray: "1 1", strokeDashoffset: 1, opacity: 0 }); // opacity hides each round-cap dot until its stroke starts
+      // Played, not scrubbed: the credits are the last screen, so the scroll can never reach a late end point and the name would stop half-signed.
+      const signing = gsap.timeline({ delay: 0.6, scrollTrigger: { trigger: ".outro .creator-about-photo", start: "top 70%", toggleActions: "play none none none" } });
+      strokes.forEach((stroke) => {
+        signing.set(stroke, { opacity: 1 }).to(stroke, { strokeDashoffset: 0, ease: "power1.inOut", duration: Number(stroke.dataset.duration) }).to({}, { duration: 0.06 });
+      });
       gsap.fromTo(".outro-iris", { clipPath: "circle(12% at 50% 55%)" }, { clipPath: "circle(150% at 50% 55%)", ease: "none",
         scrollTrigger: { trigger: ".outro", start: "top 90%", end: "top 10%", scrub: 0.6 } });
       // Content plays as one beat once the iris is mostly open (not scrubbed: half-way states stacked the mail over the tiles).
       gsap.timeline({ scrollTrigger: { trigger: ".outro", start: "top 35%", toggleActions: "play none none reverse" } })
-        .from(".outro-title > span:first-child, .outro-line, .outro-mail", { y: 40, autoAlpha: 0, stagger: 0.1, duration: 0.7, ease: "power3.out" })
+        .from(".outro-title > span:first-child, .outro-line, .outro-langs, .outro-mail", { y: 40, autoAlpha: 0, stagger: 0.1, duration: 0.7, ease: "power3.out" })
         .from(".outro-channels li", { y: 40, scale: 0.8, autoAlpha: 0, stagger: 0.06, duration: 0.6, ease: "back.out(1.6)" }, "-=0.35")
         .from(".outro-credits", { autoAlpha: 0, duration: 0.6 }, "-=0.2");
 
       // Resizing across 820px swaps scripts: hand the reels back to native scrolling.
       return () => {
-        gsap.set(".journey-reel", { clearProps: "overflow,display" });
         gsap.set(".edu-panel", { clearProps: "all" });
       };
     });
@@ -608,64 +530,23 @@ export default function IntroductionPage() {
       <FilmHud language={language} />
       <HeroSection copy={copy} />
 
-      <section id="more" className="creator-marquee" aria-label={t("intro.story.work.label")}>
-        {[marquee, [...marquee].reverse()].map((row, rowIndex) => <div className="creator-marquee-viewport" key={rowIndex}>
-          <div className={`creator-marquee-track ${rowIndex ? "is-reverse" : ""}`}>
-            {[...row, ...row].map((item, index) => <SmartImg key={`${item.id}-${index}`} src={item.src} alt={index < row.length ? item.title : ""} />)}
-          </div>
-        </div>)}
-      </section>
-
-      <section id="about" className="creator-about">
-        <div className="creator-about-text">
-          <motion.p className="creator-kicker" {...reveal}>{t("intro.story.profile.kicker")}</motion.p>
-          <RiseHeading>{copy.aboutTitle.split("\n").map((line, index) => <span key={line}>{index ? <em>{line}</em> : line}</span>)}</RiseHeading>
-          <p className="creator-about-copy">{copy.about.split(" ").map((word, index) => <span key={index} className="sub-word">{word} </span>)}</p>
-          <motion.div className="creator-about-meta" {...reveal}>
-            <span>{copy.languages}<b>{copy.languagesValue}</b></span>
-          </motion.div>
+      <section id="projects" className="journey" data-depth>
+        <header className="journey-intro"><motion.p className="creator-kicker" {...reveal}>{t("intro.story.work.label")}</motion.p><RiseHeading>{t("intro.story.work.heading")}</RiseHeading><motion.p {...reveal}>{language === "vi" ? "Mỗi dự án là một chặng: tôi đã nghĩ gì và làm gì." : "Each project is a stop: what I thought, and what I built."}</motion.p></header>
+        <div className="pj-deck">
+          {featured.map((project, index) => <ProjectCard key={project.id} project={project} index={index} t={t} from={`${location.pathname}${location.search}${location.hash}`} />)}
         </div>
-        <figure className="creator-about-photo">
-          <svg width="0" height="0" aria-hidden="true" focusable="false">
-            {/* Duotone from the hero palette: shadows → cobalt #283DB7, highlights → sun #FFBF08 */}
-            <filter id="about-duotone" colorInterpolationFilters="sRGB">
-              <feColorMatrix type="saturate" values="0" />
-              <feComponentTransfer>
-                <feFuncR type="table" tableValues="0.157 1" />
-                <feFuncG type="table" tableValues="0.239 0.749" />
-                <feFuncB type="table" tableValues="0.718 0.031" />
-              </feComponentTransfer>
-            </filter>
-          </svg>
-          <motion.img src="/hugo-about.webp" alt={language === "vi" ? "Hugo Wishpax quàng khăn len, nhìn sang bên" : "Hugo Wishpax in a knitted scarf, looking to the side"} loading="lazy"
-            initial={{ opacity: 0, scale: 1.18, rotate: -12 }} whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
-            viewport={{ once: true, amount: 0.4 }} transition={{ type: "spring", stiffness: 260, damping: 18 }} />
-          <Signature />
-        </figure>
+        <div className="journey-end">
+          <p>{language === "vi" ? "Và còn nữa." : "And there is more."}</p>
+          <Link className="journey-cta" to="/project" state={{ from: location.pathname }}>{t("intro.story.work.viewAll")} <ArrowUpRight size={18} /></Link>
+        </div>
       </section>
-
       <section id="skills" className="creator-skills">
         <SkillVortex language={language} heading={<RiseHeading>{copy.techHeading}</RiseHeading>} />
       </section>
 
       <Education language={language} copy={copy} from={`${location.pathname}${location.search}${location.hash}`} />
 
-      <section id="projects" className="journey">
-        <header className="journey-intro"><motion.p className="creator-kicker" {...reveal}>{t("intro.story.work.label")}</motion.p><RiseHeading>{t("intro.story.work.heading")}</RiseHeading><motion.p {...reveal}>{language === "vi" ? "Mỗi dự án là một chặng: tôi đã nghĩ gì và làm gì." : "Each project is a stop: what I thought, and what I built."}</motion.p></header>
-        <div className="journey-reel">
-          <div className="journey-track">
-            <svg className="journey-path" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-              <path pathLength="1" d="M0 70 C120 20 220 95 333 55 S560 15 666 60 S880 95 1000 40" />
-            </svg>
-            {featured.map((project, index) => <JourneySlide key={project.id} project={project} index={index} total={featured.length} t={t} stopLabel={language === "vi" ? "Chặng" : "Stop"} from={`${location.pathname}${location.search}${location.hash}`} />)}
-            <div className="journey-end">
-              <p>{language === "vi" ? "Hành trình vẫn tiếp tục." : "The journey keeps going."}</p>
-              <Link className="journey-cta" to="/project" state={{ from: location.pathname }}>{t("intro.story.work.viewAll")} <ArrowUpRight size={18} /></Link>
-            </div>
-          </div>
-        </div>
-      </section>
-      <Contact language={language} />
+      <Contact language={language} copy={copy} />
     </div>
   );
 }

@@ -33,7 +33,7 @@
 .pd-facts div{display:flex;padding:1.5rem 1.25rem 1.5rem 0;flex-direction:column-reverse;gap:.4rem}
 .pd-facts div+div{padding-left:1.25rem;border-left:1px solid var(--pd-line)}
 .pd-facts dt{color:var(--pd-soft);font-size:.85rem}
-.pd-facts dd{margin:0;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.15rem,1.8vw,1.5rem);font-weight:800;letter-spacing:-.02em}
+.pd-facts dd{margin:0;font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-size:clamp(1.15rem,1.8vw,1.5rem);font-weight:800;letter-spacing:-.02em}
 
 /* Hook */
 .pd-hook{padding-block:clamp(5rem,12vh,8rem)}
@@ -46,16 +46,16 @@
 .pd-stack li{display:grid;place-items:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
 .pd-stack li:hover{transform:translateY(-8px) rotate(-6deg)}
 .pd-stack .tech-logo[data-dark]{fill:var(--pd-ink)}
-.pd-stack-word{color:var(--pd-soft);font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:1.3rem;font-weight:700}
+.pd-stack-word{color:var(--pd-soft);font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-size:1.3rem;font-weight:700}
 
 /* Highlights */
 .pd-highlights{padding-bottom:clamp(5rem,12vh,8rem)}
 .pd-highlights ol{margin:2.5rem 0 0;padding:0;border-top:1px solid var(--pd-line);list-style:none}
 .pd-highlights li{border-bottom:1px solid var(--pd-line)}
 .pd-highlights button{display:grid;width:100%;padding:clamp(1.25rem,3vh,1.75rem) 0;grid-template-columns:3.5rem 1fr auto;align-items:center;gap:1rem;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
-.pd-hl-num{color:#ffbf08;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-weight:800}
+.pd-hl-num{color:#ffbf08;font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-weight:800}
 :root[data-theme="light"] .pd-hl-num{color:#283db7}
-.pd-hl-title{font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.25rem,2.4vw,2rem);font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.pd-hl-title{font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-size:clamp(1.25rem,2.4vw,2rem);font-weight:700;letter-spacing:-.02em;line-height:1.15}
 .pd-hl-icon{transition:transform .35s cubic-bezier(.16,1,.3,1)}
 .pd-highlights button[aria-expanded="true"] .pd-hl-icon{transform:rotate(45deg)}
 .pd-highlights li p{max-width:62ch;margin:0;overflow:hidden;padding-left:4.5rem;color:var(--pd-soft);font-size:1.05rem;line-height:1.65}
@@ -103,7 +103,7 @@
 /* Academic report */
 .pd-report{width:min(1240px,100%);margin-inline:auto;padding:0 clamp(1.25rem,5vw,4rem) clamp(5rem,12vh,8rem)}
 .pd-report>h2{margin-bottom:2rem}
-.pd-report h3{margin:0 0 1rem;font-family:"Bricolage Grotesque","Nunito",sans-serif;font-size:clamp(1.35rem,2.4vw,1.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.pd-report h3{margin:0 0 1rem;font-family:"Bricolage Grotesque","Be Vietnam Pro",sans-serif;font-size:clamp(1.35rem,2.4vw,1.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.2}
 .pd-report h3 span{color:#ffbf08}
 :root[data-theme="light"] .pd-report h3 span{color:#283db7}
 .pd-report h4{margin:1.5rem 0 .5rem;font-size:1.1rem;font-weight:700}
