@@ -6,9 +6,13 @@
     { "source": "/zh/:path*", "destination": "/:path*", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/((?!assets/|project-screenshots/|favicon/|.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|assets/|project-screenshots/|favicon/|.*\\.[a-zA-Z0-9]+$).*)", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/admin(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }, { "key": "Cache-Control", "value": "no-store" }]
+    },
     {
       "source": "/(.*)",
       "headers": [

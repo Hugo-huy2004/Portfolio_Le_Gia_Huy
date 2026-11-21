@@ -89,7 +89,7 @@ ${LANGS.map((code) => `    <xhtml:link rel="alternate" hreflang="${code}" href="
 </urlset>
 `;
 fs.writeFileSync(path.join(dist, "sitemap.xml"), sitemap);
-fs.writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`);
+fs.writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${ORIGIN}/sitemap.xml\n`);
 
 // llms.txt (llmstxt.org): a short, plain summary for AI assistants, linking to the pages that hold the details.
 const en = COPY.en;

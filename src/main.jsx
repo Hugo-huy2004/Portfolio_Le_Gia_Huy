@@ -366,7 +366,15 @@ function Portfolio() {
   );
 }
 
+// /admin is the private job-hunt board: its own page, outside the portfolio shell (no nav, footer or smooth scroll).
+const Admin = lazy(() => import("./admin/AdminPage"));
+const isAdmin = /^\/admin(\/|$)/.test(window.location.pathname);
+
 await i18n.changeLanguage(prefix.slice(1) || "vi");
 createRoot(document.getElementById("root")).render(
-  <React.StrictMode><BrowserRouter basename={prefix || undefined}><Portfolio /></BrowserRouter></React.StrictMode>,
+  <React.StrictMode>
+    {isAdmin
+      ? <Suspense fallback={null}><Admin /></Suspense>
+      : <BrowserRouter basename={prefix || undefined}><Portfolio /></BrowserRouter>}
+  </React.StrictMode>,
 );
