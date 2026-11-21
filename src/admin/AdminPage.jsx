@@ -1,22 +1,28 @@
-import { Fragment, useEffect, useState } from "react";
-import { FACTORS, feasibility } from "./feasibility.js";
+import { useEffect, useState } from "react";
+import HugoLogo from "../components/HugoLogo";
+import { FACTORS, feasibility, needsAction } from "./feasibility.js";
+import "./admin.css";
 
-// Private job-hunt board at /admin. Data comes from /api/admin (Gmail, read-only). The password is kept in
+// Private dashboard at /admin. Data comes from /api/admin (Gmail, read-only). The password is kept in
 // sessionStorage only, so closing the tab logs out.
 const KEY = "hugo-admin";
-const STATUS = {
-  sent: { label: "Đã gửi", tone: "bg-sky-500/15 text-sky-600 dark:text-sky-300" },
-  replied: { label: "Có phản hồi", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-300" },
-  interview: { label: "Phỏng vấn", tone: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300" },
-  rejected: { label: "Từ chối", tone: "bg-rose-500/15 text-rose-600 dark:text-rose-300" },
-};
 const GMAIL = "https://mail.google.com/mail/u/0/";
+const COLOR = { sent: "var(--ink)", replied: "var(--cyan)", interview: "var(--sun)", rejected: "var(--brick)" };
+const TODO = {
+  interview: { icon: "event_available", label: "Phỏng vấn" },
+  urgent: { icon: "priority_high", label: "Cần trả lời gấp" },
+  reply: { icon: "reply", label: "Chưa trả lời HR" },
+  nudge: { icon: "notifications", label: "Nên gửi email nhắc" },
+};
+const TONE = { positive: "Tích cực", neutral: "Trung tính", negative: "Tiêu cực" };
 const store = {
   get: () => { try { return sessionStorage.getItem(KEY) || ""; } catch { return ""; } },
   set: (v) => { try { v ? sessionStorage.setItem(KEY, v) : sessionStorage.removeItem(KEY); } catch { /* private mode */ } },
 };
 const day = (ms) => new Date(ms).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
 const domain = (email) => email.split("@")[1] || "";
+const Icon = ({ name }) => <span className="material-symbols-outlined" aria-hidden="true">{name}</span>;
+const sender = (from) => from.replace(/<.*>/, "").replace(/"/g, "").trim();
 
 // Analysis entries are keyed by recruiting email; fall back to the company domain (never for free-mail domains).
 function findAnalysis(companies, to) {
@@ -27,75 +33,114 @@ function findAnalysis(companies, to) {
 
 async function fetchBoard(password) {
   const response = await fetch("/api/admin", { method: "POST", headers: { "x-admin-password": password } });
-  const body = await response.json().catch(() => ({ error: `Lỗi máy chủ (${response.status})` }));
+  const body = await response.json().catch(() => ({ error: `Máy chủ trả lỗi ${response.status}. Thử lại sau ít phút.` }));
   if (!response.ok) throw Object.assign(new Error(body.error), { status: response.status });
   return body;
 }
 
-function Login({ onLogin, error }) {
+function Login({ onLogin, error, loading }) {
   const [value, setValue] = useState("");
   const [shown, setShown] = useState(false);
   return (
-    <form className="mx-auto mt-[20vh] flex w-full max-w-sm flex-col gap-3 px-4" onSubmit={(e) => { e.preventDefault(); onLogin(value); }}>
-      <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-      <label className="text-sm text-muted-foreground" htmlFor="admin-password">Mật khẩu</label>
-      <div className="relative">
-        <input id="admin-password" type={shown ? "text" : "password"} autoFocus autoComplete="current-password" value={value} onChange={(e) => setValue(e.target.value)}
-          className="w-full rounded-lg border border-border bg-background py-2 pl-3 pr-12 outline-none focus:ring-2 focus:ring-sky-500" />
-        <button type="button" onClick={() => setShown(!shown)} aria-pressed={shown} aria-label={shown ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground">
-          <span className="material-symbols-outlined text-xl" aria-hidden="true">{shown ? "visibility_off" : "visibility"}</span>
-        </button>
-      </div>
-      {error && <p role="alert" className="text-sm text-rose-500">{error}</p>}
-      <button className="rounded-lg bg-foreground px-3 py-2 font-medium text-background">Đăng nhập</button>
-    </form>
+    <div className="adm-center">
+      <form className="adm-login" onSubmit={(e) => { e.preventDefault(); onLogin(value); }}>
+        <HugoLogo aria-hidden="true" />
+        <h1 className="adm-display">Admin Dashboard</h1>
+        <label htmlFor="admin-password">Mật khẩu</label>
+        <div className="adm-field">
+          <input id="admin-password" type={shown ? "text" : "password"} autoFocus autoComplete="current-password" required
+            value={value} onChange={(e) => setValue(e.target.value)} aria-invalid={Boolean(error)} aria-describedby={error ? "admin-error" : undefined} />
+          <button type="button" className="adm-eye" onClick={() => setShown(!shown)} aria-pressed={shown} aria-label={shown ? "Ẩn mật khẩu" : "Hiện mật khẩu"}>
+            <Icon name={shown ? "visibility_off" : "visibility"} />
+          </button>
+        </div>
+        {error && <p id="admin-error" role="alert" className="adm-error">{error}</p>}
+        <button className="adm-btn adm-btn--sun" disabled={loading}>{loading ? "Đang mở…" : "Đăng nhập"}</button>
+      </form>
+    </div>
   );
 }
 
-function Card({ app, info, result }) {
-  const status = STATUS[app.status];
+// Sent, replied, interview is the path an application walks; a rejection ends it after the reply.
+function Track({ status }) {
+  const steps = status === "rejected" ? ["Đã gửi", "Từ chối"] : ["Đã gửi", "Phản hồi", "Phỏng vấn"];
+  const reached = { sent: 0, replied: 1, interview: 2, rejected: 1 }[status];
   return (
-    <article className="rounded-xl border border-border p-4 shadow-card">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="font-semibold">{info?.company || app.to}</h3>
-          <p className="text-sm text-muted-foreground">{[info?.role, info?.district].filter(Boolean).join(" · ") || app.subject}</p>
-        </div>
-        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${status.tone}`}>{status.label}</span>
-      </div>
-      <div className="mt-3 flex items-center gap-3" title="Điểm khả thi">
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-border" role="meter" aria-valuenow={result.score} aria-valuemin={0} aria-valuemax={100} aria-label="Điểm khả thi">
-          <div className="h-full rounded-full bg-sky-500" style={{ width: `${result.score}%` }} />
-        </div>
-        <span className="w-10 text-right text-sm font-semibold tabular-nums">{result.score}</span>
-      </div>
-      <p className="mt-2 text-sm"><b>Nên làm:</b> {result.action}</p>
-      {app.reply && (
-        <blockquote className="mt-2 border-l-2 border-amber-500 pl-3 text-sm text-muted-foreground">
-          {app.reply.from.replace(/<.*>/, "").trim()} · {day(app.reply.at)}: “{app.reply.snippet}”
-        </blockquote>
+    <ol className="adm-track" aria-label={`Trạng thái: ${steps[reached]}`} style={{ "--c": COLOR[status] }}>
+      {steps.map((label, i) => <li key={label} className={`adm-step${i <= reached ? " is-done" : ""}`}><i aria-hidden="true" />{label}</li>)}
+    </ol>
+  );
+}
+
+// What the recruiter's words give away: live cues from the reply text, plus the routine's deeper reading.
+function Readout({ app, result, info }) {
+  const { cues, fast, urgent } = result.read;
+  const deep = info?.readout;
+  if (!app.reply && !deep) return null;
+  return (
+    <div className="adm-read">
+      <p className="adm-read-head"><Icon name="psychology" />Đọc vị{deep?.tone && <span className="adm-tone">{TONE[deep.tone]}</span>}</p>
+      {(cues.length > 0 || fast || urgent) && (
+        <ul className="adm-cues">
+          {cues.map((cue) => <li key={cue.id} className={`is-${cue.tone}`}><Icon name={cue.icon} />{cue.label}</li>)}
+          {fast && <li className="is-positive"><Icon name="bolt" />Trả lời trong 2 ngày</li>}
+          {urgent && <li className="is-negative"><Icon name="priority_high" />Có hạn chót</li>}
+        </ul>
       )}
-      <p className="mt-2 text-xs text-muted-foreground">
-        Gửi {day(app.sentAt)}{app.lastSentAt !== app.sentAt && `, nhắc ${day(app.lastSentAt)}`} · {app.to} ·{" "}
-        <a className="underline" href={`${GMAIL}#all/${app.threadId}`} target="_blank" rel="noreferrer">Mở trong Gmail</a>
-      </p>
-      {info && (
-        <details className="mt-3 text-sm">
-          <summary className="cursor-pointer font-medium">Tóm tắt tin tuyển &amp; đánh giá</summary>
-          {info.summary?.length > 0 && <ul className="mt-2 list-disc space-y-1 pl-5">{info.summary.map((line) => <li key={line}>{line}</li>)}</ul>}
-          <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-            {info.schedule && <><dt className="text-muted-foreground">Thời gian</dt><dd>{info.schedule}</dd></>}
-            {info.allowance && <><dt className="text-muted-foreground">Trợ cấp</dt><dd>{info.allowance}</dd></>}
-            {info.reputationNote && <><dt className="text-muted-foreground">Review</dt><dd>{info.reputationNote}</dd></>}
-            {Object.entries(FACTORS).map(([key, { label }]) => (
-              <Fragment key={key}><dt className="text-muted-foreground">{label}</dt><dd>{"●".repeat(info.fit?.[key] ?? 1)}{"○".repeat(2 - (info.fit?.[key] ?? 1))}</dd></Fragment>
-            ))}
-          </dl>
-          {info.jdUrl && <a className="mt-2 inline-block underline" href={info.jdUrl} target="_blank" rel="noreferrer">Xem tin tuyển gốc</a>}
-        </details>
-      )}
-    </article>
+      {deep?.note && <p className="adm-read-note">{deep.note}{deep.quote && <q>{deep.quote}</q>}</p>}
+    </div>
+  );
+}
+
+function Application({ app, info, result }) {
+  const closed = app.status === "rejected";
+  const fit = info?.fit || {};
+  return (
+    <li className={`adm-row${closed ? " is-closed" : result.score < 50 ? " is-low" : ""}`}>
+      <p className="adm-score adm-display" aria-label={`Điểm khả thi ${result.score} trên 100`}>{result.score}<small>khả thi</small></p>
+      <div className="adm-co">
+        <h3>{info?.company || app.to}</h3>
+        <p>{info?.role || app.subject}{info?.district && `, ${info.district}`}</p>
+        <p className="adm-next"><Icon name={closed ? "do_not_disturb_on" : "arrow_forward"} /><span>{result.action}</span></p>
+        {app.reply && <p className="adm-reply"><strong>{sender(app.reply.from)}</strong> ({day(app.reply.at)}): “{app.reply.snippet}”</p>}
+        <Readout app={app} result={result} info={info} />
+        <p className="adm-foot">
+          <span><Icon name="outgoing_mail" />Gửi {day(app.sentAt)}</span>
+          {app.lastSentAt !== app.sentAt && <span><Icon name="notifications" />Nhắc {day(app.lastSentAt)}</span>}
+          {!closed && <span><Icon name="hourglass_empty" />Chờ {result.waited} ngày</span>}
+          <span><Icon name="alternate_email" />{app.to}</span>
+          <a href={`${GMAIL}#all/${app.threadId}`} target="_blank" rel="noreferrer"><Icon name="open_in_new" />Mở trong Gmail</a>
+        </p>
+        {info && (
+          <details className="adm-details">
+            <summary><Icon name="chevron_right" />Tin tuyển và đánh giá</summary>
+            <div className="adm-brief">
+              {info.summary?.length > 0 && <ul>{info.summary.map((line) => <li key={line}>{line}</li>)}</ul>}
+              {(info.schedule || info.allowance || info.reputationNote) && (
+                <dl className="adm-facts">
+                  {info.schedule && <><dt>Thời gian</dt><dd>{info.schedule}</dd></>}
+                  {info.allowance && <><dt>Trợ cấp</dt><dd>{info.allowance}</dd></>}
+                  {info.reputationNote && <><dt>Review</dt><dd>{info.reputationNote}</dd></>}
+                </dl>
+              )}
+              <div className="adm-factors">
+                {Object.entries(FACTORS).map(([key, { label }]) => {
+                  const value = fit[key] ?? 1;
+                  return (
+                    <div key={key} role="img" aria-label={`${label}: ${value} trên 2`}>
+                      <span>{label}</span>
+                      <div className="adm-pips" aria-hidden="true"><i className={value >= 1 ? "on" : ""} /><i className={value >= 2 ? "on" : ""} /></div>
+                    </div>
+                  );
+                })}
+              </div>
+              {info.jdUrl && <a href={info.jdUrl} target="_blank" rel="noreferrer"><Icon name="open_in_new" />Xem tin tuyển gốc</a>}
+            </div>
+          </details>
+        )}
+      </div>
+      <Track status={app.status} />
+    </li>
   );
 }
 
@@ -109,8 +154,8 @@ export default function AdminPage() {
     document.title = "Admin Dashboard";
     const robots = Object.assign(document.createElement("meta"), { name: "robots", content: "noindex, nofollow" });
     document.head.appendChild(robots);
-    try { document.documentElement.dataset.theme = localStorage.getItem("hugo-theme") || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); } catch { /* default theme */ }
-    return () => robots.remove();
+    document.body.style.background = "#050817"; // overscroll matches the page
+    return () => { robots.remove(); document.body.style.background = ""; };
   }, []);
 
   const load = (pass) => {
@@ -122,69 +167,108 @@ export default function AdminPage() {
   };
   useEffect(() => { if (password) load(password); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!password || (!board && error)) return <main className="min-h-screen bg-background text-foreground"><Login onLogin={load} error={error} /></main>;
-  if (!board) return <main className="min-h-screen bg-background p-6 text-foreground">Đang tải dữ liệu Gmail…</main>;
+  if (!board && (!password || error)) return <main className="adm"><Login onLogin={load} error={error} loading={loading} /></main>;
+  if (!board) return <main className="adm"><p className="adm-center">Đang đọc Gmail…</p></main>;
 
-  const companies = board.analysis?.companies || [];
+  const analysis = board.analysis || {};
+  const companies = analysis.companies || [];
   const rows = board.applications
-    .map((app) => { const info = findAnalysis(companies, app.to); return { app, info, result: feasibility(app, info) }; })
+    .map((app) => { const info = findAnalysis(companies, app.to); const result = feasibility(app, info); return { app, info, result, todo: needsAction(app, result) }; })
     .sort((a, b) => b.result.score - a.result.score);
+  const open = rows.filter((r) => r.app.status !== "rejected");
+  const closed = rows.filter((r) => r.app.status === "rejected");
+  const todos = rows.filter((r) => r.todo).sort((a, b) => Object.keys(TODO).indexOf(a.todo) - Object.keys(TODO).indexOf(b.todo));
   const count = (s) => board.applications.filter((a) => a.status === s).length;
+  const stages = [["sent", "send", board.applications.length, "đã gửi"], ["replied", "forum", count("replied") + count("interview"), "có phản hồi"], ["interview", "record_voice_over", count("interview"), "phỏng vấn"]];
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <header className="flex flex-wrap items-center justify-between gap-3">
+    <main className="adm">
+      <div className="adm-wrap">
+        <header className="adm-head">
           <div>
-            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-            <p className="text-sm text-muted-foreground">
-              Gmail: trực tiếp · Phân tích: {board.analysis?.updatedAt ? new Date(board.analysis.updatedAt).toLocaleString("vi-VN") : "chưa có"}
+            <h1 className="adm-display">Admin Dashboard</h1>
+            <p className="adm-meta">
+              Gmail đọc trực tiếp. Phân tích cập nhật {analysis.updatedAt ? new Date(analysis.updatedAt).toLocaleString("vi-VN", { dateStyle: "short", timeStyle: "short" }) : "chưa có"}.
             </p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => load(password)} disabled={loading} className="rounded-lg border border-border px-3 py-1.5 text-sm">{loading ? "Đang tải…" : "Làm mới"}</button>
-            <button onClick={() => { store.set(""); setPassword(""); setBoard(null); }} className="rounded-lg border border-border px-3 py-1.5 text-sm">Đăng xuất</button>
+          <div className="adm-actions">
+            <button type="button" className="adm-btn" onClick={() => load(password)} disabled={loading}><Icon name="refresh" />{loading ? "Đang tải…" : "Làm mới"}</button>
+            <button type="button" className="adm-btn" onClick={() => { store.set(""); setPassword(""); setBoard(null); }}><Icon name="logout" />Đăng xuất</button>
           </div>
         </header>
-        {error && <p role="alert" className="mt-3 text-sm text-rose-500">{error}</p>}
+        {error && <p role="alert" className="adm-notice">{error}</p>}
+        {analysis.error && <p className="adm-notice">{analysis.error} Danh sách bên dưới vẫn lấy từ Gmail.</p>}
 
-        <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5" aria-label="Tổng quan">
-          {[["Đã gửi", board.applications.length], ["Có phản hồi", count("replied")], ["Phỏng vấn", count("interview")], ["Từ chối", count("rejected")], ["Nháp chờ gửi", board.drafts.length]].map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-border p-3">
-              <p className="text-2xl font-semibold tabular-nums">{value}</p>
-              <p className="text-xs text-muted-foreground">{label}</p>
+        <section className="adm-pipe" aria-label="Tổng quan">
+          {stages.map(([key, icon, value, label], i) => (
+            <div key={key} style={{ display: "contents" }}>
+              {i > 0 && <span className="adm-pipe-line" aria-hidden="true" />}
+              <p className={`adm-stage is-${key}`}><b>{value}</b><span><Icon name={icon} />{label}</span></p>
             </div>
           ))}
+          <div className="adm-pipe-rest">
+            <p className="adm-stage is-rejected"><b>{count("rejected")}</b><span><Icon name="block" />từ chối</span></p>
+            <p className="adm-stage is-drafts"><b>{board.drafts.length}</b><span><Icon name="edit_note" />nháp chờ gửi</span></p>
+          </div>
         </section>
 
-        {board.analysis?.advice?.length > 0 && (
-          <section className="mt-6 rounded-xl border border-sky-500/40 p-4">
-            <h2 className="font-semibold">Gợi ý hôm nay</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">{board.analysis.advice.map((line) => <li key={line}>{line}</li>)}</ul>
+        {todos.length > 0 && (
+          <section className="adm-section" aria-labelledby="adm-todo">
+            <h2 id="adm-todo">Cần làm ngay</h2>
+            <ul className="adm-todos">
+              {todos.map(({ app, info, result, todo }) => (
+                <li key={app.threadId} className={`is-${todo}`}>
+                  <Icon name={TODO[todo].icon} />
+                  <div>
+                    <p><b>{info?.company || app.to}</b><span>{TODO[todo].label}</span></p>
+                    <p>{result.action}</p>
+                  </div>
+                  <a href={`${GMAIL}#all/${app.threadId}`} target="_blank" rel="noreferrer" aria-label={`Mở thư ${info?.company || app.to} trong Gmail`}><Icon name="open_in_new" /></a>
+                </li>
+              ))}
+            </ul>
           </section>
         )}
 
-        <section className="mt-6" aria-label="Hồ sơ đã gửi">
-          <h2 className="mb-3 font-semibold">Hồ sơ đã gửi · xếp theo điểm khả thi</h2>
-          <div className="grid gap-3">{rows.map((row) => <Card key={row.app.threadId} {...row} />)}</div>
+        {analysis.advice?.length > 0 && (
+          <section className="adm-advice">
+            <h2><Icon name="lightbulb" />Gợi ý hôm nay</h2>
+            <ul>{analysis.advice.map((line) => <li key={line}>{line}</li>)}</ul>
+          </section>
+        )}
+
+        <section className="adm-section" aria-labelledby="adm-apps">
+          <h2 id="adm-apps">Hồ sơ đang mở</h2>
+          <p>Điểm khả thi gồm: kỹ năng, giờ linh hoạt, khu vực, tin còn mở, uy tín, và những gì câu chữ của HR để lộ.</p>
+          {open.length
+            ? <ul className="adm-list">{open.map((row) => <Application key={row.app.threadId} {...row} />)}</ul>
+            : <p className="adm-empty">Chưa có hồ sơ nào đang mở. Gửi hồ sơ mới rồi bấm Làm mới.</p>}
         </section>
 
         {board.drafts.length > 0 && (
-          <section className="mt-8" aria-label="Bản nháp">
-            <h2 className="mb-3 font-semibold">Bản nháp chờ gửi</h2>
-            <ul className="grid gap-2">
+          <section className="adm-section" aria-labelledby="adm-drafts">
+            <h2 id="adm-drafts">Nháp chờ gửi</h2>
+            <ul className="adm-list">
               {board.drafts.map((d) => {
                 const info = findAnalysis(companies, d.to);
                 return (
-                  <li key={d.id} className="rounded-xl border border-border p-3 text-sm">
-                    <b>{info?.company || d.to}</b> · {d.subject}
-                    {info?.summary?.[0] && <p className="text-muted-foreground">{info.summary[0]}</p>}
-                    <a className="underline" href={`${GMAIL}#drafts`} target="_blank" rel="noreferrer">Mở Thư nháp</a>
+                  <li key={d.id} className="adm-draft">
+                    <h3>{info?.company || d.to}</h3>
+                    <p>{d.subject}</p>
+                    {info?.summary?.[0] && <p>{info.summary[0]}</p>}
+                    <a href={`${GMAIL}#drafts`} target="_blank" rel="noreferrer"><Icon name="open_in_new" />Mở Thư nháp</a>
                   </li>
                 );
               })}
             </ul>
           </section>
+        )}
+
+        {closed.length > 0 && (
+          <details className="adm-section adm-closed">
+            <summary><Icon name="chevron_right" />Đã đóng ({closed.length})</summary>
+            <ul className="adm-list">{closed.map((row) => <Application key={row.app.threadId} {...row} />)}</ul>
+          </details>
         )}
       </div>
     </main>
