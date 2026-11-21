@@ -89,6 +89,9 @@ ${LANGS.map((code) => `    <xhtml:link rel="alternate" hreflang="${code}" href="
 </urlset>
 `;
 fs.writeFileSync(path.join(dist, "sitemap.xml"), sitemap);
+// /admin gets its own copy of the app shell: the SPA rewrite in vercel.json doesn't reach unknown paths on the host.
+fs.mkdirSync(path.join(dist, "admin"), { recursive: true });
+fs.writeFileSync(path.join(dist, "admin", "index.html"), template.replace("<!--seo-->", '<title>Quản lý thực tập</title><meta name="robots" content="noindex, nofollow">'));
 fs.writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\n\nSitemap: ${ORIGIN}/sitemap.xml\n`);
 
 // llms.txt (llmstxt.org): a short, plain summary for AI assistants, linking to the pages that hold the details.
