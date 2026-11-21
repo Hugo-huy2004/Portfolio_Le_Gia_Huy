@@ -1,5 +1,5 @@
 node_modules/
 dist/
 .vercel/
-
+push.sh
 cv-private/
