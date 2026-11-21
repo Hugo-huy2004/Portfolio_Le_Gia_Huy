@@ -24,6 +24,10 @@ body {
 
 .material-symbols-outlined { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
 
+/* Decoration never takes the pointer: glows, overlays, icons and art are all marked aria-hidden, so clicks and
+   hovers pass through to the real control (or the [data-depth] section) beneath. */
+[aria-hidden="true"] { pointer-events: none; }
+
 :focus-visible { outline: 2px solid #ffbf08; outline-offset: 2px; }
 
 /* iOS zooms into inputs under 16px. */
