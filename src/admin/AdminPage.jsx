@@ -34,12 +34,19 @@ async function fetchBoard(password) {
 
 function Login({ onLogin, error }) {
   const [value, setValue] = useState("");
+  const [shown, setShown] = useState(false);
   return (
     <form className="mx-auto mt-[20vh] flex w-full max-w-sm flex-col gap-3 px-4" onSubmit={(e) => { e.preventDefault(); onLogin(value); }}>
-      <h1 className="text-xl font-semibold">Quản lý thực tập</h1>
+      <h1 className="text-xl font-semibold">Admin Dashboard</h1>
       <label className="text-sm text-muted-foreground" htmlFor="admin-password">Mật khẩu</label>
-      <input id="admin-password" type="password" autoFocus autoComplete="current-password" value={value} onChange={(e) => setValue(e.target.value)}
-        className="rounded-lg border border-border bg-background px-3 py-2 outline-none focus:ring-2 focus:ring-sky-500" />
+      <div className="relative">
+        <input id="admin-password" type={shown ? "text" : "password"} autoFocus autoComplete="current-password" value={value} onChange={(e) => setValue(e.target.value)}
+          className="w-full rounded-lg border border-border bg-background py-2 pl-3 pr-12 outline-none focus:ring-2 focus:ring-sky-500" />
+        <button type="button" onClick={() => setShown(!shown)} aria-pressed={shown} aria-label={shown ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+          className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground">
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">{shown ? "visibility_off" : "visibility"}</span>
+        </button>
+      </div>
       {error && <p role="alert" className="text-sm text-rose-500">{error}</p>}
       <button className="rounded-lg bg-foreground px-3 py-2 font-medium text-background">Đăng nhập</button>
     </form>
@@ -99,7 +106,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    document.title = "Quản lý thực tập";
+    document.title = "Admin Dashboard";
     const robots = Object.assign(document.createElement("meta"), { name: "robots", content: "noindex, nofollow" });
     document.head.appendChild(robots);
     try { document.documentElement.dataset.theme = localStorage.getItem("hugo-theme") || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"); } catch { /* default theme */ }
@@ -129,7 +136,7 @@ export default function AdminPage() {
       <div className="mx-auto max-w-4xl px-4 py-8">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold">Quản lý thực tập</h1>
+            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
             <p className="text-sm text-muted-foreground">
               Gmail: trực tiếp · Phân tích: {board.analysis?.updatedAt ? new Date(board.analysis.updatedAt).toLocaleString("vi-VN") : "chưa có"}
             </p>

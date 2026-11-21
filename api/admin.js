@@ -56,8 +56,10 @@ function parseData(message) {
   const parts = [message.payload, ...(message.payload?.parts || [])];
   const plain = parts.find((p) => p?.mimeType === "text/plain" && p.body?.data);
   const text = plain ? Buffer.from(plain.body.data, "base64url").toString("utf8") : "";
-  const json = text.match(/<<<JSON([\s\S]*?)JSON>>>/)?.[1];
-  return json ? JSON.parse(json) : null;
+  // Markers must sit on their own lines: the mail's intro sentence mentions them inline.
+  const json = text.match(/^<<<JSON[ \t]*\r?\n([\s\S]*?)\r?\n[ \t]*JSON>>>[ \t]*$/m)?.[1];
+  if (!json) return null;
+  try { return JSON.parse(json); } catch { return { error: "Dữ liệu [HUGO-DATA] mới nhất bị lỗi JSON." }; } // Gmail list still shows
 }
 
 async function load() {
