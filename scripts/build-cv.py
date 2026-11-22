@@ -38,7 +38,7 @@ bullet = st("bullet", 9.2, leftIndent=24, firstLineIndent=-8, lead=11.3, spaceBe
 
 TRACKS = {
     "web": {
-        "title": "Computing Student - Full-Stack Web Developer",
+        "title": "Full-Stack Web Developer",
         "summary": "Final-year Computing student at the University of Greenwich (Vietnam), named Best Student in Mobile "
                    "Application Design and Development (Summer 2026). Ships web apps end to end, from UI design to deployment, "
                    "with two sites in real use by a paying client and a parish community. Short-term goal: join a product team "
@@ -49,11 +49,12 @@ TRACKS = {
             "Backend and Data: Node.js, Express, MongoDB, Firebase / Firestore, SQLite, RESTful API design, MVC",
             "Auth, Payments and Tools: JWT, Google OAuth 2.0, bcrypt, PayPal, Facebook Graph API, Git, Vercel",
             "Also: Android (Java), React Native, Expo; studied PHP, Python, C#, C++ in coursework",
+            "Soft Skills: Teamwork, Task Coordination, Time Management, Planning",
         ],
         "projects": ["hwj", "l3go", "mhike"],
     },
     "mobile": {
-        "title": "Computing Student - Mobile and Full-Stack Developer",
+        "title": "Mobile and Full-Stack Developer",
         "summary": "Final-year Computing student at the University of Greenwich (Vietnam), named Best Student in Mobile "
                    "Application Design and Development (Summer 2026) for an app built both natively and cross-platform. "
                    "Comfortable owning a feature from screen design to backend. Short-term goal: join a product team as a "
@@ -64,6 +65,7 @@ TRACKS = {
             "Backend and Data: Firebase / Firestore, Node.js, Express, MongoDB, RESTful API design, MVC",
             "Auth and Tools: JWT, Google OAuth 2.0, bcrypt, PayPal, Git, Vercel",
             "Also: React, Next.js, Tailwind CSS; studied PHP, Python, C#, C++ in coursework",
+            "Soft Skills: Teamwork, Task Coordination, Time Management, Planning",
         ],
         "projects": ["mhike", "hwj", "l3go"],
     },
@@ -115,7 +117,8 @@ def build(track, out, phone=None):
 
     section("TECHNICAL SKILLS")
     for line in t["skills"]:
-        P(line, body)
+        label, rest = line.split(": ", 1)
+        P(f"- <b>{label}:</b> {rest}", bullet)
 
     # Real clients and real users come before coursework.
     section("EXPERIENCE")
