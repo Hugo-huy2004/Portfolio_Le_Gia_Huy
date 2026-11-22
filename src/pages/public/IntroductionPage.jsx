@@ -48,6 +48,8 @@ const desktopMotion = "(min-width: 821px) and (prefers-reduced-motion: no-prefer
 const phoneMotion = "(max-width: 820px) and (prefers-reduced-motion: no-preference)";
 
 const ease = [0.16, 1, 0.3, 1];
+// Depth slices behind each HUGO letter (hero.css: real 3D concrete block).
+const SLICES = Array.from({ length: 24 }, (_, i) => 24 - i); // back to front: later paints on top
 
 // Opening credits, poster style: Hugo sits on his own name.
 // On load a projector line flashes, the shutter opens, the letters rise, he sits down onto them, the credits come up
@@ -78,7 +80,9 @@ function HeroSection({ copy }) {
       <h1 className="hero-mark" aria-label="Hugo Wishpax — Lê Gia Huy" translate="no">
         {"HUGO".split("").map((letter, index) => (
           <span key={letter} className="hero-mark-mask" aria-hidden="true">
-            <motion.span data-l={letter} initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ delay: 0.55 + index * 0.08, duration: 1.1, ease }}>{letter}</motion.span>
+            <motion.span data-l={letter} initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ delay: 0.55 + index * 0.08, duration: 1.1, ease }}>
+              {letter}{SLICES.map((z) => <i key={z} style={{ "--z": z }}>{letter}</i>)}
+            </motion.span>
           </span>
         ))}
       </h1>
@@ -112,7 +116,7 @@ function HeroSection({ copy }) {
       </div>
       <div className="hero-credits">
         <motion.p className="hero-kicker" {...credit(1.2)}>Lê Gia Huy · Hugo Wishpax</motion.p>
-        <motion.p className="hero-line" {...credit(1.3)}>{vi ? <>Kỹ sư phần mềm<br /><em>Full&#8209;Stack</em>, web &amp; mobile.</> : <>Full&#8209;stack<br /><em>software engineer</em>, web &amp; mobile.</>}</motion.p>
+        <motion.p className="hero-line" {...credit(1.3)}>{vi ? <>Lập trình viên<br /><em>Full&#8209;Stack</em>, web &amp; mobile.</> : <>Full&#8209;stack<br /><em>developer</em>, web &amp; mobile.</>}</motion.p>
         <motion.div className="hero-actions" {...credit(1.4)}>
           <a href="#projects" className="hero-cta">{vi ? "Xem dự án" : "See the work"}<ArrowDown size={16} aria-hidden="true" /></a>
           <a href={cvPdf(i18n.language)} target="_blank" rel="noreferrer" className="hero-cta hero-cta--quiet">{vi ? "Xem CV" : "View CV"}<FileText size={15} aria-hidden="true" /></a>
@@ -177,14 +181,14 @@ const profileCopy = {
     heroPlace: "Sống và làm việc tại Việt Nam",
     languages: "Ngôn ngữ", languagesValue: "Tiếng Anh VSTEP B2 (6.5) · Tiếng Trung HSK 2",
     techHeading: "Kỹ năng chuyên môn", techNote: "Ngôn ngữ, framework và nền tảng tôi dùng hằng ngày.",
-    education: "Học vấn", degree: "Cử nhân Kỹ thuật phần mềm (Bachelor of Computing) · Sinh viên năm cuối",
+    education: "Học vấn", degree: "BSc (Hons) Computing · Sinh viên năm cuối",
   },
   en: {
     heroStatus: "Open to frontend, backend and full-stack roles",
     heroPlace: "Based in Vietnam",
     languages: "Languages", languagesValue: "VSTEP English B2 (6.5) · Chinese HSK 2",
     techHeading: "Technical Skills", techNote: "The languages, frameworks and platforms I use every day.",
-    education: "Education", degree: "Bachelor of Computing — Software Engineering · Final-year student",
+    education: "Education", degree: "BSc (Hons) Computing · Final-year student",
   },
 };
 

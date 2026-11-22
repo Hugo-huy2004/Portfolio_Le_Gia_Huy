@@ -13,13 +13,33 @@
    Body: stacked shadows towards the centre, so we see the inner sides of each letter as from a camera at chest height. */
 .hero-mark{position:absolute;z-index:1;left:50%;width:max-content;translate:-50% 0;bottom:calc(var(--b) + var(--h) + var(--t)*.55);display:flex;justify-content:center;margin:0;
   font-family:"Bricolage Grotesque",sans-serif;font-size:var(--F);font-weight:800;font-variation-settings:"opsz" 96;letter-spacing:-.065em;line-height:.74}
-.hero-mark-mask{display:inline-block;overflow:hidden;padding:.1em .12em 0;margin:-.1em -.12em 0}
-.hero-mark-mask>span{position:relative;display:inline-block;color:#121c5c}
-.hero-mark-mask:nth-child(-n+2)>span{text-shadow:.005em 0 #16216a,.01em 0 #1a2778,.015em 0 #1e2c84,.02em 0 #223190,.025em 0 #26379a,.03em 0 #2b3ca4,.035em 0 #3043ad}
-.hero-mark-mask:nth-child(n+3)>span{text-shadow:-.005em 0 #16216a,-.01em 0 #1a2778,-.015em 0 #1e2c84,-.02em 0 #223190,-.025em 0 #26379a,-.03em 0 #2b3ca4,-.035em 0 #3043ad}
-/* The front face reaches past the span: negative tracking makes the box narrower than round glyphs like O. */
-.hero-mark-mask>span::after{position:absolute;top:0;bottom:0;left:-.2em;right:-.2em;padding:0 .2em;content:attr(data-l);
-  background:linear-gradient(0deg,#f4f1ea 0%,#c9d4f5 18%,#4b5fc9 45%,#1a2672 72%,#0b1240 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+/* Cast concrete in the stage's cobalt, built as a real 3D block: each letter is a stack of slices pushed back in depth
+   (<i> --z 1…24) as seen by one camera at the middle of the word, a little below centre
+   (chest height). So the outer letters show more side than the inner ones, strokes above the eye show their
+   underside and those below show their top, and the slices fall into shade with depth while the footlight grazes their
+   lower edge. The projection is precomputed as a 2D scale towards the camera point (s = P/(P+d), P = 4em), painted
+   back to front in DOM order: real 3D slices this close together made the compositor re-sort them every frame and
+   flicker. The mask gets its own layer so the pointer parallax moves pixels instead of repainting 100 glyphs. */
+.hero-mark{--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 .6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/220px;
+  --mottle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 .45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E") 0 0/600px}
+.hero-mark-mask{display:inline-block;overflow:hidden;padding:.1em .12em 0;margin:-.1em -.12em 0;will-change:translate}
+.hero-mark-mask:nth-child(1){--cam:205%}.hero-mark-mask:nth-child(2){--cam:105%}.hero-mark-mask:nth-child(3){--cam:-5%}.hero-mark-mask:nth-child(4){--cam:-105%}
+.hero-mark-mask>span{position:relative;display:inline-block;color:transparent}
+.hero-mark-mask>span>i,.hero-mark-mask>span::after{position:absolute;top:0;bottom:0;left:-.2em;right:-.2em;padding:0 .2em;font-style:normal;color:transparent}
+/* Sides: slices darken with depth (ambient occlusion), lit from the footlight at the bottom, smooth: per-slice grain would band into stripes. */
+.hero-mark-mask>span>i{transform-origin:var(--cam) 64%;scale:calc(4 / (4 + var(--z) * .0075));
+  background:linear-gradient(0deg,hsl(229 52% calc(56% - var(--z)*1.4%)) 0%,hsl(230 58% calc(30% - var(--z)*.7%)) 32%,hsl(232 70% 9%) 80%);-webkit-background-clip:text;background-clip:text}
+/* Front face, top layer first: form-tie holes and formwork seams (architectural concrete), grain, cloudy mottling, then
+   the footlight: brightest just above a dark contact line on the plinth, into cobalt and night above.
+   It reaches past the span: negative tracking makes the box narrower than round glyphs like O. */
+.hero-mark-mask>span::after{content:attr(data-l);
+  background:
+    radial-gradient(circle,rgb(8 12 40/.65) 0 .008em,rgb(220 230 255/.12) .01em,transparent .013em) .16em .12em/.32em .27em,
+    repeating-linear-gradient(0deg,transparent 0 .262em,rgb(8 12 40/.32) .262em .268em),
+    repeating-linear-gradient(90deg,transparent 0 .634em,rgb(8 12 40/.22) .634em .64em),
+    var(--grain),var(--mottle),
+    linear-gradient(0deg,#27358a 0%,#f4f1ea 2.5%,#c9d4f5 18%,#4b5fc9 45%,#1a2672 72%,#0b1240 100%);
+  background-blend-mode:normal,multiply,multiply,overlay,soft-light,normal;-webkit-background-clip:text;background-clip:text}
 
 /* Sugar Script, subset to the letters of "Petrus Hugo Wishpax Lê" (public/fonts/sugar-script-name.woff2, from scripts/fonts/Sugar-Script.otf; personal-use licence). */
 @font-face{font-family:"Sugar Script";src:url("/fonts/sugar-script-name.woff2") format("woff2");font-display:swap}

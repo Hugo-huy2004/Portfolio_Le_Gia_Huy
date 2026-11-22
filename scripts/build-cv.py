@@ -36,8 +36,8 @@ bullet = st("bullet", 9.2, leftIndent=24, firstLineIndent=-8, lead=11.3, spaceBe
 
 TRACKS = {
     "web": {
-        "title": "Software Engineering Student - Full-Stack Web Developer",
-        "summary": "Final-year Software Engineering student at the University of Greenwich (Vietnam), named Best Student in Mobile "
+        "title": "Computing Student - Full-Stack Web Developer",
+        "summary": "Final-year Computing student at the University of Greenwich (Vietnam), named Best Student in Mobile "
                    "Application Design and Development (Summer 2026). Builds and ships full-stack web apps with React, Next.js, "
                    "Node.js and MongoDB, from UI design to deployment, including one freelance client site and one site in use by a "
                    "parish community. Seeking a Frontend or Full-Stack Web Developer role.",
@@ -51,8 +51,8 @@ TRACKS = {
         "projects": ["hwj", "l3go", "mhike"],
     },
     "mobile": {
-        "title": "Software Engineering Student - Mobile and Full-Stack Developer",
-        "summary": "Final-year Software Engineering student at the University of Greenwich (Vietnam), named Best Student in Mobile "
+        "title": "Computing Student - Mobile and Full-Stack Developer",
+        "summary": "Final-year Computing student at the University of Greenwich (Vietnam), named Best Student in Mobile "
                    "Application Design and Development (Summer 2026) for M-Hike, built both in native Android (Java) and in React "
                    "Native for Android and iOS. Also builds the backends apps need, with Node.js, Express, MongoDB and Firebase. "
                    "Seeking a Mobile Developer (Android / React Native) role.",
@@ -138,7 +138,7 @@ def build(track, out, phone=None):
 
     section("EDUCATION")
     P("University of Greenwich - Vietnam", item)
-    P("Bachelor of Computing - Software Engineering | Final-year student", body)
+    P("BSc (Hons) Computing | Final-year student", body)
     P("Provisional classification mark (Greenwich 10:90 algorithm): 69%", body)
     P("Honors: Certificate of Merit - Best Student in Mobile Application Design and Development (MHike), Summer 2026", body)
     P("THPT Nguyen Dinh Chieu, My Tho (Coll&egrave;ge de Mytho) - High School Diploma", item)
