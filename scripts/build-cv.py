@@ -144,7 +144,7 @@ def build(track, out, phone=None):
 
     section("CERTIFICATES")
     P("Certificate of Merit - Best Student in Mobile Application Design and Development (M-Hike), Summer 2026", body)
-    P("English: VSTEP B2 (Overall 6.5) | Chinese: HSK 2", body)
+    P("English: VSTEP B2 (Overall 6.5)", body)
 
     out.parent.mkdir(parents=True, exist_ok=True)
     SimpleDocTemplate(str(out), pagesize=letter, leftMargin=M, rightMargin=M, topMargin=30, bottomMargin=22,
